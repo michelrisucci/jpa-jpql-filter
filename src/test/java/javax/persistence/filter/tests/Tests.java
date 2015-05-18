@@ -43,7 +43,7 @@ public class Tests {
 		Filter<Person> filter = Filter.newInstance(Person.class);
 		filter.add(Where.insensitiveLike("dog.breed.name", "kit"));
 
-		Person person = FilterService.filter(em, filter, 0, 100).get(0);
+		Person person = FilterService.list(em, filter, 0, 100).get(0);
 		Assert.assertEquals(person.getName(), "Alberto");
 	}
 

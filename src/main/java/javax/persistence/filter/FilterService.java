@@ -18,6 +18,8 @@ import org.apache.commons.logging.LogFactory;
 public class FilterService {
 
 	private static final Log log = LogFactory.getLog(FilterService.class);
+	private static final String LISTING = "Filtering entity %s, found %d entries.";
+	private static final String COUNTING = "Counting entity %s, found %d entries.";
 
 	/**
 	 * Returns JPA entity name.
@@ -32,6 +34,27 @@ public class FilterService {
 		} else {
 			return type.getSimpleName();
 		}
+	}
+
+	/**
+	 * @param entityManager
+	 * @param filter
+	 * @param firstResult
+	 * @param maxResults
+	 * @return
+	 */
+	public static <E> PageFilter<E> filter( //
+			EntityManager entityManager, //
+			Filter<E> filter, //
+			int firstResult, //
+			int maxResults) {
+
+		Class<E> type = filter.getRootType();
+		List<E> list = list(entityManager, filter, firstResult, maxResults);
+		log.debug(String.format(LISTING, getEntityName(type), list.size()));
+		long count = count(entityManager, filter);
+		log.debug(String.format(COUNTING, getEntityName(type), count));
+		return new PageFilter<E>(list, count);
 	}
 
 	/**
@@ -75,7 +98,7 @@ public class FilterService {
 	 * @param maxResults
 	 * @return
 	 */
-	public static <E> List<E> filter( //
+	public static <E> List<E> list( //
 			EntityManager entityManager, //
 			Filter<E> filter, //
 			int firstResult, //
