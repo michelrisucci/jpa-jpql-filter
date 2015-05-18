@@ -4,6 +4,7 @@ Project in alpha stage: under development, yet. ;)
 
 To use snapshots from our internal Github Maven repository branch, add this code lines to your pom.xml.
 
+```xml
   <repositories>
     <repository>
       <id>jpa-jpql-filter</id>
@@ -15,3 +16,4 @@ To use snapshots from our internal Github Maven repository branch, add this code
       </snapshots>
     </repository>
   </repositories>
+```
