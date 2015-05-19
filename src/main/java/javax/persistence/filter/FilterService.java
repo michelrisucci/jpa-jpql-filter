@@ -54,7 +54,7 @@ public class FilterService {
 		log.info(String.format(LISTING, getEntityName(type), list.size()));
 		long count = count(entityManager, filter);
 		log.info(String.format(COUNTING, getEntityName(type), count));
-		return new PageFilter<E>(list, count);
+		return new PageFilter<E>(list, maxResults, count);
 	}
 
 	/**

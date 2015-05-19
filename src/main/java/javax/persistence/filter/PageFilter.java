@@ -18,12 +18,13 @@ public class PageFilter<E> {
 
 	/**
 	 * @param list
+	 * @param pageSize
 	 * @param count
 	 */
-	public PageFilter(List<E> list, long count) {
+	public PageFilter(List<E> list, int pageSize, long count) {
 		super();
 		this.list = list;
-		this.pageSize = list.size();
+		this.pageSize = pageSize;
 		this.count = count;
 		this.numberOfPages = calcNumberOfPages();
 	}
