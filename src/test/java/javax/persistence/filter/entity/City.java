@@ -1,4 +1,4 @@
-package javax.persistence.entity.sample;
+package javax.persistence.filter.entity;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;

@@ -1,4 +1,4 @@
-package javax.persistence.entity.sample;
+package javax.persistence.filter.entity;
 
 import java.util.List;
 
