@@ -41,7 +41,7 @@ public class Tests {
 		em.getTransaction().commit();
 
 		Filter<Person> filter = Filter.newInstance(Person.class);
-		filter.add(Where.insensitiveLike("dog.breed.name", "kit"));
+		filter.add(Where.iLike("dog.breed.name", "kit"));
 
 		Person person = FilterService.list(em, filter, 0, 100).get(0);
 		Assert.assertEquals(person.getName(), "Alberto");

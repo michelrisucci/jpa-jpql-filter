@@ -104,8 +104,44 @@ public final class Where {
 	 * @param value
 	 * @return
 	 */
-	public static Where insensitiveLike(String path, String value) {
-		return new Where(path, Operator.INSENSITIVE_LIKE, value);
+	public static Where iLike(String path, String value) {
+		return new Where(path, Operator.I_LIKE, value);
+	}
+
+	/**
+	 * @param path
+	 * @param value
+	 * @return
+	 */
+	public static Where startsWith(String path, String value) {
+		return new Where(path, Operator.STARTS_WITH, value);
+	}
+
+	/**
+	 * @param path
+	 * @param value
+	 * @return
+	 */
+	public static Where iStartsWith(String path, String value) {
+		return new Where(path, Operator.I_STARTS_WITH, value);
+	}
+
+	/**
+	 * @param path
+	 * @param value
+	 * @return
+	 */
+	public static Where endsWith(String path, String value) {
+		return new Where(path, Operator.ENDS_WITH, value);
+	}
+
+	/**
+	 * @param path
+	 * @param value
+	 * @return
+	 */
+	public static Where iEndsWith(String path, String value) {
+		return new Where(path, Operator.I_ENDS_WITH, value);
 	}
 
 	/**
@@ -163,9 +199,16 @@ public final class Where {
 				return path + " BETWEEN " + values[0] + " AND " + values[1];
 			case LIKE:
 				return path + " LIKE '%" + values[0] + "%'";
-			case INSENSITIVE_LIKE:
-				return "UPPER('%" + path + "%') LIKE UPPER('%" + values[0]
-						+ "%')";
+			case I_LIKE:
+				return "UPPER(" + path + ") LIKE UPPER('%" + values[0] + "%')";
+			case STARTS_WITH:
+				return path + " LIKE '" + values[0] + "%'";
+			case I_STARTS_WITH:
+				return "UPPER(" + path + ") LIKE UPPER('" + values[0] + "%')";
+			case ENDS_WITH:
+				return path + " LIKE '%" + values[0] + "'";
+			case I_ENDS_WITH:
+				return "UPPER(" + path + ") LIKE UPPER('%" + values[0] + "')";
 			case IN:
 				return path + " IN (" + valuesToString() + ") ";
 			case NOT_IN:

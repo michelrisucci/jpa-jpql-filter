@@ -51,9 +51,9 @@ public class FilterService {
 
 		Class<E> type = filter.getRootType();
 		List<E> list = list(entityManager, filter, firstResult, maxResults);
-		log.debug(String.format(LISTING, getEntityName(type), list.size()));
+		log.info(String.format(LISTING, getEntityName(type), list.size()));
 		long count = count(entityManager, filter);
-		log.debug(String.format(COUNTING, getEntityName(type), count));
+		log.info(String.format(COUNTING, getEntityName(type), count));
 		return new PageFilter<E>(list, count);
 	}
 
@@ -80,7 +80,7 @@ public class FilterService {
 		}
 
 		String jpql = builder.toString();
-		log.debug(jpql);
+		log.info(jpql);
 
 		TypedQuery<Long> query = entityManager.createQuery(jpql, Long.class);
 
@@ -122,7 +122,7 @@ public class FilterService {
 		}
 
 		String jpql = builder.toString();
-		log.debug(jpql);
+		log.info(jpql);
 
 		TypedQuery<E> query = entityManager.createQuery(jpql,
 				filter.getRootType());
@@ -220,9 +220,13 @@ public class FilterService {
 					varPath + "Lesser AND :" + //
 					varPath + "Greater ";
 		case LIKE:
+		case STARTS_WITH:
+		case ENDS_WITH:
 			return "x." + path + " LIKE :" + //
 					varPath + " ";
-		case INSENSITIVE_LIKE:
+		case I_LIKE:
+		case I_STARTS_WITH:
+		case I_ENDS_WITH:
 			return "UPPER(x." + path + ") LIKE UPPER(:" //
 					+ varPath + ") ";
 		case IN:
@@ -256,8 +260,8 @@ public class FilterService {
 	 * @param varPath
 	 * @param values
 	 */
-	private static <E> void compileQueryWhereClauses(TypedQuery<E> query,
-			Operator operator, //
+	private static <E> TypedQuery<E> compileQueryWhereClauses(
+			TypedQuery<E> query, Operator operator, //
 			String varPath, Object... values) {
 
 		switch (operator) {
@@ -267,22 +271,24 @@ public class FilterService {
 		case LESSER_THAN_OR_EQUAL:
 		case GREATER_THAN:
 		case GREATER_THAN_OR_EQUAL:
-			query.setParameter(varPath, values[0]);
-			break;
+			return query.setParameter(varPath, values[0]);
 		case BETWEEN:
-			query.setParameter(varPath + "Lesser", values[0]);
-			query.setParameter(varPath + "Greater", values[1]);
-			break;
+			return query.setParameter(varPath + "Lesser", values[0])
+					.setParameter(varPath + "Greater", values[1]);
 		case LIKE:
-		case INSENSITIVE_LIKE:
-			query.setParameter(varPath, "%" + values[0] + "%");
-			break;
+		case I_LIKE:
+			return query.setParameter(varPath, "%" + values[0] + "%");
+		case STARTS_WITH:
+		case I_STARTS_WITH:
+			return query.setParameter(varPath, values[0] + "%");
+		case ENDS_WITH:
+		case I_ENDS_WITH:
+			return query.setParameter(varPath, "%" + values[0]);
 		case IN:
 		case NOT_IN:
-			query.setParameter(varPath, values);
-			break;
+			return query.setParameter(varPath, values);
 		default:
-			break;
+			return query;
 		}
 	}
 

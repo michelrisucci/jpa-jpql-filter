@@ -13,7 +13,11 @@ public enum Operator {
 	GREATER_THAN_OR_EQUAL, //
 	BETWEEN, //
 	LIKE, //
-	INSENSITIVE_LIKE, //
+	I_LIKE, //
+	STARTS_WITH, //
+	I_STARTS_WITH, //
+	ENDS_WITH, //
+	I_ENDS_WITH, //
 	IN, //
 	NOT_IN;
 
