@@ -15,3 +15,13 @@ To use snapshots from our internal Github Maven repository branch, add this code
   </snapshots>
 </repository>
 ```
+
+Add this project snapshot release as a dependency.
+
+```xml
+<dependency>
+  <groupId>com.github.michelrisucci</groupId>
+  <artifactId>jpa-jpql-filter</artifactId>
+  <version>1.2.0.GA-SNAPSHOT</version>
+</dependency>
+```
