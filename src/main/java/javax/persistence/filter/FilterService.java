@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.filter.exception.FirstResultOutOfRangeException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 public class FilterService {
 
 	private static final Log log = LogFactory.getLog(FilterService.class);
+	private static final String FIRST_RESULT_OUT_OF_RANGE = "Start position \"%d\" to this filter is not the first (equals to 0) and found nothing: possibly out of pagination range.";
 	private static final String LISTING = "Filtering entity %s, found %d entries.";
 	private static final String COUNTING = "Counting entity %s, found %d entries.";
 
@@ -42,18 +44,27 @@ public class FilterService {
 	 * @param firstResult
 	 * @param maxResults
 	 * @return
+	 * @throws FirstResultOutOfRangeException
 	 */
 	public static <E> PageFilter<E> filter( //
 			EntityManager entityManager, //
 			Filter<E> filter, //
 			int firstResult, //
-			int maxResults) {
+			int maxResults) throws FirstResultOutOfRangeException {
 
 		Class<E> type = filter.getRootType();
-		List<E> list = list(entityManager, filter, firstResult, maxResults);
-		log.info(String.format(LISTING, getEntityName(type), list.size()));
+
 		long count = count(entityManager, filter);
 		log.info(String.format(COUNTING, getEntityName(type), count));
+
+		if (count == 0 && firstResult != 0) {
+			throw new FirstResultOutOfRangeException( //
+					String.format(FIRST_RESULT_OUT_OF_RANGE, firstResult));
+		}
+
+		List<E> list = list(entityManager, filter, firstResult, maxResults);
+		log.info(String.format(LISTING, getEntityName(type), list.size()));
+
 		return new PageFilter<E>(list, maxResults, count);
 	}
 
