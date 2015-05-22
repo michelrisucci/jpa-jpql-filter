@@ -16,9 +16,9 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @author Michel Risucci
  */
-public class FilterService {
+public class FilterServices {
 
-	private static final Log log = LogFactory.getLog(FilterService.class);
+	private static final Log log = LogFactory.getLog(FilterServices.class);
 	private static final String FIRST_RESULT_OUT_OF_RANGE = "Start position \"%d\" to this filter is not the first (equals to 0) and found nothing: possibly out of pagination range.";
 	private static final String LISTING = "Filtering entity %s, found %d entries.";
 	private static final String COUNTING = "Counting entity %s, found %d entries.";
@@ -57,7 +57,7 @@ public class FilterService {
 		long count = count(entityManager, filter);
 		log.info(String.format(COUNTING, getEntityName(type), count));
 
-		if (count == 0 && firstResult != 0) {
+		if ((count == 0 && firstResult != 0) || (count > 0 && firstResult > count)) {
 			throw new FirstResultOutOfRangeException( //
 					String.format(FIRST_RESULT_OUT_OF_RANGE, firstResult));
 		}
