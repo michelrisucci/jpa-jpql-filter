@@ -1,4 +1,4 @@
-package javax.persistence.filter.engine;
+package javax.persistence.filter.core;
 
 import java.util.Arrays;
 

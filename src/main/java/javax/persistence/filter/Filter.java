@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.filter.engine.Order;
-import javax.persistence.filter.engine.Where;
+import javax.persistence.filter.core.Order;
+import javax.persistence.filter.core.Where;
 
 /**
  * @author Michel Risucci
