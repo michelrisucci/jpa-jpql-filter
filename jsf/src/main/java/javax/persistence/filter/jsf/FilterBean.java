@@ -13,6 +13,12 @@ import javax.persistence.filter.core.Order.Direction;
 import javax.persistence.filter.exception.FirstResultOutOfRangeException;
 import javax.persistence.filter.service.FilterService;
 
+/**
+ * @author Michel Risucci
+ *
+ * @param <E>
+ * @param <S>
+ */
 public abstract class FilterBean<E, S extends FilterService<E>> {
 
 	protected static final int DEFAULT_MAX_RESULTS = 20;
@@ -27,6 +33,9 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 	protected int results;
 	protected PageFilter<E> pageFilter;
 
+	/**
+	 * 
+	 */
 	public FilterBean() {
 	}
 
@@ -182,6 +191,13 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 	 */
 	public void setPageFilter(PageFilter<E> pageFilter) {
 		this.pageFilter = pageFilter;
+	}
+
+	/**
+	 * @param service
+	 */
+	public void setService(S service) {
+		this.service = service;
 	}
 
 	/*

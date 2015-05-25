@@ -22,7 +22,7 @@ Add this project snapshot release as a dependency.
 <dependency>
   <groupId>com.github.michelrisucci</groupId>
   <artifactId>jpa-jpql-filter-core</artifactId>
-  <version>1.4.0.GA-SNAPSHOT</version>
+  <version>1.4.1.GA-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -32,6 +32,6 @@ If you use JSF as view layer, use JSF module with a custom FilterBean ready to u
 <dependency>
   <groupId>com.github.michelrisucci</groupId>
   <artifactId>jpa-jpql-filter-jsf</artifactId>
-  <version>1.4.0.GA-SNAPSHOT</version>
+  <version>1.4.1.GA-SNAPSHOT</version>
 </dependency>
 ```

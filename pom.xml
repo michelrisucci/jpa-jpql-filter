@@ -7,7 +7,7 @@
 
 	<groupId>com.github.michelrisucci</groupId>
 	<artifactId>jpa-jpql-filter</artifactId>
-	<version>1.4.0.GA-SNAPSHOT</version>
+	<version>1.4.1.GA-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
