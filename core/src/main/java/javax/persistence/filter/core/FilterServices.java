@@ -188,7 +188,7 @@ public class FilterServices {
 		for (Iterator<Order> i = orders.listIterator(); i.hasNext();) {
 			Order order = i.next();
 
-			builder.append(order.getPath() + " " + order.getDirection().name());
+			builder.append("x." + order.getPath() + " " + order.getDirection().name());
 
 			if (i.hasNext()) {
 				builder.append(",");

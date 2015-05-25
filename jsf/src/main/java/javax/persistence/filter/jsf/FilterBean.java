@@ -28,7 +28,7 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 
 	// Filter
 	protected Map<String, Object> filterMap;
-	protected Map<String, Direction> orderMap;
+	protected LinkedHashMap<String, Direction> orderMap;
 	protected int currentPage;
 	protected int results;
 	protected PageFilter<E> pageFilter;
@@ -72,15 +72,13 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 	 * @return
 	 */
 	protected PageFilter<E> doFilter(Filter<E> filter, int page, int qtdReg,
-			Map<String, Object> fMap, Map<String, Direction> oMap) {
+			Map<String, Object> fMap, LinkedHashMap<String, Direction> oMap) {
 
 		// Adding filter clauses;
 		this.addWheres(filter, fMap);
 
 		// Adding filter orders
-		@SuppressWarnings("unchecked")
-		LinkedHashMap<String, Direction> oLink = LinkedHashMap.class.cast(oMap);
-		Iterator<Entry<String, Direction>> oIter = oLink.entrySet().iterator();
+		Iterator<Entry<String, Direction>> oIter = oMap.entrySet().iterator();
 		this.addOrders(filter, oIter);
 
 		// Filtering
@@ -126,6 +124,57 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 			String path = entry.getKey();
 			filter.add(direction.createOrder(path));
 		}
+	}
+
+	/**
+	 * @param path
+	 */
+	public void changeOrderAndFilter(String path) {
+		changeOrder(path);
+		doFilter();
+	}
+
+	/**
+	 * @param path
+	 */
+	public void changeOrder(String path) {
+		changeOrder(path, null);
+	}
+
+	/**
+	 * @param path
+	 * @param direction
+	 */
+	public void changeOrder(String path, Direction direction) {
+		if (orderMap.containsKey(path)) {
+			Direction current = orderMap.get(path);
+			if (Direction.ASC == current) {
+				orderMap.put(path, Direction.DESC);
+			} else if (Direction.DESC == current) {
+				orderMap.put(path, Direction.ASC);
+			}
+		} else if (direction == null) {
+			orderMap.put(path, Direction.ASC);
+		} else {
+			orderMap.put(path, direction);
+		}
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	public int getOrderSequence(String path) {
+		Iterator<Entry<String, Direction>> i = orderMap.entrySet().iterator();
+		int count = 1;
+		while (i.hasNext()) {
+			Entry<String, Direction> entry = i.next();
+			if (entry.getKey().equals(path)) {
+				return count;
+			}
+			count++;
+		}
+		return -1;
 	}
 
 	/**
@@ -177,6 +226,20 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 	 */
 	public void setFilterMap(Map<String, Object> filterMap) {
 		this.filterMap = filterMap;
+	}
+
+	/**
+	 * @return
+	 */
+	public LinkedHashMap<String, Direction> getOrderMap() {
+		return orderMap;
+	}
+
+	/**
+	 * @param orderMap
+	 */
+	public void setOrderMap(LinkedHashMap<String, Direction> orderMap) {
+		this.orderMap = orderMap;
 	}
 
 	/**
