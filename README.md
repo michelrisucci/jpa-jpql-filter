@@ -21,7 +21,17 @@ Add this project snapshot release as a dependency.
 ```xml
 <dependency>
   <groupId>com.github.michelrisucci</groupId>
-  <artifactId>jpa-jpql-filter</artifactId>
-  <version>1.2.0.GA-SNAPSHOT</version>
+  <artifactId>jpa-jpql-filter-core</artifactId>
+  <version>1.4.0.GA-SNAPSHOT</version>
+</dependency>
+```
+
+If you use JSF as view layer, use JSF module with a custom FilterBean ready to use.
+
+```xml
+<dependency>
+  <groupId>com.github.michelrisucci</groupId>
+  <artifactId>jpa-jpql-filter-jsf</artifactId>
+  <version>1.4.0.GA-SNAPSHOT</version>
 </dependency>
 ```
