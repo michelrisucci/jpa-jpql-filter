@@ -8,6 +8,7 @@
 	<groupId>com.github.michelrisucci</groupId>
 	<artifactId>jpa-jpql-filter</artifactId>
 	<version>1.4.0.GA-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
