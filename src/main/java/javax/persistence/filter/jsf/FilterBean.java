@@ -8,8 +8,8 @@ import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.filter.Filter;
-import javax.persistence.filter.Order.Direction;
 import javax.persistence.filter.PageFilter;
+import javax.persistence.filter.engine.Order.Direction;
 import javax.persistence.filter.exception.FirstResultOutOfRangeException;
 import javax.persistence.filter.service.FilterService;
 

@@ -1,4 +1,4 @@
-package javax.persistence.filter;
+package javax.persistence.filter.engine;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.filter.Filter;
+import javax.persistence.filter.PageFilter;
 import javax.persistence.filter.exception.FirstResultOutOfRangeException;
 
 import org.apache.commons.logging.Log;
