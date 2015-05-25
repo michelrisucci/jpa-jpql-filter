@@ -10,6 +10,16 @@ public class Order {
 	 */
 	public enum Direction {
 		ASC, DESC;
+
+		/**
+		 * Creates an order clause, using a {@link String} path.
+		 * 
+		 * @param path
+		 * @return
+		 */
+		public Order createOrder(String path) {
+			return new Order(path, this);
+		}
 	}
 
 	private String path;

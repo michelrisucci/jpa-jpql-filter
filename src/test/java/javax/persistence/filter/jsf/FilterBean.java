@@ -1,10 +1,14 @@
 package javax.persistence.filter.jsf;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.filter.Filter;
+import javax.persistence.filter.Order.Direction;
 import javax.persistence.filter.PageFilter;
 import javax.persistence.filter.exception.FirstResultOutOfRangeException;
 import javax.persistence.filter.service.FilterService;
@@ -18,6 +22,7 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 
 	// Filter
 	protected Map<String, Object> filterMap;
+	protected Map<String, Direction> orderMap;
 	protected int currentPage;
 	protected int results;
 	protected PageFilter<E> pageFilter;
@@ -34,36 +39,43 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 	 * 
 	 */
 	public void eraseAndFilter() {
-		Filter<E> filtro = eraseFilter();
-		this.pageFilter = doFilter(filtro, currentPage, results, filterMap);
+		Filter<E> filter = eraseFilter();
+		this.pageFilter = doFilter(filter, //
+				currentPage, results, filterMap, orderMap);
 	}
 
 	/**
 	 * 
 	 */
 	public void doFilter() {
-		Filter<E> filtro = newFilter();
-		this.pageFilter = doFilter(filtro, currentPage, results, filterMap);
+		Filter<E> filter = newFilter();
+		this.pageFilter = doFilter(filter, //
+				currentPage, results, filterMap, orderMap);
 	}
 
 	/**
 	 * Low-level filter method that processes filter map.
 	 * 
 	 * @param filter
-	 * @param pagina
+	 * @param page
 	 * @param qtdReg
-	 * @param map
+	 * @param fMap
 	 * @return
 	 */
-	protected PageFilter<E> doFilter(Filter<E> filter, int pagina, int qtdReg,
-			Map<String, Object> map) {
+	protected PageFilter<E> doFilter(Filter<E> filter, int page, int qtdReg,
+			Map<String, Object> fMap, Map<String, Direction> oMap) {
 
-		// Adicionando funções do filtro;
-		this.addWheres(filter, map);
-		this.addOrders(filter);
+		// Adding filter clauses;
+		this.addWheres(filter, fMap);
 
-		// Filtrando
-		return doFilter(filter, pagina, qtdReg);
+		// Adding filter orders
+		@SuppressWarnings("unchecked")
+		LinkedHashMap<String, Direction> oLink = LinkedHashMap.class.cast(oMap);
+		Iterator<Entry<String, Direction>> oIter = oLink.entrySet().iterator();
+		this.addOrders(filter, oIter);
+
+		// Filtering
+		return doFilter(filter, page, qtdReg);
 	}
 
 	/**
@@ -92,12 +104,20 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 	/**
 	 * Adds filter conditional clauses;
 	 */
-	protected abstract void addWheres(Filter<E> filtro, Map<String, Object> mapa);
+	protected abstract void addWheres(Filter<E> filter, Map<String, Object> map);
 
 	/**
 	 * Adds filter ordering clauses;
 	 */
-	protected abstract void addOrders(Filter<E> filtro);
+	protected void addOrders(Filter<E> filter,
+			Iterator<Entry<String, Direction>> iterator) {
+		while (iterator.hasNext()) {
+			Entry<String, Direction> entry = iterator.next();
+			Direction direction = entry.getValue();
+			String path = entry.getKey();
+			filter.add(direction.createOrder(path));
+		}
+	}
 
 	/**
 	 * @return
@@ -180,10 +200,18 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 	 * @return
 	 */
 	protected Filter<E> eraseFilter(int results) {
+		// Clearing filter
 		if (filterMap == null) {
 			filterMap = new HashMap<String, Object>();
 		} else {
 			filterMap.clear();
+		}
+
+		// Clearing orders
+		if (orderMap == null) {
+			orderMap = new LinkedHashMap<String, Direction>();
+		} else {
+			orderMap.clear();
 		}
 
 		this.currentPage = 1;
