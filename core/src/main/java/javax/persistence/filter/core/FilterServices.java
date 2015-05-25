@@ -12,15 +12,15 @@ import javax.persistence.filter.Filter;
 import javax.persistence.filter.PageFilter;
 import javax.persistence.filter.exception.FirstResultOutOfRangeException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Michel Risucci
  */
 public class FilterServices {
 
-	private static final Log log = LogFactory.getLog(FilterServices.class);
+	private static final Logger log = LogManager.getLogger(FilterServices.class);
 	private static final String FIRST_RESULT_OUT_OF_RANGE = "Start position \"%d\" to this filter is not the first (equals to 0) and found nothing: possibly out of pagination range.";
 	private static final String LISTING = "Filtering entity %s, found %d entries.";
 	private static final String COUNTING = "Counting entity %s, found %d entries.";
@@ -59,7 +59,8 @@ public class FilterServices {
 		long count = count(entityManager, filter);
 		log.info(String.format(COUNTING, getEntityName(type), count));
 
-		if ((count == 0 && firstResult != 0) || (count > 0 && firstResult > count)) {
+		if ((count == 0 && firstResult != 0)
+				|| (count > 0 && firstResult > count)) {
 			throw new FirstResultOutOfRangeException( //
 					String.format(FIRST_RESULT_OUT_OF_RANGE, firstResult));
 		}
