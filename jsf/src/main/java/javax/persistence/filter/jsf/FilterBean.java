@@ -19,12 +19,9 @@ import javax.persistence.filter.service.FilterService;
  * @param <E>
  * @param <S>
  */
-public abstract class FilterBean<E, S extends FilterService<E>> {
+public abstract class FilterBean<E> {
 
 	protected static final int DEFAULT_MAX_RESULTS = 20;
-
-	// Services
-	protected S service;
 
 	// Filter
 	protected Map<String, Object> filterMap;
@@ -95,6 +92,7 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 	 */
 	protected PageFilter<E> doFilter(Filter<E> filter, int page, int results) {
 		try {
+			FilterService<E> service = getFilterService();
 			int initial = (page - 1) * results;
 			initial = initial >= 0 ? initial : 0;
 			return service.filter(filter, initial, results);
@@ -256,13 +254,6 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 		this.pageFilter = pageFilter;
 	}
 
-	/**
-	 * @param service
-	 */
-	public void setService(S service) {
-		this.service = service;
-	}
-
 	/*
 	 * Utilities
 	 */
@@ -298,5 +289,7 @@ public abstract class FilterBean<E, S extends FilterService<E>> {
 
 		return newFilter();
 	}
+
+	protected abstract FilterService<E> getFilterService();
 
 }
