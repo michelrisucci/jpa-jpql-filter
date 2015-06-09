@@ -1,27 +1,41 @@
 package javax.persistence.filter.core;
 
-import java.util.Arrays;
+import javax.persistence.TypedQuery;
+import javax.persistence.filter.core.conditional.Between;
+import javax.persistence.filter.core.conditional.In;
+import javax.persistence.filter.core.conditional.NotIn;
+import javax.persistence.filter.core.conditional.exact.Equal;
+import javax.persistence.filter.core.conditional.exact.GreaterThan;
+import javax.persistence.filter.core.conditional.exact.GreaterThanOrEqual;
+import javax.persistence.filter.core.conditional.exact.LesserThan;
+import javax.persistence.filter.core.conditional.exact.LesserThanOrEqual;
+import javax.persistence.filter.core.conditional.exact.NotEqual;
+import javax.persistence.filter.core.conditional.like.EndsWith;
+import javax.persistence.filter.core.conditional.like.IEndsWith;
+import javax.persistence.filter.core.conditional.like.ILike;
+import javax.persistence.filter.core.conditional.like.IStartsWith;
+import javax.persistence.filter.core.conditional.like.Like;
+import javax.persistence.filter.core.conditional.like.StartsWith;
 
 /**
  * @author Michel Risucci
  */
-public final class Where {
+public abstract class Where extends VolatilePath {
 
-	private String path;
-	private Operator operator;
-	private Object[] values;
+	protected String varPath;
+	protected Object[] values;
+
+	/*
+	 * Constructors
+	 */
 
 	/**
 	 * @param path
-	 * @param operator
 	 * @param values
 	 */
-	private Where(String path, //
-			Operator operator, //
-			Object... values) {
-
+	protected Where(String path, Object... values) {
 		this.path = path;
-		this.operator = operator;
+		this.varPath = createVarPath();
 		this.values = values;
 	}
 
@@ -31,7 +45,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where equal(String path, Object value) {
-		return new Where(path, Operator.EQUAL, value);
+		return new Equal(path, value);
 	}
 
 	/**
@@ -40,7 +54,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where notEqual(String path, Object value) {
-		return new Where(path, Operator.NOT_EQUAL, value);
+		return new NotEqual(path, value);
 	}
 
 	/**
@@ -49,7 +63,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where lesserThan(String path, Object value) {
-		return new Where(path, Operator.LESSER_THAN, value);
+		return new LesserThan(path, value);
 	}
 
 	/**
@@ -58,7 +72,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where lesserThanOrEqual(String path, Object value) {
-		return new Where(path, Operator.LESSER_THAN_OR_EQUAL, value);
+		return new LesserThanOrEqual(path, value);
 	}
 
 	/**
@@ -67,7 +81,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where greaterThan(String path, Object value) {
-		return new Where(path, Operator.GREATER_THAN, value);
+		return new GreaterThan(path, value);
 	}
 
 	/**
@@ -76,7 +90,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where greaterThanOrEqual(String path, Object value) {
-		return new Where(path, Operator.GREATER_THAN_OR_EQUAL, value);
+		return new GreaterThanOrEqual(path, value);
 	}
 
 	/**
@@ -87,7 +101,7 @@ public final class Where {
 	 */
 	public static Where between(String path, Object initialValue,
 			Object finalValue) {
-		return new Where(path, Operator.BETWEEN, initialValue, finalValue);
+		return new Between(path, initialValue, finalValue);
 	}
 
 	/**
@@ -96,7 +110,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where like(String path, String value) {
-		return new Where(path, Operator.LIKE, value);
+		return new Like(path, value);
 	}
 
 	/**
@@ -105,7 +119,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where iLike(String path, String value) {
-		return new Where(path, Operator.I_LIKE, value);
+		return new ILike(path, value);
 	}
 
 	/**
@@ -114,7 +128,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where startsWith(String path, String value) {
-		return new Where(path, Operator.STARTS_WITH, value);
+		return new StartsWith(path, value);
 	}
 
 	/**
@@ -123,7 +137,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where iStartsWith(String path, String value) {
-		return new Where(path, Operator.I_STARTS_WITH, value);
+		return new IStartsWith(path, value);
 	}
 
 	/**
@@ -132,7 +146,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where endsWith(String path, String value) {
-		return new Where(path, Operator.ENDS_WITH, value);
+		return new EndsWith(path, value);
 	}
 
 	/**
@@ -141,7 +155,7 @@ public final class Where {
 	 * @return
 	 */
 	public static Where iEndsWith(String path, String value) {
-		return new Where(path, Operator.I_ENDS_WITH, value);
+		return new IEndsWith(path, value);
 	}
 
 	/**
@@ -150,21 +164,27 @@ public final class Where {
 	 * @return
 	 */
 	public static Where in(String path, Object... values) {
-		return new Where(path, Operator.IN, values);
+		return new In(path, values);
 	}
+
+	/**
+	 * @param path
+	 * @param value
+	 * @return
+	 */
+	public static Where notIn(String path, Object... values) {
+		return new NotIn(path, values);
+	}
+
+	/*
+	 * Getters and Setters
+	 */
 
 	/**
 	 * @return
 	 */
-	public String getPath() {
-		return path;
-	}
-
-	/**
-	 * @return
-	 */
-	public Operator getOperator() {
-		return operator;
+	public String getVarPath() {
+		return varPath;
 	}
 
 	/**
@@ -174,59 +194,36 @@ public final class Where {
 		return values;
 	}
 
+	/*
+	 * Implementations
+	 */
+
+	/**
+	 * @param realPath
+	 * @return
+	 */
+	protected abstract String getClause(String realPath);
+
+	/**
+	 * @param query
+	 */
+	public abstract <E> TypedQuery<E> compileClause(TypedQuery<E> query);
+
+	/*
+	 * To String
+	 */
+
 	@Override
 	public String toString() {
-
-		if (path != null //
-				&& !path.isEmpty() //
-				&& values != null //
-				&& operator != null) {
-
-			switch (operator) {
-			case EQUAL:
-				return path + " = " + values[0];
-			case NOT_EQUAL:
-				return path + " <> " + values[0];
-			case LESSER_THAN:
-				return path + " < " + values[0];
-			case LESSER_THAN_OR_EQUAL:
-				return path + " <= " + values[0];
-			case GREATER_THAN:
-				return path + " > " + values[0];
-			case GREATER_THAN_OR_EQUAL:
-				return path + " >= " + values[0];
-			case BETWEEN:
-				return path + " BETWEEN " + values[0] + " AND " + values[1];
-			case LIKE:
-				return path + " LIKE '%" + values[0] + "%'";
-			case I_LIKE:
-				return "UPPER(" + path + ") LIKE UPPER('%" + values[0] + "%')";
-			case STARTS_WITH:
-				return path + " LIKE '" + values[0] + "%'";
-			case I_STARTS_WITH:
-				return "UPPER(" + path + ") LIKE UPPER('" + values[0] + "%')";
-			case ENDS_WITH:
-				return path + " LIKE '%" + values[0] + "'";
-			case I_ENDS_WITH:
-				return "UPPER(" + path + ") LIKE UPPER('%" + values[0] + "')";
-			case IN:
-				return path + " IN (" + valuesToString() + ") ";
-			case NOT_IN:
-				return path + " NOT IN (" + valuesToString() + ") ";
-			default:
-				return " ";
-			}
-		} else {
-			return super.toString();
-		}
+		return toString(path);
 	}
 
 	/**
+	 * @param realPath
 	 * @return
 	 */
-	public String valuesToString() {
-		String values = Arrays.deepToString(this.values);
-		return values.substring(1, values.length() - 1);
+	public String toString(String realPath) {
+		return getClause(realPath);
 	}
 
 }

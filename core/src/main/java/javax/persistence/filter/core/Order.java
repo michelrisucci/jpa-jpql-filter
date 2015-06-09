@@ -3,7 +3,7 @@ package javax.persistence.filter.core;
 /**
  * @author Michel Risucci
  */
-public class Order {
+public class Order extends VolatilePath {
 
 	/**
 	 * @author Michel Risucci
@@ -22,8 +22,11 @@ public class Order {
 		}
 	}
 
-	private String path;
 	private Direction direction;
+
+	/*
+	 * Constructors
+	 */
 
 	/**
 	 * 
@@ -49,19 +52,9 @@ public class Order {
 		return new Order(path, Direction.DESC);
 	}
 
-	/**
-	 * @return
+	/*
+	 * Getters and Setters
 	 */
-	public String getPath() {
-		return path;
-	}
-
-	/**
-	 * @param path
-	 */
-	public void setPath(String path) {
-		this.path = path;
-	}
 
 	/**
 	 * @return
@@ -70,11 +63,13 @@ public class Order {
 		return direction;
 	}
 
-	/**
-	 * @param direction
+	/*
+	 * Implementations
 	 */
-	public void setDirection(Direction direction) {
-		this.direction = direction;
+
+	@Override
+	protected String getClause(String realPath) {
+		return realPath + " " + direction.name() + " ";
 	}
 
 }
