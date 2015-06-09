@@ -158,7 +158,7 @@ public class Filters {
 	 * @return
 	 */
 	public static String getAliasRealPath(VolatilePath volatilePath) {
-		// TODO Adds alias and JOINS functionality: version 2.0.x.
+		// TODO Adds alias and JOINS functionality.
 		return "x." + volatilePath.getPath();
 	}
 

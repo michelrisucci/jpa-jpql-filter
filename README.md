@@ -1,6 +1,7 @@
 # JPA JPQL Filter
 
-Project in alpha stage: under development, yet. ;)
+General Availability (GA), but yet under development.
+Future releases: navigating over collections.
 
 To use snapshots from our internal Github Maven repository branch, add this code lines to your pom.xml.
 
@@ -22,7 +23,7 @@ Add this project snapshot release as a dependency.
 <dependency>
   <groupId>com.github.michelrisucci</groupId>
   <artifactId>jpa-jpql-filter-core</artifactId>
-  <version>1.4.2.GA-SNAPSHOT</version>
+  <version>1.5.0.GA-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -32,6 +33,6 @@ If you use JSF as view layer, use JSF module with a custom FilterBean ready to u
 <dependency>
   <groupId>com.github.michelrisucci</groupId>
   <artifactId>jpa-jpql-filter-jsf</artifactId>
-  <version>1.4.2.GA-SNAPSHOT</version>
+  <version>1.5.0.GA-SNAPSHOT</version>
 </dependency>
 ```
