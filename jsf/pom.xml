@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.github.michelrisucci</groupId>
 		<artifactId>jpa-jpql-filter</artifactId>
-		<version>1.5.0.GA-SNAPSHOT</version>
+		<version>1.6.0.GA-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>jpa-jpql-filter-jsf</artifactId>
