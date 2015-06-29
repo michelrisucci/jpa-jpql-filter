@@ -199,12 +199,6 @@ public abstract class Where extends VolatilePath {
 	 */
 
 	/**
-	 * @param realPath
-	 * @return
-	 */
-	protected abstract String getClause(String realPath);
-
-	/**
 	 * @param query
 	 */
 	public abstract <E> TypedQuery<E> compileClause(TypedQuery<E> query);
