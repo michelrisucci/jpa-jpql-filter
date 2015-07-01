@@ -18,13 +18,13 @@ import org.junit.Test;
 
 public class Tester {
 
-	private static final String AFRICA = "Africa";
-	private static final String ANTARCTICA = "Antarctica";
-	private static final String ASIA = "Asia";
-	private static final String EUROPE = "Europe";
-	private static final String NORTH_AMERICA = "North America";
-	private static final String OCEANIA = "Oceania";
-	private static final String SOUTH_AMERICA = "South America";
+	public static final String AFRICA = "Africa";
+	public static final String ANTARCTICA = "Antarctica";
+	public static final String ASIA = "Asia";
+	public static final String EUROPE = "Europe";
+	public static final String NORTH_AMERICA = "North America";
+	public static final String OCEANIA = "Oceania";
+	public static final String SOUTH_AMERICA = "South America";
 
 	private static EntityManagerFactory EMF;
 	private static EntityManager EM;

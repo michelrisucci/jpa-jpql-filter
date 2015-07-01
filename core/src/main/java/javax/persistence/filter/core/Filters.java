@@ -159,7 +159,7 @@ public class Filters {
 	 */
 	private static String getAliasRealPath(VolatilePath volatilePath) {
 		// TODO Adds alias and JOINS functionality.
-		return "x." + volatilePath.getPath();
+		return Aliases.ROOT_PREFIX + Aliases.DOT + volatilePath.getPath();
 	}
 
 	/**
