@@ -6,6 +6,8 @@ package javax.persistence.filter.core.conditional.like;
 public class ILike extends Like {
 
 	/**
+	 * Protected Constructor: needed for inherited classes.
+	 * 
 	 * @param path
 	 * @param percentPosition
 	 * @param value
@@ -19,7 +21,7 @@ public class ILike extends Like {
 	 * @param value
 	 */
 	public ILike(String path, String value) {
-		this(path, PercentPosition.AROUND, value);
+		super(path, PercentPosition.AROUND, value);
 	}
 
 	@Override

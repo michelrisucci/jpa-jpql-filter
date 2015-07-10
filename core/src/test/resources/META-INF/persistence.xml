@@ -34,35 +34,4 @@
 				value="none" />
 		</properties>
 	</persistence-unit>
-
-	<persistence-unit
-		name="copy"
-		transaction-type="RESOURCE_LOCAL"
-	>
-		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<exclude-unlisted-classes>false</exclude-unlisted-classes>
-
-		<properties>
-			<property
-				name="javax.persistence.jdbc.driver"
-				value="org.postgresql.Driver" />
-			<property
-				name="javax.persistence.jdbc.url"
-				value="jdbc:postgresql:world_copy" />
-			<property
-				name="javax.persistence.jdbc.user"
-				value="postgres" />
-			<property
-				name="javax.persistence.jdbc.password"
-				value="postgres" />
-
-			<property
-				name="eclipselink.target-database"
-				value="org.eclipse.persistence.platform.database.PostgreSQLPlatform" />
-			<property
-				name="eclipselink.ddl-generation"
-				value="create-tables" />
-		</properties>
-	</persistence-unit>
-
 </persistence>

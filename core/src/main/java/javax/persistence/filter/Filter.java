@@ -1,5 +1,7 @@
 package javax.persistence.filter;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,19 +21,42 @@ public class Filter<T> {
 	private List<Order> orders;
 
 	/**
-	 * Filter constructor that uses default first and max results.
+	 * Empty Filter constructor that initializes minimal filter functions.
 	 */
-	private Filter(Class<T> rootType) {
+	public Filter() {
 		super();
-		this.rootType = rootType;
+		this.rootType = getRecursiveType();
+	}
+
+	/**
+	 * Filter constructor automatically adds Wheres and Orders.
+	 * 
+	 * @param wheres
+	 * @param orders
+	 */
+	public Filter(Where[] wheres, Order... orders) {
+		this();
+		if (wheres.length > 0) {
+			add(wheres);
+		}
+		if (orders.length > 0) {
+			add(orders);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Class<T> getRecursiveType() {
+		Type genericType = this.getClass().getGenericSuperclass();
+		ParameterizedType paramType = ParameterizedType.class.cast(genericType);
+		return Class.class.cast(paramType.getActualTypeArguments()[0]);
 	}
 
 	/**
 	 * @param rootType
 	 * @return
 	 */
-	public static <T> Filter<T> newInstance(Class<T> rootType) {
-		return new Filter<T>(rootType);
+	public static <T> Filter<T> newInstance() {
+		return new Filter<T>();
 	}
 
 	/**
@@ -39,13 +64,6 @@ public class Filter<T> {
 	 */
 	public Class<T> getRootType() {
 		return rootType;
-	}
-
-	/**
-	 * @param rootType
-	 */
-	public void setRootType(Class<T> rootType) {
-		this.rootType = rootType;
 	}
 
 	/**

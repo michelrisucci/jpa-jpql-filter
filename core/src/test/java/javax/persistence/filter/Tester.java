@@ -52,7 +52,7 @@ public class Tester {
 
 	@Test
 	public void test() {
-		Filter<Country> filter = Filter.newInstance(Country.class);
+		Filter<Country> filter = new Filter<Country>();
 		filter.add(Where.iLike("cities.name", "cabedelo"));
 
 		List<Country> countries = Filters.list(EM, filter, 0, 999);

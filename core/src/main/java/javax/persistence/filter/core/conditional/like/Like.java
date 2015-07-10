@@ -72,6 +72,8 @@ public class Like extends Where {
 	private String processPercentPosition(String param) {
 		if (param != null && !param.isEmpty()) {
 			switch (percentPosition) {
+			case NONE:
+				return param;
 			case LEFT:
 				return "%" + param;
 			case RIGHT:
@@ -87,7 +89,7 @@ public class Like extends Where {
 	 * @author Michel Risucci
 	 */
 	protected enum PercentPosition {
-		LEFT, RIGHT, AROUND;
+		NONE, LEFT, RIGHT, AROUND;
 	}
 
 }

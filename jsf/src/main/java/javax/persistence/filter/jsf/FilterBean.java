@@ -54,7 +54,7 @@ public abstract class FilterBean<E> {
 	 * 
 	 */
 	public void doFilter() {
-		Filter<E> filter = newFilter();
+		Filter<E> filter = new Filter<E>();
 		this.pageFilter = doFilter(filter, //
 				currentPage, results, filterMap, orderMap);
 	}
@@ -175,11 +175,6 @@ public abstract class FilterBean<E> {
 		return -1;
 	}
 
-	/**
-	 * @return
-	 */
-	protected abstract Filter<E> newFilter();
-
 	/*
 	 * Getters and Setters
 	 */
@@ -287,7 +282,7 @@ public abstract class FilterBean<E> {
 		this.currentPage = 1;
 		this.results = results;
 
-		return newFilter();
+		return new Filter<E>();
 	}
 
 	protected abstract FilterService<E> getFilterService();
