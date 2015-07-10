@@ -1,0 +1,16 @@
+README: IMPORTING DATABASE SQL FILES TO POSTGRESQL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	psql -h hostname -p port_number -U username -f file.sql databasename
+
+
+EXAMPLE: WORLD IN LOCAL DATABASE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	psql databasename username < world-utf-8.sql
+
+
+EXAMPLE: WORLD ON UBUNTU LOCAL DATABASE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	sudo -u postgres psql world postgres < world-utf-8.sql
