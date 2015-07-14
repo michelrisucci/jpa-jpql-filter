@@ -28,8 +28,8 @@ public abstract class Exact extends Where {
 	}
 
 	@Override
-	protected String getClause(String realPath) {
-		return realPath + " " + operation.getOperand() + " :" + varPath + " ";
+	protected String getClause() {
+		return getRealPath() + " " + operation.getOperand() + " :" + varPath + " ";
 	}
 
 	@Override

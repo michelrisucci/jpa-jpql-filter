@@ -29,37 +29,30 @@ public class Tester {
 	private static EntityManagerFactory EMF;
 	private static EntityManager EM;
 
-	private static EntityManagerFactory EMF_C;
-	private static EntityManager EM_C;
-
 	@BeforeClass
 	public static void beforeClass() {
 		EMF = Persistence.createEntityManagerFactory("default");
 		EM = EMF.createEntityManager();
-
-		EMF_C = Persistence.createEntityManagerFactory("copy");
-		EM_C = EMF_C.createEntityManager();
 	}
 
 	@AfterClass
 	public static void afterClass() {
 		EM.close();
 		EMF.close();
-
-		EM_C.close();
-		EMF_C.close();
 	}
 
 	@Test
 	public void test() {
-		Filter<Country> filter = new Filter<Country>();
-		filter.add(Where.iLike("cities.name", "cabedelo"));
+		System.out.println("Starting tests...");
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.iLike("cities.name", "south"));
 
 		List<Country> countries = Filters.list(EM, filter, 0, 999);
 
 		for (Country country : countries) {
 			System.out.println(country);
 		}
+		System.out.println("Ending tests...");
 	}
 
 	public void testCities() {

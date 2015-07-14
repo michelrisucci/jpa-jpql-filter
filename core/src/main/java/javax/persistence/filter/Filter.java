@@ -1,7 +1,5 @@
 package javax.persistence.filter;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,9 +21,27 @@ public class Filter<T> {
 	/**
 	 * Empty Filter constructor that initializes minimal filter functions.
 	 */
-	public Filter() {
+	private Filter(Class<T> rootType) {
 		super();
-		this.rootType = getRecursiveType();
+		this.rootType = rootType;
+	}
+
+	/**
+	 * Filter constructor automatically adds Wheres
+	 * 
+	 * @param wheres
+	 */
+	private Filter(Class<T> rootType, Where... wheres) {
+		this(rootType, wheres, null);
+	}
+
+	/**
+	 * Filter constructor automatically adds Orders
+	 * 
+	 * @param orders
+	 */
+	private Filter(Class<T> rootType, Order... orders) {
+		this(rootType, null, orders);
 	}
 
 	/**
@@ -34,29 +50,50 @@ public class Filter<T> {
 	 * @param wheres
 	 * @param orders
 	 */
-	public Filter(Where[] wheres, Order... orders) {
-		this();
-		if (wheres.length > 0) {
+	private Filter(Class<T> rootType, Where[] wheres, Order[] orders) {
+		this(rootType);
+		if (wheres != null && wheres.length > 0) {
 			add(wheres);
 		}
-		if (orders.length > 0) {
+		if (orders != null && orders.length > 0) {
 			add(orders);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private Class<T> getRecursiveType() {
-		Type genericType = this.getClass().getGenericSuperclass();
-		ParameterizedType paramType = ParameterizedType.class.cast(genericType);
-		return Class.class.cast(paramType.getActualTypeArguments()[0]);
+	/**
+	 * Empty Filter constructor that initializes minimal filter functions.
+	 */
+	public static <T> Filter<T> newInstance(Class<T> rootType) {
+		return new Filter<T>(rootType);
 	}
 
 	/**
-	 * @param rootType
-	 * @return
+	 * Filter constructor automatically adds Wheres
+	 * 
+	 * @param wheres
 	 */
-	public static <T> Filter<T> newInstance() {
-		return new Filter<T>();
+	public static <T> Filter<T> newInstance(Class<T> rootType, Where... wheres) {
+		return new Filter<T>(rootType, wheres);
+	}
+
+	/**
+	 * Filter constructor automatically adds Orders
+	 * 
+	 * @param orders
+	 */
+	public static <T> Filter<T> newInstance(Class<T> rootType, Order... orders) {
+		return new Filter<T>(rootType, orders);
+	}
+
+	/**
+	 * Filter constructor automatically adds Wheres and Orders.
+	 * 
+	 * @param wheres
+	 * @param orders
+	 */
+	public static <T> Filter<T> newInstance(Class<T> rootType, Where[] wheres,
+			Order[] orders) {
+		return new Filter<T>(rootType, wheres, orders);
 	}
 
 	/**

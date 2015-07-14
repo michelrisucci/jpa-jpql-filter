@@ -219,15 +219,7 @@ public abstract class Where extends VolatilePath {
 
 	@Override
 	public String toString() {
-		return toString(path);
-	}
-
-	/**
-	 * @param realPath
-	 * @return
-	 */
-	public String toString(String realPath) {
-		return getClause(realPath);
+		return getClause();
 	}
 
 }

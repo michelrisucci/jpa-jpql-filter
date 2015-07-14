@@ -68,8 +68,8 @@ public class Order extends VolatilePath {
 	 */
 
 	@Override
-	protected String getClause(String realPath) {
-		return realPath + " " + direction.name() + " ";
+	protected String getClause() {
+		return getRealPath() + " " + direction.name() + " ";
 	}
 
 }

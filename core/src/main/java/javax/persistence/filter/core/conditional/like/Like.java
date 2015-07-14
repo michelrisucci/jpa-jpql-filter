@@ -36,8 +36,8 @@ public class Like extends Where {
 	}
 
 	@Override
-	protected String getClause(String realPath) {
-		return realPath + " LIKE :" + varPath + " ";
+	protected String getClause() {
+		return getRealPath() + " LIKE :" + varPath + " ";
 	}
 
 	@Override

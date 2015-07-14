@@ -7,6 +7,8 @@ public abstract class VolatilePath {
 
 	protected String path;
 
+	private String realPath;
+
 	/**
 	 * 
 	 */
@@ -21,12 +23,25 @@ public abstract class VolatilePath {
 	}
 
 	/**
-	 * Returns the real aliased JPQL path.
-	 * 
-	 * @param realPath
 	 * @return
 	 */
-	protected abstract String getClause(String realPath);
+	public String getRealPath() {
+		return realPath == null ? path : realPath;
+	}
+
+	/**
+	 * @param realPath
+	 */
+	protected void setRealPath(String realPath) {
+		this.realPath = realPath;
+	}
+
+	/**
+	 * Returns the aliased JPQL path.
+	 * 
+	 * @return
+	 */
+	protected abstract String getClause();
 
 	/**
 	 * Creates a path string to be used on JPQL parameters.

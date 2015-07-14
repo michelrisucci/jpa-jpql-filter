@@ -14,8 +14,8 @@ public class NotIn extends In {
 	}
 
 	@Override
-	protected String getClause(String realPath) {
-		return realPath + " NOT IN (:" + varPath + ") ";
+	protected String getClause() {
+		return getRealPath() + " NOT IN (:" + varPath + ") ";
 	}
 
 }

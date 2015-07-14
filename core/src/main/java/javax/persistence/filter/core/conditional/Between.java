@@ -21,8 +21,8 @@ public class Between extends Where {
 	}
 
 	@Override
-	protected String getClause(String realPath) {
-		return realPath //
+	protected String getClause() {
+		return getRealPath() //
 				+ " BETWEEN " //
 				+ ":" + getLesserVarPath() //
 				+ " AND " //

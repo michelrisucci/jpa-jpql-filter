@@ -25,8 +25,8 @@ public class ILike extends Like {
 	}
 
 	@Override
-	protected String getClause(String realPath) {
-		return "UPPER(" + realPath + ") LIKE UPPER(:" + varPath + ") ";
+	protected String getClause() {
+		return "UPPER(" + getRealPath() + ") LIKE UPPER(:" + varPath + ") ";
 	}
 
 	@Override

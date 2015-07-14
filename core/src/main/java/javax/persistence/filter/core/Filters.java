@@ -10,15 +10,15 @@ import javax.persistence.filter.Filter;
 import javax.persistence.filter.PageFilter;
 import javax.persistence.filter.exception.FirstResultOutOfRangeException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Michel Risucci
  */
 public class Filters {
 
-	private static final Logger log = LogManager.getLogger(Filters.class);
+	private static final Log log = LogFactory.getLog(Filter.class);
 
 	private static final String FIRST_RESULT_OUT_OF_RANGE = "Start position \"%d\" to this filter is not the first (equals to 0) and found nothing: possibly out of pagination range.";
 	private static final String LISTING = "Filtering entity %s, found %d entries.";
@@ -125,6 +125,8 @@ public class Filters {
 				.append("SELECT x ") //
 				.append("FROM " + entityName + " x ");
 
+		b.append(Aliases.process(filter));
+
 		List<Where> wheres = filter.getWheres();
 		boolean existWheres = wheres != null && !wheres.isEmpty();
 		if (existWheres) {
@@ -154,15 +156,6 @@ public class Filters {
 	}
 
 	/**
-	 * @param volatilePath
-	 * @return
-	 */
-	private static String getAliasRealPath(VolatilePath volatilePath) {
-		// TODO Adds alias and JOINS functionality.
-		return Aliases.ROOT_PREFIX + Aliases.DOT + volatilePath.getPath();
-	}
-
-	/**
 	 * @param b
 	 * @param wheres
 	 */
@@ -170,8 +163,7 @@ public class Filters {
 		b.append("WHERE ");
 		for (ListIterator<Where> i = wheres.listIterator(); i.hasNext();) {
 			Where where = i.next();
-			String aliasRealPath = getAliasRealPath(where);
-			b.append(where.getClause(aliasRealPath));
+			b.append(where.getClause());
 
 			if (i.hasNext()) {
 				b.append("AND");
@@ -188,8 +180,7 @@ public class Filters {
 		b.append("ORDER BY ");
 		for (ListIterator<Order> i = orders.listIterator(); i.hasNext();) {
 			Order order = i.next();
-			String aliasRealPath = getAliasRealPath(order);
-			b.append(order.getClause(aliasRealPath));
+			b.append(order.getClause());
 
 			if (i.hasNext()) {
 				b.append(",");

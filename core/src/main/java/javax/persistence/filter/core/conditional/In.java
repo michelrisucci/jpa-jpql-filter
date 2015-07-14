@@ -20,8 +20,8 @@ public class In extends Where {
 	}
 
 	@Override
-	protected String getClause(String realPath) {
-		return realPath + " IN (:" + varPath + ") ";
+	protected String getClause() {
+		return getRealPath() + " IN (:" + varPath + ") ";
 	}
 
 	@Override
