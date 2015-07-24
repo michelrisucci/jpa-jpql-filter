@@ -11,7 +11,7 @@ public abstract class Exact extends Where {
 	private Operation operation;
 
 	/**
-	 * @param path
+	 * @param relativePath
 	 * @param operation
 	 * @param value
 	 */
@@ -29,12 +29,12 @@ public abstract class Exact extends Where {
 
 	@Override
 	protected String getClause() {
-		return getRealPath() + " " + operation.getOperand() + " :" + varPath + " ";
+		return getRealPath() + " " + operation.getOperand() + " :" + queryParamName + " ";
 	}
 
 	@Override
 	public <E> TypedQuery<E> compileClause(TypedQuery<E> query) {
-		return query.setParameter(varPath, values[0]);
+		return query.setParameter(queryParamName, values[0]);
 	}
 
 	/**

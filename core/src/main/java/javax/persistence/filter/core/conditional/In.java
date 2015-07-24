@@ -12,7 +12,7 @@ import javax.persistence.filter.core.Where;
 public class In extends Where {
 
 	/**
-	 * @param path
+	 * @param relativePath
 	 * @param values
 	 */
 	public In(String path, Object[] values) {
@@ -21,13 +21,13 @@ public class In extends Where {
 
 	@Override
 	protected String getClause() {
-		return getRealPath() + " IN (:" + varPath + ") ";
+		return getRealPath() + " IN (:" + queryParamName + ") ";
 	}
 
 	@Override
 	public <E> TypedQuery<E> compileClause(TypedQuery<E> query) {
 		List<Object> valuesAsList = Arrays.asList(values);
-		return query.setParameter(varPath, valuesAsList);
+		return query.setParameter(queryParamName, valuesAsList);
 	}
 
 }

@@ -12,9 +12,9 @@ public class Order extends VolatilePath {
 		ASC, DESC;
 
 		/**
-		 * Creates an order clause, using a {@link String} path.
+		 * Creates an order clause, using a {@link String} relativePath.
 		 * 
-		 * @param path
+		 * @param relativePath
 		 * @return
 		 */
 		public Order createOrder(String path) {
@@ -32,12 +32,12 @@ public class Order extends VolatilePath {
 	 * 
 	 */
 	private Order(String path, Direction direction) {
-		this.path = path;
+		this.relativePath = path;
 		this.direction = direction;
 	}
 
 	/**
-	 * @param path
+	 * @param relativePath
 	 * @return
 	 */
 	public static Order ascending(String path) {
@@ -45,7 +45,7 @@ public class Order extends VolatilePath {
 	}
 
 	/**
-	 * @param path
+	 * @param relativePath
 	 * @return
 	 */
 	public static Order descending(String path) {

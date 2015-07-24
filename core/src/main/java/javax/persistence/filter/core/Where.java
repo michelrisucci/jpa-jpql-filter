@@ -23,7 +23,6 @@ import javax.persistence.filter.core.conditional.like.StartsWith;
  */
 public abstract class Where extends VolatilePath {
 
-	protected String varPath;
 	protected Object[] values;
 
 	/*
@@ -31,12 +30,25 @@ public abstract class Where extends VolatilePath {
 	 */
 
 	/**
-	 * @param path
+	 * @param fullRelativePath
 	 * @param values
 	 */
-	protected Where(String path, Object... values) {
-		this.path = path;
-		this.varPath = createVarPath();
+	protected Where(String fullRelativePath, Object... values) {
+
+		if (fullRelativePath.contains(".")) {
+			int valueDotIndex = fullRelativePath.lastIndexOf('.');
+
+			// Relative path without value field name;
+			this.relativePath = fullRelativePath.substring(0, valueDotIndex);
+			// Relative path parts according to separator REGEX;
+			this.relativePathParts = relativePath.split(SEPARATOR_REGEX);
+			// Value field name (only last word);
+			this.valueFieldName = fullRelativePath.substring(valueDotIndex + 1);
+		} else {
+			this.valueFieldName = fullRelativePath;
+		}
+
+		this.queryParamName = createQueryParamName();
 		this.values = values;
 	}
 
@@ -170,7 +182,7 @@ public abstract class Where extends VolatilePath {
 
 	/**
 	 * @param path
-	 * @param value
+	 * @param values
 	 * @return
 	 */
 	public static Where in(String path, Object... values) {
@@ -179,7 +191,7 @@ public abstract class Where extends VolatilePath {
 
 	/**
 	 * @param path
-	 * @param value
+	 * @param values
 	 * @return
 	 */
 	public static Where notIn(String path, Object... values) {
@@ -189,13 +201,6 @@ public abstract class Where extends VolatilePath {
 	/*
 	 * Getters and Setters
 	 */
-
-	/**
-	 * @return
-	 */
-	public String getVarPath() {
-		return varPath;
-	}
 
 	/**
 	 * @return

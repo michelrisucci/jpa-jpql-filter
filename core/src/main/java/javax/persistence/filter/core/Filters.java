@@ -1,7 +1,9 @@
 package javax.persistence.filter.core;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -42,42 +44,44 @@ public class Filters {
 	/**
 	 * @param entityManager
 	 * @param filter
-	 * @param firstResult
-	 * @param maxResults
+	 * @param offset
+	 * @param limit
 	 * @return
 	 * @throws FirstResultOutOfRangeException
 	 */
 	public static <E> PageFilter<E> filter( //
 			EntityManager entityManager, //
 			Filter<E> filter, //
-			int firstResult, //
-			int maxResults) throws FirstResultOutOfRangeException {
+			int offset, //
+			int limit) throws FirstResultOutOfRangeException {
 
+		Map<String, String> joinAliases = new HashMap<String, String>();
 		Class<E> type = filter.getRootType();
 
-		long count = count(entityManager, filter);
+		long count = count(entityManager, filter, joinAliases);
 		log.info(String.format(COUNTING, getEntityName(type), count));
 
-		if ((count == 0 && firstResult != 0)
-				|| (count > 0 && firstResult > count)) {
+		if ((count == 0 && offset != 0) || (count > 0 && offset > count)) {
 			throw new FirstResultOutOfRangeException( //
-					String.format(FIRST_RESULT_OUT_OF_RANGE, firstResult));
+					String.format(FIRST_RESULT_OUT_OF_RANGE, offset));
 		}
 
-		List<E> list = list(entityManager, filter, firstResult, maxResults);
+		List<E> list = list(entityManager, filter, joinAliases, offset, limit);
 		log.info(String.format(LISTING, getEntityName(type), list.size()));
 
-		return new PageFilter<E>(list, maxResults, count);
+		return new PageFilter<E>(list, limit, count);
 	}
 
 	/**
 	 * @param entityManager
 	 * @param filter
+	 * @param joinAliases
 	 * @return
 	 */
 	public static <E> long count( //
 			EntityManager entityManager, //
-			Filter<E> filter) {
+			Filter<E> filter, //
+			Map<String, String> joinAliases) {
 
 		Class<E> type = filter.getRootType();
 		String entityName = getEntityName(type);
@@ -89,7 +93,7 @@ public class Filters {
 		List<Where> wheres = filter.getWheres();
 		boolean existWheres = wheres != null && !wheres.isEmpty();
 		if (existWheres) {
-			buildJpqlWhereParams(b, wheres);
+			buildJpqlWhereParams(b, joinAliases, wheres);
 		}
 
 		String jpql = b.toString();
@@ -108,15 +112,17 @@ public class Filters {
 	/**
 	 * @param entityManager
 	 * @param filter
-	 * @param firstResult
-	 * @param maxResults
+	 * @param joinAliases
+	 * @param offset
+	 * @param limit
 	 * @return
 	 */
 	public static <E> List<E> list( //
 			EntityManager entityManager, //
 			Filter<E> filter, //
-			int firstResult, //
-			int maxResults) {
+			Map<String, String> joinAliases, //
+			int offset, //
+			int limit) {
 
 		Class<E> type = filter.getRootType();
 		String entityName = getEntityName(type);
@@ -125,18 +131,16 @@ public class Filters {
 				.append("SELECT x ") //
 				.append("FROM " + entityName + " x ");
 
-		b.append(Aliases.process(filter));
-
 		List<Where> wheres = filter.getWheres();
 		boolean existWheres = wheres != null && !wheres.isEmpty();
 		if (existWheres) {
-			buildJpqlWhereParams(b, wheres);
+			buildJpqlWhereParams(b, joinAliases, wheres);
 		}
 
 		List<Order> orders = filter.getOrders();
 		boolean existOrders = orders != null && !orders.isEmpty();
 		if (existOrders) {
-			buildOrderParams(b, orders);
+			buildOrderParams(b, joinAliases, orders);
 		}
 
 		String jpql = b.toString();
@@ -150,16 +154,24 @@ public class Filters {
 		}
 
 		return query //
-				.setFirstResult(firstResult) //
-				.setMaxResults(maxResults) //
+				.setFirstResult(offset) //
+				.setMaxResults(limit) //
 				.getResultList();
 	}
 
 	/**
 	 * @param b
+	 * @param aliases
 	 * @param wheres
 	 */
-	private static void buildJpqlWhereParams(StringBuilder b, List<Where> wheres) {
+	private static void buildJpqlWhereParams(StringBuilder b,
+			Map<String, String> aliases, List<Where> wheres) {
+
+		for (ListIterator<Where> i = wheres.listIterator(); i.hasNext();) {
+			Where where = i.next();
+			where.processJoins(aliases);
+		}
+
 		b.append("WHERE ");
 		for (ListIterator<Where> i = wheres.listIterator(); i.hasNext();) {
 			Where where = i.next();
@@ -174,9 +186,10 @@ public class Filters {
 
 	/**
 	 * @param b
+	 * @param aliases
 	 * @param orders
 	 */
-	private static void buildOrderParams(StringBuilder b, List<Order> orders) {
+	private static void buildOrderParams(StringBuilder b, Map<String, String> aliases, List<Order> orders) {
 		b.append("ORDER BY ");
 		for (ListIterator<Order> i = orders.listIterator(); i.hasNext();) {
 			Order order = i.next();

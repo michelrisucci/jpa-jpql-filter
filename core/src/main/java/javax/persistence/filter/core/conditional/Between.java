@@ -12,7 +12,7 @@ public class Between extends Where {
 	private static final String GREATER_SUFFIX = "_GREATER";
 
 	/**
-	 * @param path
+	 * @param relativePath
 	 * @param initialValue
 	 * @param finalValue
 	 */
@@ -40,14 +40,14 @@ public class Between extends Where {
 	 * @return
 	 */
 	private String getLesserVarPath() {
-		return varPath + LESSER_SUFFIX;
+		return queryParamName + LESSER_SUFFIX;
 	}
 
 	/**
 	 * @return
 	 */
 	private String getGreaterVarPath() {
-		return varPath + GREATER_SUFFIX;
+		return queryParamName + GREATER_SUFFIX;
 	}
 
 }

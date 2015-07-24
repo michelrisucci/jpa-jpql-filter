@@ -125,7 +125,7 @@ public abstract class FilterBean<E> {
 	}
 
 	/**
-	 * @param path
+	 * @param relativePath
 	 */
 	public void changeOrderAndFilter(String path) {
 		changeOrder(path);
@@ -133,14 +133,14 @@ public abstract class FilterBean<E> {
 	}
 
 	/**
-	 * @param path
+	 * @param relativePath
 	 */
 	public void changeOrder(String path) {
 		changeOrder(path, null);
 	}
 
 	/**
-	 * @param path
+	 * @param relativePath
 	 * @param direction
 	 */
 	public void changeOrder(String path, Direction direction) {
@@ -159,7 +159,7 @@ public abstract class FilterBean<E> {
 	}
 
 	/**
-	 * @param path
+	 * @param relativePath
 	 * @return
 	 */
 	public int getOrderSequence(String path) {

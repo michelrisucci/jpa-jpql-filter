@@ -11,7 +11,7 @@ public class Like extends Where {
 	private PercentPosition percentPosition;
 
 	/**
-	 * @param path
+	 * @param relativePath
 	 * @param percentPosition
 	 * @param value
 	 */
@@ -21,7 +21,7 @@ public class Like extends Where {
 	}
 
 	/**
-	 * @param path
+	 * @param relativePath
 	 * @param value
 	 */
 	public Like(String path, String value) {
@@ -37,13 +37,13 @@ public class Like extends Where {
 
 	@Override
 	protected String getClause() {
-		return getRealPath() + " LIKE :" + varPath + " ";
+		return getRealPath() + " LIKE :" + queryParamName + " ";
 	}
 
 	@Override
 	public <E> TypedQuery<E> compileClause(TypedQuery<E> query) {
 		String value = generateParamValue();
-		return query.setParameter(varPath, value);
+		return query.setParameter(queryParamName, value);
 	}
 
 	/**
