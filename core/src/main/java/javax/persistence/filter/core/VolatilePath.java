@@ -33,7 +33,7 @@ public abstract class VolatilePath {
 	protected String createQueryParamName() {
 		StringBuilder builder = new StringBuilder("_");
 		if (relativePath != null) {
-			builder.append(relativePath);
+			builder.append(relativePath.replaceAll(SEPARATOR_REGEX, ""));
 		}
 		builder.append(valueFieldName);
 		return builder.toString();
@@ -45,21 +45,45 @@ public abstract class VolatilePath {
 	 */
 	protected String processJoins(Map<String, String> aliases) {
 		if (relativePath != null && relativePathParts != null) {
-			return processJoins(aliases, relativePath);
+			StringBuilder joins = new StringBuilder();
+			// Process join strings;
+			return processJoins(aliases, joins, -1, null);
 		} else {
 			this.realPath = ROOT_PREFIX + SEPARATOR + valueFieldName;
+			// No join strings;
 			return "";
 		}
 	}
 
 	/**
 	 * @param aliases
+	 * @param joins
+	 * @param lastIndex
 	 * @param last
 	 * @return
 	 */
-	protected String processJoins(Map<String, String> aliases, String last) {
+	protected String processJoins(Map<String, String> aliases,
+			StringBuilder joins, int lastIndex, String last) {
 
-		return null;
+		int currentIndex = lastIndex + 1;
+		if (relativePathParts.length > currentIndex) {
+			boolean first = lastIndex == -1;
+			String prefix = first ? ROOT_PREFIX : last;
+			last = prefix + SEPARATOR + relativePathParts[currentIndex];
+			String lastAlias = last.replaceAll(SEPARATOR_REGEX, "");
+
+			aliases.put(last, lastAlias);
+			joins.append("INNER JOIN ") //
+					.append(last) //
+					.append(" ") //
+					.append(lastAlias) //
+					.append(" ");
+
+			return processJoins(aliases, joins, currentIndex, lastAlias);
+		} else {
+			realPath = last + SEPARATOR + valueFieldName;
+			return joins.toString();
+		}
 	}
 
 	/*

@@ -1,5 +1,7 @@
 package javax.persistence.filter.core;
 
+import static javax.persistence.filter.core.VolatilePath.ROOT_PREFIX;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -25,6 +27,11 @@ public class Filters {
 	private static final String FIRST_RESULT_OUT_OF_RANGE = "Start position \"%d\" to this filter is not the first (equals to 0) and found nothing: possibly out of pagination range.";
 	private static final String LISTING = "Filtering entity %s, found %d entries.";
 	private static final String COUNTING = "Counting entity %s, found %d entries.";
+
+	private static final String DISTINCT = "DISTINCT(" + ROOT_PREFIX + ") ";
+	private static final String COUNT = "COUNT(" + ROOT_PREFIX + ") ";
+	private static final String COUNT_DISTINCT = "COUNT(DISTINCT("
+			+ ROOT_PREFIX + ")) ";
 
 	/**
 	 * Returns JPA entity name.
@@ -87,8 +94,9 @@ public class Filters {
 		String entityName = getEntityName(type);
 
 		StringBuilder b = new StringBuilder() //
-				.append("SELECT COUNT(x) ") //
-				.append("FROM " + entityName + " x ");
+				.append("SELECT ") //
+				.append(filter.isDistinct() ? COUNT_DISTINCT : COUNT) //
+				.append("FROM " + entityName + " " + ROOT_PREFIX + " ");
 
 		List<Where> wheres = filter.getWheres();
 		boolean existWheres = wheres != null && !wheres.isEmpty();
@@ -128,8 +136,9 @@ public class Filters {
 		String entityName = getEntityName(type);
 
 		StringBuilder b = new StringBuilder() //
-				.append("SELECT x ") //
-				.append("FROM " + entityName + " x ");
+				.append("SELECT ") //
+				.append(filter.isDistinct() ? DISTINCT : ROOT_PREFIX + " ") //
+				.append("FROM " + entityName + " " + ROOT_PREFIX + " ");
 
 		List<Where> wheres = filter.getWheres();
 		boolean existWheres = wheres != null && !wheres.isEmpty();
@@ -167,10 +176,12 @@ public class Filters {
 	private static void buildJpqlWhereParams(StringBuilder b,
 			Map<String, String> aliases, List<Where> wheres) {
 
+		String joins = "";
 		for (ListIterator<Where> i = wheres.listIterator(); i.hasNext();) {
 			Where where = i.next();
-			where.processJoins(aliases);
+			joins = where.processJoins(aliases);
 		}
+		b.append(joins);
 
 		b.append("WHERE ");
 		for (ListIterator<Where> i = wheres.listIterator(); i.hasNext();) {
@@ -189,7 +200,8 @@ public class Filters {
 	 * @param aliases
 	 * @param orders
 	 */
-	private static void buildOrderParams(StringBuilder b, Map<String, String> aliases, List<Order> orders) {
+	private static void buildOrderParams(StringBuilder b,
+			Map<String, String> aliases, List<Order> orders) {
 		b.append("ORDER BY ");
 		for (ListIterator<Order> i = orders.listIterator(); i.hasNext();) {
 			Order order = i.next();

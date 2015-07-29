@@ -15,6 +15,7 @@ import javax.persistence.filter.core.Where;
 public class Filter<T> {
 
 	private Class<T> rootType;
+	private boolean distinct;
 	private List<Where> wheres;
 	private List<Order> orders;
 
@@ -24,6 +25,7 @@ public class Filter<T> {
 	private Filter(Class<T> rootType) {
 		super();
 		this.rootType = rootType;
+		this.distinct = false;
 	}
 
 	/**
@@ -125,6 +127,20 @@ public class Filter<T> {
 		}
 		this.orders.addAll(Arrays.asList(orders));
 		return this;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isDistinct() {
+		return distinct;
+	}
+
+	/**
+	 * @param distinct
+	 */
+	public void setDistinct(boolean distinct) {
+		this.distinct = distinct;
 	}
 
 	/**

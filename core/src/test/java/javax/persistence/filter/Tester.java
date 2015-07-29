@@ -1,9 +1,6 @@
 package javax.persistence.filter;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -47,20 +44,16 @@ public class Tester {
 	@Test
 	public void test() {
 		System.out.println("Starting tests...");
-		Filter<Country> filter = Filter.newInstance(Country.class);
-		filter.add(Where.iLike("cities.name", "south"));
+		Filter<Continent> filter = Filter.newInstance(Continent.class);
+		filter.setDistinct(true);
+		filter.add(Where.iLike("countries.cities.name", "south"));
 
-		Map<String, String> joinAliases = new HashMap<String, String>();
-		List<Country> countries = Filters.list(EM, filter,
-				joinAliases, 0, 999);
+		// Map<String, String> joinAliases = new HashMap<String, String>();
+		PageFilter<Continent> results = Filters.filter(EM, filter, 0, 999);
 
-		System.out.println("Join Aliases:");
-		for (Entry<String, String> entry : joinAliases.entrySet()) {
-			System.out.println(entry.getKey() + " = " + entry.getValue());
-		}
-
-		for (Country country : countries) {
-			System.out.println(country);
+		System.out.println("Results: " + results.getCount());
+		for (Object result : results.getList()) {
+			System.out.println(result);
 		}
 		System.out.println("Ending tests...");
 	}
