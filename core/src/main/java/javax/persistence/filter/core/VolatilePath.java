@@ -31,7 +31,12 @@ public abstract class VolatilePath {
 	 * @return
 	 */
 	protected String createQueryParamName() {
-		return "_" + relativePath.replaceAll(SEPARATOR_REGEX, "");
+		StringBuilder builder = new StringBuilder("_");
+		if (relativePath != null) {
+			builder.append(relativePath);
+		}
+		builder.append(valueFieldName);
+		return builder.toString();
 	}
 
 	/**
