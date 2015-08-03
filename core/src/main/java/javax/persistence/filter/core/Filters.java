@@ -62,10 +62,10 @@ public class Filters {
 			int offset, //
 			int limit) throws FirstResultOutOfRangeException {
 
-		Map<String, String> joinAliases = new HashMap<String, String>();
+		
 		Class<E> type = filter.getRootType();
 
-		long count = count(entityManager, filter, joinAliases);
+		long count = count(entityManager, filter);
 		log.info(String.format(COUNTING, getEntityName(type), count));
 
 		if ((count == 0 && offset != 0) || (count > 0 && offset > count)) {
@@ -73,7 +73,7 @@ public class Filters {
 					String.format(FIRST_RESULT_OUT_OF_RANGE, offset));
 		}
 
-		List<E> list = list(entityManager, filter, joinAliases, offset, limit);
+		List<E> list = list(entityManager, filter, offset, limit);
 		log.info(String.format(LISTING, getEntityName(type), list.size()));
 
 		return new PageFilter<E>(list, limit, count);
@@ -82,16 +82,15 @@ public class Filters {
 	/**
 	 * @param entityManager
 	 * @param filter
-	 * @param joinAliases
 	 * @return
 	 */
 	public static <E> long count( //
 			EntityManager entityManager, //
-			Filter<E> filter, //
-			Map<String, String> joinAliases) {
+			Filter<E> filter) {
 
 		Class<E> type = filter.getRootType();
 		String entityName = getEntityName(type);
+		Map<String, String> joinAliases = new HashMap<String, String>();
 
 		StringBuilder b = new StringBuilder() //
 				.append("SELECT ") //
@@ -120,7 +119,6 @@ public class Filters {
 	/**
 	 * @param entityManager
 	 * @param filter
-	 * @param joinAliases
 	 * @param offset
 	 * @param limit
 	 * @return
@@ -128,12 +126,12 @@ public class Filters {
 	public static <E> List<E> list( //
 			EntityManager entityManager, //
 			Filter<E> filter, //
-			Map<String, String> joinAliases, //
 			int offset, //
 			int limit) {
 
 		Class<E> type = filter.getRootType();
 		String entityName = getEntityName(type);
+		Map<String, String> joinAliases = new HashMap<String, String>();
 
 		StringBuilder b = new StringBuilder() //
 				.append("SELECT ") //
