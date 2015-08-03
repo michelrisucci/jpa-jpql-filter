@@ -92,7 +92,7 @@ public abstract class FilterBean<E> {
 	 */
 	protected PageFilter<E> doFilter(Filter<E> filter, int page, int results) {
 		try {
-			FilterService<E> service = getFilterService();
+			FilterService service = getFilterService();
 			int initial = (page - 1) * results;
 			initial = initial >= 0 ? initial : 0;
 			return service.filter(filter, initial, results);
@@ -287,6 +287,6 @@ public abstract class FilterBean<E> {
 
 	protected abstract Filter<E> newFilter();
 
-	protected abstract FilterService<E> getFilterService();
+	protected abstract FilterService getFilterService();
 
 }
