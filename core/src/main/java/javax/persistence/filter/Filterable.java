@@ -1,9 +1,11 @@
-package javax.persistence.filter.service;
+package javax.persistence.filter;
 
-import javax.persistence.filter.Filter;
-import javax.persistence.filter.PageFilter;
-
-public interface FilterService {
+/**
+ * An interface that defines a filterable component.
+ * 
+ * @author Michel Risucci
+ */
+public interface Filterable {
 
 	/**
 	 * Filters any defined entity.

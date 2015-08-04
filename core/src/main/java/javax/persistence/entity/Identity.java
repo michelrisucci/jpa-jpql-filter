@@ -12,7 +12,7 @@ import javax.persistence.MappedSuperclass;
  * @author Michel Risucci
  */
 @MappedSuperclass
-public abstract class Identity<I extends Comparable<I>> {
+public abstract class Identity<I extends Number> {
 
 	private I id;
 

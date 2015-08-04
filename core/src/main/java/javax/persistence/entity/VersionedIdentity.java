@@ -10,8 +10,7 @@ import javax.persistence.Version;
  * @author Michel Risucci
  */
 @MappedSuperclass
-public abstract class VersionedIdentity<I extends Comparable<I>> extends
-		Identity<I> {
+public abstract class VersionedIdentity<I extends Number> extends Identity<I> {
 
 	private Long version;
 
