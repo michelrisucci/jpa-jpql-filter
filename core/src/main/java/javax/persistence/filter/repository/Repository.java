@@ -6,7 +6,7 @@ public interface Repository {
 
 	<T> void save(T entity);
 
-	<T> void delete(T entity);
+	<T, PK> void delete(Class<T> type, PK pk);
 
 	<T> T update(T entity);
 

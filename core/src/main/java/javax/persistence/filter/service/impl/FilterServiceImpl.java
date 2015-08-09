@@ -9,8 +9,7 @@ import javax.persistence.filter.service.FilterableService;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
-public class FilterServiceImpl<T, PK, R extends Repository & Filterable>
-		implements FilterableService<T, PK, R> {
+public class FilterServiceImpl<T, PK, R extends Repository & Filterable> implements FilterableService<T, PK, R> {
 
 	@Inject
 	protected R repository;
@@ -35,8 +34,8 @@ public class FilterServiceImpl<T, PK, R extends Repository & Filterable>
 
 	@Override
 	@Transactional(TxType.REQUIRED)
-	public void delete(T entity) {
-		repository.delete(entity);
+	public void delete(Class<T> type, PK pk) {
+		repository.delete(type, pk);
 	}
 
 	@Override

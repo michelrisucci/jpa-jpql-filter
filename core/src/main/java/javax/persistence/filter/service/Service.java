@@ -8,7 +8,7 @@ public interface Service<T, PK, R extends Repository> {
 
 	void save(T entity);
 
-	void delete(T entity);
+	void delete(Class<T> type, PK pk);
 
 	T update(T entity);
 

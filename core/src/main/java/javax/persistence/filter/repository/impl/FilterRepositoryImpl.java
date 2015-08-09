@@ -26,8 +26,9 @@ public class FilterRepositoryImpl implements Repository, Filterable {
 		entityManager.persist(entity);
 	}
 
-	public <T> void delete(T entity) {
-		entityManager.remove(entity);
+	public <T, PK> void delete(Class<T> type, PK pk) {
+		T reference = entityManager.getReference(type, pk);
+		entityManager.remove(reference);
 	}
 
 	public <T> T update(T entity) {
