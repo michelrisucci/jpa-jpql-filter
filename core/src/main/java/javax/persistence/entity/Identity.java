@@ -27,7 +27,7 @@ public abstract class Identity<I extends Number> {
 	 * @return sequential ID for this entity
 	 */
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "identity-sequence")
 	@Column(name = "id")
 	public I getId() {
 		return id;
