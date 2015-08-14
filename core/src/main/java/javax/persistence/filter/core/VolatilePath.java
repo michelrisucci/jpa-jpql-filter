@@ -62,8 +62,7 @@ public abstract class VolatilePath {
 	 * @param last
 	 * @return
 	 */
-	protected String processJoins(Map<String, String> aliases,
-			StringBuilder joins, int lastIndex, String last) {
+	protected String processJoins(Map<String, String> aliases, StringBuilder joins, int lastIndex, String last) {
 
 		int currentIndex = lastIndex + 1;
 		if (relativePathParts.length > currentIndex) {

@@ -12,7 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.filter.Filter;
 import javax.persistence.filter.PageFilter;
-import javax.persistence.filter.exception.FirstResultOutOfRangeException;
+import javax.persistence.filter.exception.OffsetOutOfRangeException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,14 +24,12 @@ public class Filters {
 
 	private static final Log log = LogFactory.getLog(Filter.class);
 
-	private static final String FIRST_RESULT_OUT_OF_RANGE = "Start position \"%d\" to this filter is not the first (equals to 0) and found nothing: possibly out of pagination range.";
 	private static final String LISTING = "Filtering entity %s, found %d entries.";
 	private static final String COUNTING = "Counting entity %s, found %d entries.";
 
 	private static final String DISTINCT = "DISTINCT(" + ROOT_PREFIX + ") ";
 	private static final String COUNT = "COUNT(" + ROOT_PREFIX + ") ";
-	private static final String COUNT_DISTINCT = "COUNT(DISTINCT("
-			+ ROOT_PREFIX + ")) ";
+	private static final String COUNT_DISTINCT = "COUNT(DISTINCT(" + ROOT_PREFIX + ")) ";
 
 	/**
 	 * Returns JPA entity name.
@@ -49,44 +47,43 @@ public class Filters {
 	}
 
 	/**
-	 * @param entityManager
+	 * @param em
+	 * @param filter
+	 * @return
+	 */
+	public static <E> PageFilter<E> filter(EntityManager em, Filter<E> filter) {
+		return filter(em, filter, -1, -1);
+	}
+
+	/**
+	 * @param em
 	 * @param filter
 	 * @param offset
 	 * @param limit
 	 * @return
-	 * @throws FirstResultOutOfRangeException
+	 * @throws OffsetOutOfRangeException
 	 */
-	public static <E> PageFilter<E> filter( //
-			EntityManager entityManager, //
-			Filter<E> filter, //
-			int offset, //
-			int limit) throws FirstResultOutOfRangeException {
+	public static <E> PageFilter<E> filter(EntityManager em, Filter<E> filter, int offset, int limit)
+			throws OffsetOutOfRangeException {
 
-		
 		Class<E> type = filter.getRootType();
 
-		long count = count(entityManager, filter);
+		long count = count(em, filter);
 		log.info(String.format(COUNTING, getEntityName(type), count));
+		checkResultOutOfRange(count, offset);
 
-		if ((count == 0 && offset != 0) || (count > 0 && offset > count)) {
-			throw new FirstResultOutOfRangeException( //
-					String.format(FIRST_RESULT_OUT_OF_RANGE, offset));
-		}
-
-		List<E> list = list(entityManager, filter, offset, limit);
+		List<E> list = list(em, filter, offset, limit);
 		log.info(String.format(LISTING, getEntityName(type), list.size()));
 
 		return new PageFilter<E>(list, limit, count);
 	}
 
 	/**
-	 * @param entityManager
+	 * @param em
 	 * @param filter
 	 * @return
 	 */
-	public static <E> long count( //
-			EntityManager entityManager, //
-			Filter<E> filter) {
+	public static <E> long count(EntityManager em, Filter<E> filter) {
 
 		Class<E> type = filter.getRootType();
 		String entityName = getEntityName(type);
@@ -106,9 +103,7 @@ public class Filters {
 		String jpql = b.toString();
 		log.info(jpql);
 
-		TypedQuery<Number> query = entityManager //
-				.createQuery(jpql, Number.class);
-
+		TypedQuery<Number> query = em.createQuery(jpql, Number.class);
 		if (existWheres) {
 			setQueryWhereParams(query, wheres);
 		}
@@ -117,17 +112,13 @@ public class Filters {
 	}
 
 	/**
-	 * @param entityManager
+	 * @param em
 	 * @param filter
 	 * @param offset
 	 * @param limit
 	 * @return
 	 */
-	public static <E> List<E> list( //
-			EntityManager entityManager, //
-			Filter<E> filter, //
-			int offset, //
-			int limit) {
+	public static <E> List<E> list(EntityManager em, Filter<E> filter, int offset, int limit) {
 
 		Class<E> type = filter.getRootType();
 		String entityName = getEntityName(type);
@@ -153,17 +144,11 @@ public class Filters {
 		String jpql = b.toString();
 		log.info(jpql);
 
-		TypedQuery<E> query = entityManager //
-				.createQuery(jpql, filter.getRootType());
-
+		TypedQuery<E> query = em.createQuery(jpql, filter.getRootType());
 		if (existWheres) {
 			setQueryWhereParams(query, wheres);
 		}
-
-		return query //
-				.setFirstResult(offset) //
-				.setMaxResults(limit) //
-				.getResultList();
+		return setQueryFetchRange(query, limit, offset).getResultList();
 	}
 
 	/**
@@ -171,8 +156,7 @@ public class Filters {
 	 * @param aliases
 	 * @param wheres
 	 */
-	private static void buildJpqlWhereParams(StringBuilder b,
-			Map<String, String> aliases, List<Where> wheres) {
+	private static void buildJpqlWhereParams(StringBuilder b, Map<String, String> aliases, List<Where> wheres) {
 
 		String joins = "";
 		for (ListIterator<Where> i = wheres.listIterator(); i.hasNext();) {
@@ -198,8 +182,7 @@ public class Filters {
 	 * @param aliases
 	 * @param orders
 	 */
-	private static void buildOrderParams(StringBuilder b,
-			Map<String, String> aliases, List<Order> orders) {
+	private static void buildOrderParams(StringBuilder b, Map<String, String> aliases, List<Order> orders) {
 		b.append("ORDER BY ");
 		for (ListIterator<Order> i = orders.listIterator(); i.hasNext();) {
 			Order order = i.next();
@@ -216,10 +199,36 @@ public class Filters {
 	 * @param query
 	 * @param wheres
 	 */
-	private static <E> void setQueryWhereParams(TypedQuery<E> query,
-			List<Where> wheres) {
+	private static <E> void setQueryWhereParams(TypedQuery<E> query, List<Where> wheres) {
 		for (Where where : wheres) {
 			where.compileClause(query);
+		}
+	}
+
+	/**
+	 * @param query
+	 * @param limit
+	 * @param offset
+	 * @return
+	 */
+	private static <E> TypedQuery<E> setQueryFetchRange(TypedQuery<E> query, int limit, int offset) {
+		// Fetching without limit
+		if (limit == -1 && offset == -1) {
+			return query;
+		}
+		// Limit fetching
+		else {
+			return query.setFirstResult(offset).setMaxResults(limit);
+		}
+	}
+
+	/**
+	 * @param count
+	 * @param offset
+	 */
+	private static void checkResultOutOfRange(long count, int offset) {
+		if ((count == 0 && offset != 0) || (count > 0 && offset > count)) {
+			throw new OffsetOutOfRangeException(count, offset);
 		}
 	}
 

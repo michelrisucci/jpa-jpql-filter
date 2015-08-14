@@ -48,8 +48,7 @@ public class Tester {
 		filter.setDistinct(true);
 		filter.add(Where.iLike("countries.cities.name", "south"));
 
-		// Map<String, String> joinAliases = new HashMap<String, String>();
-		PageFilter<Continent> results = Filters.filter(EM, filter, 0, 999);
+		PageFilter<Continent> results = Filters.filter(EM, filter);
 
 		System.out.println("Results: " + results.getCount());
 		for (Object result : results.getList()) {

@@ -18,6 +18,11 @@ public class FilterRepositoryImpl implements Repository, Filterable {
 		return Filters.filter(entityManager, filter, offset, limit);
 	}
 
+	@Override
+	public <T> PageFilter<T> filter(Filter<T> filter) {
+		return Filters.filter(entityManager, filter);
+	}
+
 	public <T, PK> T find(Class<T> type, PK pk) {
 		return entityManager.find(type, pk);
 	}

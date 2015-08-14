@@ -11,7 +11,7 @@ import javax.persistence.filter.Filter;
 import javax.persistence.filter.Filterable;
 import javax.persistence.filter.PageFilter;
 import javax.persistence.filter.core.Order.Direction;
-import javax.persistence.filter.exception.FirstResultOutOfRangeException;
+import javax.persistence.filter.exception.OffsetOutOfRangeException;
 
 /**
  * @author Michel Risucci
@@ -96,7 +96,7 @@ public abstract class FilterBean<E> {
 			int initial = (page - 1) * results;
 			initial = initial >= 0 ? initial : 0;
 			return service.filter(filter, initial, results);
-		} catch (FirstResultOutOfRangeException e) {
+		} catch (OffsetOutOfRangeException e) {
 			this.currentPage = 1;
 			return doFilter(filter, currentPage, results);
 		}

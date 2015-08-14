@@ -23,6 +23,8 @@ import javax.persistence.filter.core.conditional.like.StartsWith;
  */
 public abstract class Where extends VolatilePath {
 
+	protected static final Join DEFAULT_JUNCTION = Join.INNER;
+
 	protected Object[] values;
 
 	/*
@@ -34,6 +36,15 @@ public abstract class Where extends VolatilePath {
 	 * @param values
 	 */
 	protected Where(String fullRelativePath, Object... values) {
+		this(fullRelativePath, null, values);
+	}
+
+	/**
+	 * @param fullRelativePath
+	 * @param join
+	 * @param values
+	 */
+	protected Where(String fullRelativePath, Join[] joins, Object... values) {
 
 		if (fullRelativePath.contains(".")) {
 			int valueDotIndex = fullRelativePath.lastIndexOf('.');
@@ -112,8 +123,7 @@ public abstract class Where extends VolatilePath {
 	 * @param finalValue
 	 * @return
 	 */
-	public static Where between(String path, Object initialValue,
-			Object finalValue) {
+	public static Where between(String path, Object initialValue, Object finalValue) {
 		return new Between(path, initialValue, finalValue);
 	}
 

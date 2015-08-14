@@ -21,6 +21,12 @@ public class FilterServiceImpl<T, PK, R extends Repository & Filterable> impleme
 	}
 
 	@Override
+	@SuppressWarnings("hiding")
+	public <T> PageFilter<T> filter(Filter<T> filter) {
+		return repository.filter(filter);
+	}
+
+	@Override
 	@Transactional(TxType.REQUIRED)
 	public T find(Class<T> type, PK pk) {
 		return repository.find(type, pk);
