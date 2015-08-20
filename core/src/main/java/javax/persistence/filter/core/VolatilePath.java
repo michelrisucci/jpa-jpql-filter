@@ -1,7 +1,9 @@
 package javax.persistence.filter.core;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Michel Risucci
@@ -17,6 +19,7 @@ public abstract class VolatilePath {
 	protected String valueFieldName;
 	protected String queryParamName;
 
+	// Must be PRIVATE to prevent direct access: use getter instead.
 	private String realPath;
 
 	/**
@@ -43,16 +46,18 @@ public abstract class VolatilePath {
 	 * @param aliases
 	 * @return
 	 */
-	protected String processJoins(Map<String, String> aliases) {
+	protected String processAliases(Set<String> aliases) {
 		if (relativePath != null && relativePathParts != null) {
-			StringBuilder joins = new StringBuilder();
-			// Process join strings;
-			return processJoins(aliases, joins, -1, null);
+			String prefix = ROOT_PREFIX + StringUtils.join(relativePathParts);
+			if (!aliases.contains(prefix)) {
+				StringBuilder joins = new StringBuilder();
+				return processJoins(aliases, joins, -1, null);
+			}
+			this.setRealPath(prefix + SEPARATOR + valueFieldName);
 		} else {
-			this.realPath = ROOT_PREFIX + SEPARATOR + valueFieldName;
-			// No join strings;
-			return "";
+			this.setRealPath(ROOT_PREFIX + SEPARATOR + valueFieldName);
 		}
+		return "";
 	}
 
 	/**
@@ -62,8 +67,7 @@ public abstract class VolatilePath {
 	 * @param last
 	 * @return
 	 */
-	protected String processJoins(Map<String, String> aliases, StringBuilder joins, int lastIndex, String last) {
-
+	protected String processJoins(Set<String> aliases, StringBuilder joins, int lastIndex, String last) {
 		int currentIndex = lastIndex + 1;
 		if (relativePathParts.length > currentIndex) {
 			boolean first = lastIndex == -1;
@@ -71,7 +75,9 @@ public abstract class VolatilePath {
 			last = prefix + SEPARATOR + relativePathParts[currentIndex];
 			String lastAlias = last.replaceAll(SEPARATOR_REGEX, "");
 
-			aliases.put(last, lastAlias);
+			aliases.add(last);
+			aliases.add(lastAlias);
+
 			joins.append("INNER JOIN ") //
 					.append(last) //
 					.append(" ") //
@@ -80,7 +86,7 @@ public abstract class VolatilePath {
 
 			return processJoins(aliases, joins, currentIndex, lastAlias);
 		} else {
-			realPath = last + SEPARATOR + valueFieldName;
+			this.setRealPath(last + SEPARATOR + valueFieldName);
 			return joins.toString();
 		}
 	}
@@ -129,6 +135,47 @@ public abstract class VolatilePath {
 	 */
 	protected void setRealPath(String realPath) {
 		this.realPath = realPath;
+	}
+
+	/*
+	 * Equals and Hashcode
+	 */
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((queryParamName == null) ? 0 : queryParamName.hashCode());
+		result = prime * result + ((relativePath == null) ? 0 : relativePath.hashCode());
+		result = prime * result + ((valueFieldName == null) ? 0 : valueFieldName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VolatilePath other = (VolatilePath) obj;
+		if (queryParamName == null) {
+			if (other.queryParamName != null)
+				return false;
+		} else if (!queryParamName.equals(other.queryParamName))
+			return false;
+		if (relativePath == null) {
+			if (other.relativePath != null)
+				return false;
+		} else if (!relativePath.equals(other.relativePath))
+			return false;
+		if (valueFieldName == null) {
+			if (other.valueFieldName != null)
+				return false;
+		} else if (!valueFieldName.equals(other.valueFieldName))
+			return false;
+		return true;
 	}
 
 	/**

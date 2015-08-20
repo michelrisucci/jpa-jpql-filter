@@ -209,6 +209,15 @@ public abstract class Where extends VolatilePath {
 	}
 
 	/*
+	 * Implementations
+	 */
+
+	/**
+	 * @param query
+	 */
+	public abstract <E> TypedQuery<E> compileClause(TypedQuery<E> query);
+
+	/*
 	 * Getters and Setters
 	 */
 
@@ -218,15 +227,6 @@ public abstract class Where extends VolatilePath {
 	public Object[] getValues() {
 		return values;
 	}
-
-	/*
-	 * Implementations
-	 */
-
-	/**
-	 * @param query
-	 */
-	public abstract <E> TypedQuery<E> compileClause(TypedQuery<E> query);
 
 	/*
 	 * To String

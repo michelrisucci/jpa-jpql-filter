@@ -1,8 +1,8 @@
 package javax.persistence.filter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.persistence.filter.core.Order;
 import javax.persistence.filter.core.Where;
@@ -16,8 +16,8 @@ public class Filter<T> {
 
 	private Class<T> rootType;
 	private boolean distinct;
-	private List<Where> wheres;
-	private List<Order> orders;
+	private Set<Where> wheres;
+	private Set<Order> orders;
 
 	/**
 	 * Empty Filter constructor that initializes minimal filter functions.
@@ -111,7 +111,7 @@ public class Filter<T> {
 	 */
 	public Filter<T> add(Where... wheres) {
 		if (this.wheres == null) {
-			this.wheres = new ArrayList<Where>();
+			this.wheres = new LinkedHashSet<Where>();
 		}
 		this.wheres.addAll(Arrays.asList(wheres));
 		return this;
@@ -123,7 +123,7 @@ public class Filter<T> {
 	 */
 	public Filter<T> add(Order... orders) {
 		if (this.orders == null) {
-			this.orders = new ArrayList<Order>();
+			this.orders = new LinkedHashSet<Order>();
 		}
 		this.orders.addAll(Arrays.asList(orders));
 		return this;
@@ -146,14 +146,14 @@ public class Filter<T> {
 	/**
 	 * @return
 	 */
-	public List<Where> getWheres() {
+	public Set<Where> getWheres() {
 		return wheres;
 	}
 
 	/**
 	 * @return
 	 */
-	public List<Order> getOrders() {
+	public Set<Order> getOrders() {
 		return orders;
 	}
 

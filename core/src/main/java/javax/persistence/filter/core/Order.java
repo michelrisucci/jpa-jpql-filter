@@ -5,6 +5,8 @@ package javax.persistence.filter.core;
  */
 public class Order extends VolatilePath {
 
+	public static final String JOIN_NOT_PERFORMED = "Unable to order filter query using path %s because required junctions was not performed.";
+
 	/**
 	 * @author Michel Risucci
 	 */
@@ -31,25 +33,48 @@ public class Order extends VolatilePath {
 	/**
 	 * 
 	 */
-	private Order(String path, Direction direction) {
-		this.relativePath = path;
+	private Order(String fullRelativePath, Direction direction) {
+
+		if (fullRelativePath.contains(".")) {
+			int valueDotIndex = fullRelativePath.lastIndexOf('.');
+
+			// Relative path without value field name;
+			this.relativePath = fullRelativePath.substring(0, valueDotIndex);
+			// Relative path parts according to separator REGEX;
+			this.relativePathParts = relativePath.split(SEPARATOR_REGEX);
+			// Value field name (only last word);
+			this.valueFieldName = fullRelativePath.substring(valueDotIndex + 1);
+		} else {
+			this.valueFieldName = fullRelativePath;
+		}
+
+		this.queryParamName = createQueryParamName();
 		this.direction = direction;
 	}
 
 	/**
-	 * @param relativePath
+	 * @param fullRelativePath
 	 * @return
 	 */
-	public static Order ascending(String path) {
-		return new Order(path, Direction.ASC);
+	public static Order ascending(String fullRelativePath) {
+		return new Order(fullRelativePath, Direction.ASC);
 	}
 
 	/**
-	 * @param relativePath
+	 * @param fullRelativePath
 	 * @return
 	 */
-	public static Order descending(String path) {
-		return new Order(path, Direction.DESC);
+	public static Order descending(String fullRelativePath) {
+		return new Order(fullRelativePath, Direction.DESC);
+	}
+
+	/*
+	 * Implementations
+	 */
+
+	@Override
+	protected String getClause() {
+		return getRealPath() + " " + direction.name() + " ";
 	}
 
 	/*
@@ -61,15 +86,6 @@ public class Order extends VolatilePath {
 	 */
 	public Direction getDirection() {
 		return direction;
-	}
-
-	/*
-	 * Implementations
-	 */
-
-	@Override
-	protected String getClause() {
-		return getRealPath() + " " + direction.name() + " ";
 	}
 
 }

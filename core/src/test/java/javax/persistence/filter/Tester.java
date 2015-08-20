@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.filter.core.Filters;
+import javax.persistence.filter.core.Order;
 import javax.persistence.filter.core.Where;
 import javax.persistence.filter.entity.City;
 import javax.persistence.filter.entity.Continent;
@@ -44,15 +45,21 @@ public class Tester {
 	@Test
 	public void test() {
 		System.out.println("Starting tests...");
-		Filter<Continent> filter = Filter.newInstance(Continent.class);
+		Filter<City> filter = Filter.newInstance(City.class);
 		filter.setDistinct(true);
-		filter.add(Where.iLike("countries.cities.name", "south"));
+//		filter.add(
+//				Where.iLike("country.continent.name", "a"),
+//				Where.iLike("name", "ban"));
+		filter.add(
+				Order.ascending("country.continent.name"),
+				Order.ascending("country.continent.name"),
+				Order.ascending("name"));
 
-		PageFilter<Continent> results = Filters.filter(EM, filter);
+		PageFilter<City> results = Filters.filter(EM, filter);
 
 		System.out.println("Results: " + results.getCount());
-		for (Object result : results.getList()) {
-			System.out.println(result);
+		for (City city : results.getList()) {
+			System.out.println(city + " - " + city.getCountry().getContinent().getName());
 		}
 		System.out.println("Ending tests...");
 	}

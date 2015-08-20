@@ -2,10 +2,10 @@ package javax.persistence.filter.core;
 
 import static javax.persistence.filter.core.VolatilePath.ROOT_PREFIX;
 
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -87,17 +87,22 @@ public class Filters {
 
 		Class<E> type = filter.getRootType();
 		String entityName = getEntityName(type);
-		Map<String, String> joinAliases = new HashMap<String, String>();
+		Set<String> aliases = new HashSet<String>();
 
 		StringBuilder b = new StringBuilder() //
 				.append("SELECT ") //
 				.append(filter.isDistinct() ? COUNT_DISTINCT : COUNT) //
 				.append("FROM " + entityName + " " + ROOT_PREFIX + " ");
 
-		List<Where> wheres = filter.getWheres();
+		Set<Where> wheres = filter.getWheres();
 		boolean existWheres = wheres != null && !wheres.isEmpty();
+
+		// Processing junctions
+		String junctions = processJunctions(wheres, null, aliases);
+		b.append(junctions);
+
 		if (existWheres) {
-			buildJpqlWhereParams(b, joinAliases, wheres);
+			buildJpqlWhereParams(b, wheres);
 		}
 
 		String jpql = b.toString();
@@ -122,23 +127,27 @@ public class Filters {
 
 		Class<E> type = filter.getRootType();
 		String entityName = getEntityName(type);
-		Map<String, String> joinAliases = new HashMap<String, String>();
+		Set<String> aliases = new HashSet<String>();
 
 		StringBuilder b = new StringBuilder() //
 				.append("SELECT ") //
 				.append(filter.isDistinct() ? DISTINCT : ROOT_PREFIX + " ") //
 				.append("FROM " + entityName + " " + ROOT_PREFIX + " ");
 
-		List<Where> wheres = filter.getWheres();
+		Set<Where> wheres = filter.getWheres();
 		boolean existWheres = wheres != null && !wheres.isEmpty();
-		if (existWheres) {
-			buildJpqlWhereParams(b, joinAliases, wheres);
-		}
-
-		List<Order> orders = filter.getOrders();
+		Set<Order> orders = filter.getOrders();
 		boolean existOrders = orders != null && !orders.isEmpty();
+
+		// Processing junctions
+		String junctions = processJunctions(wheres, orders, aliases);
+		b.append(junctions);
+
+		if (existWheres) {
+			buildJpqlWhereParams(b, wheres);
+		}
 		if (existOrders) {
-			buildOrderParams(b, joinAliases, orders);
+			buildOrderParams(b, orders);
 		}
 
 		String jpql = b.toString();
@@ -151,22 +160,31 @@ public class Filters {
 		return setQueryFetchRange(query, limit, offset).getResultList();
 	}
 
+	private static <E> String processJunctions(Set<Where> wheres, Set<Order> orders, Set<String> aliases) {
+
+		Set<VolatilePath> paths = new HashSet<VolatilePath>();
+		if (wheres != null) {
+			paths.addAll(wheres);
+		}
+		if (orders != null) {
+			paths.addAll(orders);
+		}
+
+		StringBuilder joins = new StringBuilder();
+		for (Iterator<VolatilePath> i = paths.iterator(); i.hasNext();) {
+			VolatilePath path = i.next();
+			joins.append(path.processAliases(aliases));
+		}
+		return joins.toString();
+	}
+
 	/**
 	 * @param b
-	 * @param aliases
 	 * @param wheres
 	 */
-	private static void buildJpqlWhereParams(StringBuilder b, Map<String, String> aliases, List<Where> wheres) {
-
-		String joins = "";
-		for (ListIterator<Where> i = wheres.listIterator(); i.hasNext();) {
-			Where where = i.next();
-			joins = where.processJoins(aliases);
-		}
-		b.append(joins);
-
+	private static void buildJpqlWhereParams(StringBuilder b, Set<Where> wheres) {
 		b.append("WHERE ");
-		for (ListIterator<Where> i = wheres.listIterator(); i.hasNext();) {
+		for (Iterator<Where> i = wheres.iterator(); i.hasNext();) {
 			Where where = i.next();
 			b.append(where.getClause());
 
@@ -179,12 +197,11 @@ public class Filters {
 
 	/**
 	 * @param b
-	 * @param aliases
 	 * @param orders
 	 */
-	private static void buildOrderParams(StringBuilder b, Map<String, String> aliases, List<Order> orders) {
+	private static void buildOrderParams(StringBuilder b, Set<Order> orders) {
 		b.append("ORDER BY ");
-		for (ListIterator<Order> i = orders.listIterator(); i.hasNext();) {
+		for (Iterator<Order> i = orders.iterator(); i.hasNext();) {
 			Order order = i.next();
 			b.append(order.getClause());
 
@@ -199,9 +216,9 @@ public class Filters {
 	 * @param query
 	 * @param wheres
 	 */
-	private static <E> void setQueryWhereParams(TypedQuery<E> query, List<Where> wheres) {
-		for (Where where : wheres) {
-			where.compileClause(query);
+	private static <E> void setQueryWhereParams(TypedQuery<E> query, Set<Where> wheres) {
+		for (Iterator<Where> i = wheres.iterator(); i.hasNext();) {
+			i.next().compileClause(query);
 		}
 	}
 
