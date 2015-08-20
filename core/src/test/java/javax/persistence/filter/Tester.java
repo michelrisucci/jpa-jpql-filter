@@ -47,11 +47,10 @@ public class Tester {
 		System.out.println("Starting tests...");
 		Filter<City> filter = Filter.newInstance(City.class);
 		filter.setDistinct(true);
-//		filter.add(
-//				Where.iLike("country.continent.name", "a"),
-//				Where.iLike("name", "ban"));
 		filter.add(
-				Order.ascending("country.continent.name"),
+				Where.iLike("country.continent.name", "a"),
+				Where.iLike("name", "ban"));
+		filter.add(
 				Order.ascending("country.continent.name"),
 				Order.ascending("name"));
 

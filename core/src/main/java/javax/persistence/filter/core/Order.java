@@ -5,8 +5,6 @@ package javax.persistence.filter.core;
  */
 public class Order extends VolatilePath {
 
-	public static final String JOIN_NOT_PERFORMED = "Unable to order filter query using path %s because required junctions was not performed.";
-
 	/**
 	 * @author Michel Risucci
 	 */

@@ -96,9 +96,10 @@ public class Filters {
 
 		Set<Where> wheres = filter.getWheres();
 		boolean existWheres = wheres != null && !wheres.isEmpty();
+		Set<Order> orders = filter.getOrders();
 
 		// Processing junctions
-		String junctions = processJunctions(wheres, null, aliases);
+		String junctions = processJunctions(wheres, orders, aliases);
 		b.append(junctions);
 
 		if (existWheres) {
@@ -190,8 +191,8 @@ public class Filters {
 
 			if (i.hasNext()) {
 				b.append("AND");
+				b.append(" ");
 			}
-			b.append(" ");
 		}
 	}
 

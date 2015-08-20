@@ -47,17 +47,18 @@ public abstract class VolatilePath {
 	 * @return
 	 */
 	protected String processAliases(Set<String> aliases) {
+		StringBuilder processed = new StringBuilder();
 		if (relativePath != null && relativePathParts != null) {
 			String prefix = ROOT_PREFIX + StringUtils.join(relativePathParts);
+			this.setRealPath(prefix + SEPARATOR + valueFieldName);
 			if (!aliases.contains(prefix)) {
 				StringBuilder joins = new StringBuilder();
-				return processJoins(aliases, joins, -1, null);
+				processed.append(processJoins(aliases, joins, -1, null));
 			}
-			this.setRealPath(prefix + SEPARATOR + valueFieldName);
 		} else {
 			this.setRealPath(ROOT_PREFIX + SEPARATOR + valueFieldName);
 		}
-		return "";
+		return processed.toString();
 	}
 
 	/**
