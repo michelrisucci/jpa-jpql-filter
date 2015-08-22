@@ -6,9 +6,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.github.michelrisucci</groupId>
+		<groupId>com.risucci</groupId>
 		<artifactId>jpa-jpql-filter</artifactId>
-		<version>1.6.3.GA-SNAPSHOT</version>
+		<version>1.7.0.GA</version>
 	</parent>
 
 	<artifactId>jpa-jpql-filter-jsf</artifactId>

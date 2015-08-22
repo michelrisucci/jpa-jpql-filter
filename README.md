@@ -21,9 +21,9 @@ Add this project snapshot release as a dependency.
 
 ```xml
 <dependency>
-  <groupId>com.github.michelrisucci</groupId>
+  <groupId>com.risucci</groupId>
   <artifactId>jpa-jpql-filter-core</artifactId>
-  <version>1.5.0.GA-SNAPSHOT</version>
+  <version>1.7.0.GA</version>
 </dependency>
 ```
 
@@ -31,8 +31,8 @@ If you use JSF as view layer, use JSF module with a custom FilterBean ready to u
 
 ```xml
 <dependency>
-  <groupId>com.github.michelrisucci</groupId>
+  <groupId>com.risucci</groupId>
   <artifactId>jpa-jpql-filter-jsf</artifactId>
-  <version>1.5.0.GA-SNAPSHOT</version>
+  <version>1.7.0.GA</version>
 </dependency>
 ```
