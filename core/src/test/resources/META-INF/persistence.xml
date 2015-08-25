@@ -9,7 +9,6 @@
 		name="default"
 		transaction-type="RESOURCE_LOCAL"
 	>
-		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 
 		<properties>
@@ -25,13 +24,6 @@
 			<property
 				name="javax.persistence.jdbc.password"
 				value="postgres" />
-
-			<property
-				name="eclipselink.target-database"
-				value="org.eclipse.persistence.platform.database.PostgreSQLPlatform" />
-			<property
-				name="eclipselink.ddl-generation"
-				value="none" />
 		</properties>
 	</persistence-unit>
 </persistence>

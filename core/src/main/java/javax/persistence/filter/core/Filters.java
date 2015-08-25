@@ -27,9 +27,9 @@ public class Filters {
 	private static final String LISTING = "Filtering entity %s, found %d entries.";
 	private static final String COUNTING = "Counting entity %s, found %d entries.";
 
-	private static final String DISTINCT = "DISTINCT(" + ROOT_PREFIX + ") ";
-	private static final String COUNT = "COUNT(" + ROOT_PREFIX + ") ";
-	private static final String COUNT_DISTINCT = "COUNT(DISTINCT(" + ROOT_PREFIX + ")) ";
+	private static final String DISTINCT = "DISTINCT " + ROOT_PREFIX + " ";
+	private static final String COUNT = "COUNT( " + ROOT_PREFIX + " ) ";
+	private static final String COUNT_DISTINCT = "COUNT( DISTINCT " + ROOT_PREFIX + " ) ";
 
 	/**
 	 * Returns JPA entity name.
@@ -185,6 +185,7 @@ public class Filters {
 	 */
 	private static void buildJpqlWhereParams(StringBuilder b, Set<Where> wheres) {
 		b.append("WHERE ");
+
 		for (Iterator<Where> i = wheres.iterator(); i.hasNext();) {
 			Where where = i.next();
 			b.append(where.getClause());

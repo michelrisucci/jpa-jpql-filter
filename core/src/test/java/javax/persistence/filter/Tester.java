@@ -1,7 +1,5 @@
 package javax.persistence.filter;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -9,11 +7,8 @@ import javax.persistence.filter.core.Filters;
 import javax.persistence.filter.core.Order;
 import javax.persistence.filter.core.Where;
 import javax.persistence.filter.entity.City;
-import javax.persistence.filter.entity.Continent;
-import javax.persistence.filter.entity.Country;
 
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -34,6 +29,7 @@ public class Tester {
 	public static void beforeClass() {
 		EMF = Persistence.createEntityManagerFactory("default");
 		EM = EMF.createEntityManager();
+		EM.createQuery("SELECT COUNT(x) FROM Country x").getResultList();
 	}
 
 	@AfterClass
@@ -44,67 +40,20 @@ public class Tester {
 
 	@Test
 	public void test() {
+		long start = System.currentTimeMillis();
 		System.out.println("Starting tests...");
 		Filter<City> filter = Filter.newInstance(City.class);
-		filter.setDistinct(true);
-		filter.add(
-				Where.iLike("country.continent.name", "a"),
-				Where.iLike("name", "ban"));
-		filter.add(
-				Order.ascending("country.continent.name"),
-				Order.ascending("name"));
+		filter.add(Where.iLike("country.continent.name", "a"), Where.iLike("name", "ban"));
+		filter.add(Order.ascending("country.continent.name"), Order.ascending("name"));
 
 		PageFilter<City> results = Filters.filter(EM, filter);
+		results.getList().size();
 
 		System.out.println("Results: " + results.getCount());
 		for (City city : results.getList()) {
 			System.out.println(city + " - " + city.getCountry().getContinent().getName());
 		}
-		System.out.println("Ending tests...");
+		System.out.println("Ending tests...  " + (System.currentTimeMillis() - start) + " milliseconds.");
 	}
 
-	public void testCities() {
-
-		final String countryCode = "BRA";
-
-		String jpql = new StringBuilder() //
-				.append("SELECT city ") //
-				.append("FROM " + Country.class.getSimpleName() + " country ") //
-				.append("  INNER JOIN country.cities city ") //
-				.append("WHERE country.code = :country ") //
-				.append("ORDER BY city.name ASC ") //
-				.toString();
-
-		List<City> cities = EM //
-				.createQuery(jpql, City.class) //
-				.setParameter("country", countryCode) //
-				.getResultList();
-
-		for (City c : cities) {
-			System.out.println(c);
-			Assert.assertEquals(c.getCountry().getCode(), countryCode);
-		}
-	}
-
-	public void testCountries() {
-		final String continent = SOUTH_AMERICA;
-
-		String jpql = new StringBuilder() //
-				.append("SELECT c ") //
-				.append("FROM " + Continent.class.getSimpleName() + " x ") //
-				.append("  INNER JOIN x.countries c ") //
-				.append("WHERE x.name = :name ") //
-				.append("ORDER BY c.name ASC ") //
-				.toString();
-
-		List<Country> countries = EM //
-				.createQuery(jpql, Country.class) //
-				.setParameter("name", continent) //
-				.getResultList();
-
-		for (Country c : countries) {
-			System.out.println(c);
-			Assert.assertEquals(c.getContinent().getName(), continent);
-		}
-	}
 }

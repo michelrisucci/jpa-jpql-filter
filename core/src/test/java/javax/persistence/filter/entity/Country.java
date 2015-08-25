@@ -16,8 +16,8 @@ public class Country {
 	private String code;
 	private String name;
 	private Continent continent;
-	private long population;
-	private double lifeExpectancy;
+	private Long population;
+	private Double lifeExpectancy;
 	private List<City> cities;
 
 	@Id
@@ -47,19 +47,19 @@ public class Country {
 		this.continent = continent;
 	}
 
-	public long getPopulation() {
+	public Long getPopulation() {
 		return population;
 	}
-
-	public void setPopulation(long population) {
+	
+	public void setPopulation(Long population) {
 		this.population = population;
 	}
 
-	public double getLifeExpectancy() {
+	public Double getLifeExpectancy() {
 		return lifeExpectancy;
 	}
-
-	public void setLifeExpectancy(double lifeExpectancy) {
+	
+	public void setLifeExpectancy(Double lifeExpectancy) {
 		this.lifeExpectancy = lifeExpectancy;
 	}
 
