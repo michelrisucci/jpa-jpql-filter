@@ -30,6 +30,8 @@ public class Tester {
 		EMF = Persistence.createEntityManagerFactory("default");
 		EM = EMF.createEntityManager();
 		EM.createQuery("SELECT COUNT(x) FROM Country x").getResultList();
+		EM.createQuery("SELECT COUNT(x) FROM City x").getResultList();
+		EM.createQuery("SELECT COUNT(x) FROM Continent x").getResultList();
 	}
 
 	@AfterClass
@@ -46,8 +48,9 @@ public class Tester {
 		filter.add(Where.iLike("country.continent.name", "a"), Where.iLike("name", "ban"));
 		filter.add(Order.ascending("country.continent.name"), Order.ascending("name"));
 
+		long nano = System.nanoTime();
 		PageFilter<City> results = Filters.filter(EM, filter);
-		results.getList().size();
+		System.out.println(">>> NANO TIME: " + (System.nanoTime() - nano));
 
 		System.out.println("Results: " + results.getCount());
 		for (City city : results.getList()) {

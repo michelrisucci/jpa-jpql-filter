@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.risucci</groupId>
 		<artifactId>jpa-jpql-filter</artifactId>
-		<version>1.7.0.GA</version>
+		<version>1.7.1.GA</version>
 	</parent>
 
 	<artifactId>jpa-jpql-filter-core</artifactId>
@@ -35,9 +35,15 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.eclipse.persistence</groupId> -->
+		<!-- <artifactId>eclipselink</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
 		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>eclipselink</artifactId>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>5.0.0.Final</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

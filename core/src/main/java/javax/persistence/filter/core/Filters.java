@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.filter.Filter;
@@ -18,6 +17,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * JPA JPQL utility class that performs JPQL queries logic based on
+ * {@link Filter} instance.
+ * 
  * @author Michel Risucci
  */
 public class Filters {
@@ -32,23 +34,13 @@ public class Filters {
 	private static final String COUNT_DISTINCT = "COUNT( DISTINCT " + ROOT_PREFIX + " ) ";
 
 	/**
-	 * Returns JPA entity name.
+	 * JPA JPQL Filter main method that performs the query logic based on
+	 * {@link Filter} instance, ignoring the fetch range.
 	 * 
-	 * @param type
-	 * @return
-	 */
-	private static <E> String getEntityName(Class<E> type) {
-		Entity entity = type.getAnnotation(Entity.class);
-		if (entity != null && !entity.name().isEmpty()) {
-			return entity.name();
-		} else {
-			return type.getSimpleName();
-		}
-	}
-
-	/**
 	 * @param em
+	 *            {@link EntityManager}
 	 * @param filter
+	 *            {@link Filter} instance
 	 * @return
 	 */
 	public static <E> PageFilter<E> filter(EntityManager em, Filter<E> filter) {
@@ -56,111 +48,160 @@ public class Filters {
 	}
 
 	/**
+	 * JPA JPQL Filter main method that performs the query logic based on
+	 * {@link Filter} instance.
+	 * 
 	 * @param em
+	 *            {@link EntityManager}
 	 * @param filter
+	 *            {@link Filter} instance
 	 * @param offset
+	 *            number of rows to skip before beginning to fetch
 	 * @param limit
-	 * @return
+	 *            number of rows to fetch starting from the offset
+	 * @return the selection according to the {@link Filter} instance
 	 * @throws OffsetOutOfRangeException
+	 *             if the offset is greater than the count
 	 */
 	public static <E> PageFilter<E> filter(EntityManager em, Filter<E> filter, int offset, int limit)
 			throws OffsetOutOfRangeException {
 
-		Class<E> type = filter.getRootType();
-
+		// Counting the number of results available for this filter instance.
 		long count = count(em, filter);
-		log.info(String.format(COUNTING, getEntityName(type), count));
-		checkResultOutOfRange(count, offset);
 
+		// Checking if offset is out of range, according to the count.
+		if (offset > count) {
+			throw new OffsetOutOfRangeException(count, offset);
+		}
+
+		// Listing the results available for this filter model.
 		List<E> list = list(em, filter, offset, limit);
-		log.info(String.format(LISTING, getEntityName(type), list.size()));
-
 		return new PageFilter<E>(list, limit, count);
 	}
 
 	/**
+	 * Filter method that performs count query based on {@link Filter} instance.
+	 * 
 	 * @param em
+	 *            {@link EntityManager}
 	 * @param filter
-	 * @return
+	 *            {@link Filter} instance
+	 * @return number of rows available for this {@link Filter} instance
 	 */
 	public static <E> long count(EntityManager em, Filter<E> filter) {
 
-		Class<E> type = filter.getRootType();
-		String entityName = getEntityName(type);
-		Set<String> aliases = new HashSet<String>();
-
+		// Starting query.
+		String name = filter.getEntityName();
 		StringBuilder b = new StringBuilder() //
 				.append("SELECT ") //
 				.append(filter.isDistinct() ? COUNT_DISTINCT : COUNT) //
-				.append("FROM " + entityName + " " + ROOT_PREFIX + " ");
+				.append("FROM " + name + " " + ROOT_PREFIX + " ");
 
+		// Getting where and order clauses for processing.
 		Set<Where> wheres = filter.getWheres();
-		boolean existWheres = wheres != null && !wheres.isEmpty();
 		Set<Order> orders = filter.getOrders();
 
-		// Processing junctions
+		// Processing junctions according to clauses.
+		Set<String> aliases = new HashSet<String>();
 		String junctions = processJunctions(wheres, orders, aliases);
 		b.append(junctions);
 
+		// Processing where clauses.
+		boolean existWheres = wheres != null && !wheres.isEmpty();
 		if (existWheres) {
 			buildJpqlWhereParams(b, wheres);
 		}
 
+		// Generating and logging final JPQL query.
 		String jpql = b.toString();
 		log.info(jpql);
 
+		// Creating JPA query.
 		TypedQuery<Number> query = em.createQuery(jpql, Number.class);
+		// Adding query where parameters.
 		if (existWheres) {
 			setQueryWhereParams(query, wheres);
 		}
 
-		return query.getSingleResult().longValue();
+		// Fetching and logging count result.
+		long count = query.getSingleResult().longValue();
+		log.info(String.format(COUNTING, name, count));
+		return count;
 	}
 
 	/**
+	 * Filter method that performs list query based on {@link Filter} instance.
+	 * 
 	 * @param em
+	 *            {@link EntityManager}
 	 * @param filter
+	 *            {@link Filter} instance
 	 * @param offset
+	 *            number of rows to skip before beginning to fetch
 	 * @param limit
-	 * @return
+	 *            number of rows to fetch starting from the offset
+	 * @return list of fetched values for this {@link Filter} instance
 	 */
 	public static <E> List<E> list(EntityManager em, Filter<E> filter, int offset, int limit) {
 
-		Class<E> type = filter.getRootType();
-		String entityName = getEntityName(type);
-		Set<String> aliases = new HashSet<String>();
-
+		// Starting query.
+		String name = filter.getEntityName();
 		StringBuilder b = new StringBuilder() //
 				.append("SELECT ") //
 				.append(filter.isDistinct() ? DISTINCT : ROOT_PREFIX + " ") //
-				.append("FROM " + entityName + " " + ROOT_PREFIX + " ");
+				.append("FROM " + name + " " + ROOT_PREFIX + " ");
 
+		// Getting where and order clauses for processing.
 		Set<Where> wheres = filter.getWheres();
-		boolean existWheres = wheres != null && !wheres.isEmpty();
 		Set<Order> orders = filter.getOrders();
-		boolean existOrders = orders != null && !orders.isEmpty();
 
-		// Processing junctions
+		// Processing junctions according to clauses.
+		Set<String> aliases = new HashSet<String>();
 		String junctions = processJunctions(wheres, orders, aliases);
 		b.append(junctions);
 
+		// Processing where clauses.
+		boolean existWheres = wheres != null && !wheres.isEmpty();
 		if (existWheres) {
 			buildJpqlWhereParams(b, wheres);
 		}
+
+		// Processing order clauses.
+		boolean existOrders = orders != null && !orders.isEmpty();
 		if (existOrders) {
-			buildOrderParams(b, orders);
+			buildJpqlOrdering(b, orders);
 		}
 
+		// Generating and logging final JPQL query.
 		String jpql = b.toString();
 		log.info(jpql);
 
+		// Creating JPA query.
 		TypedQuery<E> query = em.createQuery(jpql, filter.getRootType());
+		// Adding query where parameters.
 		if (existWheres) {
 			setQueryWhereParams(query, wheres);
 		}
-		return setQueryFetchRange(query, limit, offset).getResultList();
+
+		// Fetching and logging list result.
+		setQueryFetchRange(query, limit, offset);
+		List<E> list = query.getResultList();
+		log.info(String.format(LISTING, name, list.size()));
+		return list;
 	}
 
+	/**
+	 * Processes junctions (joins) for the {@link Where} and {@link Order}
+	 * clauses, required on this {@link Filter} instance.
+	 * 
+	 * @param wheres
+	 *            set of {@link Where} clauses
+	 * @param orders
+	 *            set of {@link Order} clauses
+	 * @param aliases
+	 *            set of processed aliases to compare if already exists
+	 * @return portion of JPQL query representing the junctions
+	 */
 	private static <E> String processJunctions(Set<Where> wheres, Set<Order> orders, Set<String> aliases) {
 
 		Set<VolatilePath> paths = new HashSet<VolatilePath>();
@@ -180,8 +221,13 @@ public class Filters {
 	}
 
 	/**
+	 * Builds JPQL where clauses parameters to be filled with values on
+	 * {@link Filters#setQueryWhereParams(TypedQuery, Set)}.
+	 * 
 	 * @param b
+	 *            JPQL {@link StringBuilder}
 	 * @param wheres
+	 *            set of {@link Where} clauses
 	 */
 	private static void buildJpqlWhereParams(StringBuilder b, Set<Where> wheres) {
 		b.append("WHERE ");
@@ -198,10 +244,14 @@ public class Filters {
 	}
 
 	/**
+	 * Builds JPQL ordering clauses.
+	 * 
 	 * @param b
+	 *            JPQL {@link StringBuilder}
 	 * @param orders
+	 *            set of {@link Order} clauses
 	 */
-	private static void buildOrderParams(StringBuilder b, Set<Order> orders) {
+	private static void buildJpqlOrdering(StringBuilder b, Set<Order> orders) {
 		b.append("ORDER BY ");
 		for (Iterator<Order> i = orders.iterator(); i.hasNext();) {
 			Order order = i.next();
@@ -215,8 +265,12 @@ public class Filters {
 	}
 
 	/**
+	 * Sets required values to all JPQL {@link Where} clause fields.
+	 * 
 	 * @param query
+	 *            JPA query
 	 * @param wheres
+	 *            set of {@link Where} clauses
 	 */
 	private static <E> void setQueryWhereParams(TypedQuery<E> query, Set<Where> wheres) {
 		for (Iterator<Where> i = wheres.iterator(); i.hasNext();) {
@@ -225,10 +279,15 @@ public class Filters {
 	}
 
 	/**
+	 * Sets the list query fetch range according to limit and offset.
+	 * 
 	 * @param query
+	 *            JPA query
 	 * @param limit
+	 *            number of rows to fetch starting from the offset
 	 * @param offset
-	 * @return
+	 *            number of rows to skip before beginning to fetch
+	 * @return the same JPA query with the limit and offset values set
 	 */
 	private static <E> TypedQuery<E> setQueryFetchRange(TypedQuery<E> query, int limit, int offset) {
 		// Fetching without limit
@@ -238,16 +297,6 @@ public class Filters {
 		// Limit fetching
 		else {
 			return query.setFirstResult(offset).setMaxResults(limit);
-		}
-	}
-
-	/**
-	 * @param count
-	 * @param offset
-	 */
-	private static void checkResultOutOfRange(long count, int offset) {
-		if ((count == 0 && offset != 0) || (count > 0 && offset > count)) {
-			throw new OffsetOutOfRangeException(count, offset);
 		}
 	}
 

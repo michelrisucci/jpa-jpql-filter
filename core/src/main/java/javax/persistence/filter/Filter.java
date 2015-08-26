@@ -1,9 +1,12 @@
 package javax.persistence.filter;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Entity;
 import javax.persistence.filter.core.Order;
 import javax.persistence.filter.core.Where;
 
@@ -14,7 +17,10 @@ import javax.persistence.filter.core.Where;
  */
 public class Filter<T> {
 
+	private static final Map<Class<?>, String> ENTITY_NAME_CACHE_MAP = new HashMap<Class<?>, String>();
+
 	private Class<T> rootType;
+	private String entityName;
 	private boolean distinct;
 	private Set<Where> wheres;
 	private Set<Order> orders;
@@ -93,8 +99,7 @@ public class Filter<T> {
 	 * @param wheres
 	 * @param orders
 	 */
-	public static <T> Filter<T> newInstance(Class<T> rootType, Where[] wheres,
-			Order[] orders) {
+	public static <T> Filter<T> newInstance(Class<T> rootType, Where[] wheres, Order[] orders) {
 		return new Filter<T>(rootType, wheres, orders);
 	}
 
@@ -106,27 +111,29 @@ public class Filter<T> {
 	}
 
 	/**
-	 * @param wheres
-	 * @return
+	 * Process entity type and returns its JPA name. By performance issues, it
+	 * checks if an internal cache already contains the entity name.
+	 * 
+	 * @return JPA entity name
 	 */
-	public Filter<T> add(Where... wheres) {
-		if (this.wheres == null) {
-			this.wheres = new LinkedHashSet<Where>();
-		}
-		this.wheres.addAll(Arrays.asList(wheres));
-		return this;
-	}
+	public String getEntityName() {
 
-	/**
-	 * @param orders
-	 * @return
-	 */
-	public Filter<T> add(Order... orders) {
-		if (this.orders == null) {
-			this.orders = new LinkedHashSet<Order>();
+		if (entityName == null) {
+			// Checking internal cache for entity name.
+			entityName = ENTITY_NAME_CACHE_MAP.get(rootType);
+
+			// Otherwise, process entity and fill internal cache.
+			if (entityName == null) {
+				Entity entity = rootType.getAnnotation(Entity.class);
+				if (entity != null && !entity.name().isEmpty()) {
+					entityName = entity.name();
+				} else {
+					entityName = rootType.getSimpleName();
+				}
+				ENTITY_NAME_CACHE_MAP.put(rootType, entityName);
+			}
 		}
-		this.orders.addAll(Arrays.asList(orders));
-		return this;
+		return entityName;
 	}
 
 	/**
@@ -155,6 +162,30 @@ public class Filter<T> {
 	 */
 	public Set<Order> getOrders() {
 		return orders;
+	}
+
+	/**
+	 * @param wheres
+	 * @return
+	 */
+	public Filter<T> add(Where... wheres) {
+		if (this.wheres == null) {
+			this.wheres = new LinkedHashSet<Where>();
+		}
+		this.wheres.addAll(Arrays.asList(wheres));
+		return this;
+	}
+
+	/**
+	 * @param orders
+	 * @return
+	 */
+	public Filter<T> add(Order... orders) {
+		if (this.orders == null) {
+			this.orders = new LinkedHashSet<Order>();
+		}
+		this.orders.addAll(Arrays.asList(orders));
+		return this;
 	}
 
 }
