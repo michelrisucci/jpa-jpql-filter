@@ -11,6 +11,8 @@ import javax.persistence.filter.core.Order;
 import javax.persistence.filter.core.Where;
 
 /**
+ * Filter model that holds query parameters.
+ * 
  * @author Michel Risucci
  * 
  * @param <T>

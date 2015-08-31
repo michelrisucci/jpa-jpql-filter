@@ -79,7 +79,9 @@ public abstract class VolatilePath {
 			aliases.add(last);
 			aliases.add(lastAlias);
 
-			joins.append("INNER JOIN ") //
+			// TODO enable users to change join type.
+			joins.append(Join.INNER.getValue()) //
+					.append(" ") //
 					.append(last) //
 					.append(" ") //
 					.append(lastAlias) //
