@@ -15,6 +15,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>${project.parent.artifactId}-core</artifactId>
 			<version>${project.parent.version}</version>
