@@ -6,7 +6,7 @@ package javax.persistence.filter.core.conditional.exact;
 public class GreaterThan extends Exact {
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param value
 	 */
 	public GreaterThan(String path, Object value) {

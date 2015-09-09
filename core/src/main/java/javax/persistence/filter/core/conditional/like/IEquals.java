@@ -6,7 +6,7 @@ package javax.persistence.filter.core.conditional.like;
 public class IEquals extends ILike {
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param value
 	 */
 	public IEquals(String path, String value) {

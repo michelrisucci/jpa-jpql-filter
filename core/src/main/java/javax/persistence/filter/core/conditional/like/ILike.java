@@ -8,7 +8,7 @@ public class ILike extends Like {
 	/**
 	 * Protected Constructor: needed for inherited classes.
 	 * 
-	 * @param relativePath
+	 * @param path
 	 * @param percentPosition
 	 * @param value
 	 */
@@ -17,7 +17,7 @@ public class ILike extends Like {
 	}
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param value
 	 */
 	public ILike(String path, String value) {

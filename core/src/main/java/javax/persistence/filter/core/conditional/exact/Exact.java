@@ -11,7 +11,7 @@ public abstract class Exact extends Where {
 	private Operation operation;
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param operation
 	 * @param value
 	 */

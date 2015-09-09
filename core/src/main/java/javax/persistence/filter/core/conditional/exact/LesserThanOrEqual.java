@@ -6,7 +6,7 @@ package javax.persistence.filter.core.conditional.exact;
 public class LesserThanOrEqual extends Exact {
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param value
 	 */
 	public LesserThanOrEqual(String path, Object value) {

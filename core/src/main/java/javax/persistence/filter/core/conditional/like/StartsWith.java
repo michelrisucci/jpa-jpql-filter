@@ -6,7 +6,7 @@ package javax.persistence.filter.core.conditional.like;
 public class StartsWith extends Like {
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param value
 	 */
 	public StartsWith(String path, String value) {

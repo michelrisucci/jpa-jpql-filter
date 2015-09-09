@@ -6,7 +6,7 @@ package javax.persistence.filter.core.conditional.exact;
 public class Equal extends Exact {
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param value
 	 */
 	public Equal(String path, Object value) {

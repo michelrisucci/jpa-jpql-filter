@@ -11,7 +11,7 @@ public class Like extends Where {
 	private PercentPosition percentPosition;
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param percentPosition
 	 * @param value
 	 */
@@ -21,7 +21,7 @@ public class Like extends Where {
 	}
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param value
 	 */
 	public Like(String path, String value) {
@@ -47,7 +47,6 @@ public class Like extends Where {
 	}
 
 	/**
-	 * @param value
 	 * @return
 	 */
 	protected String generateParamValue() {

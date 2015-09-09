@@ -6,7 +6,7 @@ package javax.persistence.filter.core.conditional;
 public class NotIn extends In {
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param values
 	 */
 	public NotIn(String path, Object[] values) {

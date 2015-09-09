@@ -12,7 +12,7 @@ public class Between extends Where {
 	private static final String GREATER_SUFFIX = "_GREATER";
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param initialValue
 	 * @param finalValue
 	 */

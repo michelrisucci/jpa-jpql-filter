@@ -1,7 +1,7 @@
 package javax.persistence.filter.repository.impl;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.filter.Filter;
 import javax.persistence.filter.Filterable;
 import javax.persistence.filter.PageFilter;
@@ -10,7 +10,7 @@ import javax.persistence.filter.repository.Repository;
 
 public class FilterRepositoryImpl implements Repository, Filterable {
 
-	@PersistenceContext
+	@Inject
 	protected EntityManager entityManager;
 
 	@Override

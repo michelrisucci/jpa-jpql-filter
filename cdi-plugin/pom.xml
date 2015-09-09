@@ -11,7 +11,7 @@
 		<version>1.7.3.GA</version>
 	</parent>
 
-	<artifactId>jpa-jpql-filter-jsf</artifactId>
+	<artifactId>jpa-jpql-filter-cdi-plugin</artifactId>
 
 	<dependencies>
 		<dependency>

@@ -12,7 +12,7 @@ import javax.persistence.filter.core.Where;
 public class In extends Where {
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param values
 	 */
 	public In(String path, Object[] values) {
