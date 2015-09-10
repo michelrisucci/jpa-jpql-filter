@@ -34,6 +34,32 @@ public class Filters {
 	private static final String COUNT_DISTINCT = "COUNT( DISTINCT " + ROOT_PREFIX + " ) ";
 
 	/**
+	 * Lists all entries of an entity.
+	 * 
+	 * @param em
+	 *            {@link EntityManager}
+	 * @param type
+	 *            Java Entity Class
+	 * @return
+	 */
+	public static <E> List<E> listAll(EntityManager em, Class<E> type) {
+		return list(em, Filter.newInstance(type), -1, -1);
+	}
+
+	/**
+	 * Counts all entries of an entity.
+	 * 
+	 * @param em
+	 *            {@link EntityManager}
+	 * @param type
+	 *            Java Entity Class
+	 * @return
+	 */
+	public static <E> long countAll(EntityManager em, Class<E> type) {
+		return count(em, Filter.newInstance(type));
+	}
+
+	/**
 	 * JPA JPQL Filter main method that performs the query logic based on
 	 * {@link Filter} instance, ignoring the fetch range.
 	 * 
