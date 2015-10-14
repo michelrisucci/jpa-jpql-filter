@@ -1,5 +1,7 @@
 package javax.persistence.entity;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,13 +9,19 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 /**
- * Abstract definition of an entity that uses sequential ID.
+ * Abstract definition of an entity that uses sequential ID.</br>
+ * <b>{@code @SequenceGenerator(name = "identity-sequence")}</b>. Changing all
+ * other parameters is allowed.
  * 
  * @author Michel Risucci
  */
 @MappedSuperclass
+@Access(AccessType.FIELD)
 public abstract class Identity<I extends Number> {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "identity-sequence")
+	@Column(name = "id")
 	private I id;
 
 	/**
@@ -26,9 +34,6 @@ public abstract class Identity<I extends Number> {
 	/**
 	 * @return sequential ID for this entity
 	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "identity-sequence")
-	@Column(name = "id")
 	public I getId() {
 		return id;
 	}

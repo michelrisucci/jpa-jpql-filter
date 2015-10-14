@@ -1,17 +1,25 @@
 package javax.persistence.entity;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 /**
- * Abstract definition of an entity that must be versioned.
+ * Abstract definition of an entity that must be versioned.</br>
+ * Important: annotate your class with the default generator
+ * <b>{@code @SequenceGenerator(name = "identity-sequence")}</b>. Changing all
+ * other parameters is allowed.
  * 
  * @author Michel Risucci
  */
 @MappedSuperclass
+@Access(AccessType.FIELD)
 public abstract class VersionedIdentity<I extends Number> extends Identity<I> {
 
+	@Version
+	@Column(name = "version")
 	private Long version;
 
 	/**
@@ -25,8 +33,6 @@ public abstract class VersionedIdentity<I extends Number> extends Identity<I> {
 	 * @return last known modification for this entity. For each update of this
 	 *         entity, this value is automatically incremented
 	 */
-	@Version
-	@Column(name = "version")
 	public Long getVersion() {
 		return version;
 	}
