@@ -8,6 +8,7 @@ import java.util.List;
  * @author Michel Risucci
  *
  * @param <E>
+ *            entity Java Class type
  */
 public class PageFilter<E> {
 
@@ -17,9 +18,14 @@ public class PageFilter<E> {
 	private int numberOfPages;
 
 	/**
+	 * Mandatory constructor.
+	 * 
 	 * @param list
+	 *            the fetched objects itself
 	 * @param pageSize
+	 *            the pagination portion
 	 * @param count
+	 *            number of results for the defined {@link Filter}
 	 */
 	public PageFilter(List<E> list, int pageSize, long count) {
 		super();
@@ -30,16 +36,22 @@ public class PageFilter<E> {
 	}
 
 	/**
-	 * @return
+	 * Calculates the number of pages, according to count and page size.
+	 * 
+	 * @return number of pages according to count and page size
 	 */
 	private int calcNumberOfPages() {
 		return calcNumberOfPages(pageSize, count);
 	}
 
 	/**
+	 * Calculates the number of pages, according to count and page size.
+	 * 
 	 * @param pageSize
+	 *            pagination size
 	 * @param count
-	 * @return
+	 *            fetch count from database
+	 * @return number of pages according to count and page size
 	 */
 	private static int calcNumberOfPages(int pageSize, long count) {
 		if (count == 0 || pageSize == 0) {
@@ -59,28 +71,28 @@ public class PageFilter<E> {
 	}
 
 	/**
-	 * @return
+	 * @return wrapped list of fetched entities
 	 */
 	public List<E> getList() {
 		return list;
 	}
 
 	/**
-	 * @return
+	 * @return wrapped count of entities
 	 */
 	public long getCount() {
 		return count;
 	}
 
 	/**
-	 * @return
+	 * @return wrapped page size
 	 */
 	public int getPageSize() {
 		return pageSize;
 	}
 
 	/**
-	 * @return
+	 * @return wrapped number of pages according to count and page size
 	 */
 	public int getNumberOfPages() {
 		return numberOfPages;

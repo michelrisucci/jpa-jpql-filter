@@ -16,6 +16,7 @@ import javax.persistence.filter.core.Where;
  * @author Michel Risucci
  * 
  * @param <T>
+ *            dynamic entity Java type
  */
 public class Filter<T> {
 
@@ -72,6 +73,12 @@ public class Filter<T> {
 
 	/**
 	 * Empty Filter constructor that initializes minimal filter functions.
+	 * 
+	 * @param <T>
+	 *            dynamic entity Java type
+	 * @param rootType
+	 *            root entity Java Class type
+	 * @return an empty {@link Filter} definition
 	 */
 	public static <T> Filter<T> newInstance(Class<T> rootType) {
 		return new Filter<T>(rootType);
@@ -80,7 +87,14 @@ public class Filter<T> {
 	/**
 	 * Filter constructor automatically adds Wheres
 	 * 
+	 * @param <T>
+	 *            dynamic entity Java type
+	 * @param rootType
+	 *            root entity Java Class type
 	 * @param wheres
+	 *            optional array of {@link Where} conditionals
+	 * @return a {@link Filter} definition with the defined {@link Where}
+	 *         conditionals
 	 */
 	public static <T> Filter<T> newInstance(Class<T> rootType, Where... wheres) {
 		return new Filter<T>(rootType, wheres);
@@ -89,7 +103,14 @@ public class Filter<T> {
 	/**
 	 * Filter constructor automatically adds Orders
 	 * 
+	 * @param <T>
+	 *            dynamic entity Java type
+	 * @param rootType
+	 *            root entity Java Class type
 	 * @param orders
+	 *            optional array of {@link Order} conditionals
+	 * @return a {@link Filter} definition with the defined {@link Order}
+	 *         conditionals
 	 */
 	public static <T> Filter<T> newInstance(Class<T> rootType, Order... orders) {
 		return new Filter<T>(rootType, orders);
@@ -98,15 +119,23 @@ public class Filter<T> {
 	/**
 	 * Filter constructor automatically adds Wheres and Orders.
 	 * 
+	 * @param <T>
+	 *            dynamic entity Java type
+	 * @param rootType
+	 *            root entity Java Class type
 	 * @param wheres
+	 *            optional array of {@link Where} conditionals
 	 * @param orders
+	 *            optional array of {@link Order} conditionals
+	 * @return a {@link Filter} definition with the defined {@link Where} and
+	 *         {@link Order} conditionals
 	 */
 	public static <T> Filter<T> newInstance(Class<T> rootType, Where[] wheres, Order[] orders) {
 		return new Filter<T>(rootType, wheres, orders);
 	}
 
 	/**
-	 * @return
+	 * @return root entity Java Class type
 	 */
 	public Class<T> getRootType() {
 		return rootType;
@@ -139,7 +168,8 @@ public class Filter<T> {
 	}
 
 	/**
-	 * @return
+	 * @return if this {@link Filter} model processes distinction (adds DISTINCT
+	 *         after "SELECT" clause)
 	 */
 	public boolean isDistinct() {
 		return distinct;
@@ -147,28 +177,33 @@ public class Filter<T> {
 
 	/**
 	 * @param distinct
+	 *            sets if this {@link Filter} model processes distinction (adds
+	 *            DISTINCT after "SELECT" clause)
 	 */
 	public void setDistinct(boolean distinct) {
 		this.distinct = distinct;
 	}
 
 	/**
-	 * @return
+	 * @return {@link Where} conditionals
 	 */
 	public Set<Where> getWheres() {
 		return wheres;
 	}
 
 	/**
-	 * @return
+	 * @return {@link Order} conditionals
 	 */
 	public Set<Order> getOrders() {
 		return orders;
 	}
 
 	/**
+	 * Adds {@link Where} conditionals to this {@link Filter} model
+	 * 
 	 * @param wheres
-	 * @return
+	 *            {@link Where} conditionals
+	 * @return this {@link Filter}
 	 */
 	public Filter<T> add(Where... wheres) {
 		if (this.wheres == null) {
@@ -179,8 +214,11 @@ public class Filter<T> {
 	}
 
 	/**
+	 * Adds {@link Order} conditionals to this {@link Filter} model
+	 * 
 	 * @param orders
-	 * @return
+	 *            {@link Order} conditionals
+	 * @return this {@link Filter}
 	 */
 	public Filter<T> add(Order... orders) {
 		if (this.orders == null) {

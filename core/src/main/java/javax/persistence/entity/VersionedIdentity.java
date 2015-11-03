@@ -7,7 +7,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 /**
- * Abstract definition of an entity that must be versioned.</br>
+ * Abstract definition of an entity that must be versioned.<br>
  * Important: annotate your class with the default generator
  * <b>{@code @SequenceGenerator(name = "identity-sequence")}</b>. Changing all
  * other parameters is allowed.

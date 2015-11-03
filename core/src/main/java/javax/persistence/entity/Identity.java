@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 /**
- * Abstract definition of an entity that uses sequential ID.</br>
+ * Abstract definition of an entity that uses sequential ID.<br>
  * <b>{@code @SequenceGenerator(name = "identity-sequence")}</b>. Changing all
  * other parameters is allowed.
  * 
@@ -32,7 +32,7 @@ public abstract class Identity<I extends Number> {
 	}
 
 	/**
-	 * @return sequential ID for this entity
+	 * @return sequential number representing uniquely this entity
 	 */
 	public I getId() {
 		return id;
@@ -43,6 +43,7 @@ public abstract class Identity<I extends Number> {
 	 * increment this, sequentially.
 	 * 
 	 * @param id
+	 *            sequential number representing uniquely this entity
 	 */
 	public void setId(I id) {
 		this.id = id;

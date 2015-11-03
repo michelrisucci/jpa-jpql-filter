@@ -36,11 +36,13 @@ public class Filters {
 	/**
 	 * Lists all entries of an entity.
 	 * 
+	 * @param <E>
+	 *            dynamic entity Java Class type
 	 * @param em
 	 *            {@link EntityManager}
 	 * @param type
 	 *            Java Entity Class
-	 * @return
+	 * @return selection of all table contents
 	 */
 	public static <E> List<E> listAll(EntityManager em, Class<E> type) {
 		return list(em, Filter.newInstance(type), -1, -1);
@@ -49,11 +51,13 @@ public class Filters {
 	/**
 	 * Counts all entries of an entity.
 	 * 
+	 * @param <E>
+	 *            dynamic entity Java Class type
 	 * @param em
 	 *            {@link EntityManager}
 	 * @param type
 	 *            Java Entity Class
-	 * @return
+	 * @return count of all table contents
 	 */
 	public static <E> long countAll(EntityManager em, Class<E> type) {
 		return count(em, Filter.newInstance(type));
@@ -63,11 +67,13 @@ public class Filters {
 	 * JPA JPQL Filter main method that performs the query logic based on
 	 * {@link Filter} instance, ignoring the fetch range.
 	 * 
+	 * @param <E>
+	 *            dynamic entity Java Class type
 	 * @param em
 	 *            {@link EntityManager}
 	 * @param filter
 	 *            {@link Filter} instance
-	 * @return
+	 * @return selection of filtered results without pagination
 	 */
 	public static <E> PageFilter<E> filter(EntityManager em, Filter<E> filter) {
 		return filter(em, filter, -1, -1);
@@ -77,6 +83,8 @@ public class Filters {
 	 * JPA JPQL Filter main method that performs the query logic based on
 	 * {@link Filter} instance.
 	 * 
+	 * @param <E>
+	 *            dynamic entity Java Class type
 	 * @param em
 	 *            {@link EntityManager}
 	 * @param filter
@@ -108,6 +116,8 @@ public class Filters {
 	/**
 	 * Filter method that performs count query based on {@link Filter} instance.
 	 * 
+	 * @param <E>
+	 *            dynamic entity Java Class type
 	 * @param em
 	 *            {@link EntityManager}
 	 * @param filter
@@ -158,6 +168,8 @@ public class Filters {
 	/**
 	 * Filter method that performs list query based on {@link Filter} instance.
 	 * 
+	 * @param <E>
+	 *            dynamic entity Java Class type
 	 * @param em
 	 *            {@link EntityManager}
 	 * @param filter
@@ -220,6 +232,8 @@ public class Filters {
 	 * Processes junctions (joins) for the {@link Where} and {@link Order}
 	 * clauses, required on this {@link Filter} instance.
 	 * 
+	 * @param <E>
+	 *            dynamic entity Java Class type
 	 * @param wheres
 	 *            set of {@link Where} clauses
 	 * @param orders
@@ -293,6 +307,8 @@ public class Filters {
 	/**
 	 * Sets required values to all JPQL {@link Where} clause fields.
 	 * 
+	 * @param <E>
+	 *            dynamic entity Java Class type
 	 * @param query
 	 *            JPA query
 	 * @param wheres
@@ -307,6 +323,8 @@ public class Filters {
 	/**
 	 * Sets the list query fetch range according to limit and offset.
 	 * 
+	 * @param <E>
+	 *            dynamic entity Java Class type
 	 * @param query
 	 *            JPA query
 	 * @param limit

@@ -10,20 +10,26 @@ public interface Filterable {
 	/**
 	 * Filters any defined entity with fetch range.
 	 * 
+	 * @param <T>
+	 *            dynamic entity Java type
 	 * @param filter
+	 *            filled {@link Filter} model
 	 * @param offset
+	 *            SQL fetch offset
 	 * @param limit
-	 * @return
+	 *            SQL fetch limit
+	 * @return {@link PageFilter} object containing the filtered results
 	 */
 	<T> PageFilter<T> filter(Filter<T> filter, int offset, int limit);
 
 	/**
 	 * Filters any defined entity without fetch range.
 	 * 
+	 * @param <T>
+	 *            dynamic entity Java type
 	 * @param filter
-	 * @param offset
-	 * @param limit
-	 * @return
+	 *            filled {@link Filter} model
+	 * @return {@link PageFilter} object containing the filtered results
 	 */
 	<T> PageFilter<T> filter(Filter<T> filter);
 
