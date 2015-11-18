@@ -31,10 +31,10 @@ public class Filter<T> {
 	/**
 	 * Empty Filter constructor that initializes minimal filter functions.
 	 */
-	private Filter(Class<T> rootType) {
+	private Filter(Class<T> rootType, boolean distinct) {
 		super();
 		this.rootType = rootType;
-		this.distinct = false;
+		this.distinct = distinct;
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class Filter<T> {
 	 * @param orders
 	 */
 	private Filter(Class<T> rootType, Where[] wheres, Order[] orders) {
-		this(rootType);
+		this(rootType, false);
 		if (wheres != null && wheres.length > 0) {
 			add(wheres);
 		}
@@ -81,7 +81,22 @@ public class Filter<T> {
 	 * @return an empty {@link Filter} definition
 	 */
 	public static <T> Filter<T> newInstance(Class<T> rootType) {
-		return new Filter<T>(rootType);
+		return new Filter<T>(rootType, false);
+	}
+
+	/**
+	 * Empty Filter constructor that initializes minimal filter functions.
+	 * 
+	 * @param <T>
+	 *            dynamic entity Java type
+	 * @param rootType
+	 *            root entity Java Class type
+	 * @param distinct
+	 *            if is to add "DISTINCT" to selection
+	 * @return an empty {@link Filter} definition
+	 */
+	public static <T> Filter<T> newInstance(Class<T> rootType, boolean distinct) {
+		return new Filter<T>(rootType, distinct);
 	}
 
 	/**
@@ -155,11 +170,10 @@ public class Filter<T> {
 
 			// Otherwise, process entity and fill internal cache.
 			if (entityName == null) {
+				entityName = rootType.getSimpleName();
 				Entity entity = rootType.getAnnotation(Entity.class);
 				if (entity != null && !entity.name().isEmpty()) {
 					entityName = entity.name();
-				} else {
-					entityName = rootType.getSimpleName();
 				}
 				ENTITY_NAME_CACHE_MAP.put(rootType, entityName);
 			}

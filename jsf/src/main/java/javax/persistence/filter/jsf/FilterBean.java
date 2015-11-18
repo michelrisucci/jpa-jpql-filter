@@ -8,10 +8,10 @@ import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.filter.Filter;
-import javax.persistence.filter.Filterable;
 import javax.persistence.filter.PageFilter;
 import javax.persistence.filter.core.Order.Direction;
 import javax.persistence.filter.exception.OffsetOutOfRangeException;
+import javax.persistence.filter.service.Filterable;
 
 /**
  * @author Michel Risucci
@@ -92,7 +92,7 @@ public abstract class FilterBean<E> {
 	 */
 	protected PageFilter<E> doFilter(Filter<E> filter, int page, int results) {
 		try {
-			Filterable service = getFilterService();
+			Filterable<E> service = getFilterService();
 			int initial = (page - 1) * results;
 			initial = initial >= 0 ? initial : 0;
 			return service.filter(filter, initial, results);
@@ -287,6 +287,6 @@ public abstract class FilterBean<E> {
 
 	protected abstract Filter<E> newFilter();
 
-	protected abstract Filterable getFilterService();
+	protected abstract Filterable<E> getFilterService();
 
 }

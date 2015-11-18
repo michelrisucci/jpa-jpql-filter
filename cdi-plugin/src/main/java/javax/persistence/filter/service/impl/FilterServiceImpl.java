@@ -1,53 +1,127 @@
 package javax.persistence.filter.service.impl;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.persistence.filter.Filter;
-import javax.persistence.filter.Filterable;
 import javax.persistence.filter.PageFilter;
-import javax.persistence.filter.repository.Repository;
-import javax.persistence.filter.service.FilterableService;
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
+import javax.persistence.filter.repository.JpaFilterRepository;
+import javax.persistence.filter.service.FilterService;
+import javax.persistence.utils.ReflectionUtils;
 
-public class FilterServiceImpl<T, PK, R extends Repository & Filterable> implements FilterableService<T, PK, R> {
+public abstract class FilterServiceImpl<E, ID extends Serializable> implements FilterService<E, ID> {
+
+	private Class<E> entityType;
+	private Class<ID> entityIdType;
 
 	@Inject
-	protected R repository;
+	private JpaFilterRepository repository;
 
 	@Override
-	@SuppressWarnings("hiding")
-	public <T> PageFilter<T> filter(Filter<T> filter, int offset, int limit) {
-		return repository.filter(filter, offset, limit);
+	public E find(Class<E> type, ID id) {
+		return getRepository().find(type, id);
 	}
 
 	@Override
-	@SuppressWarnings("hiding")
-	public <T> PageFilter<T> filter(Filter<T> filter) {
-		return repository.filter(filter);
+	public List<E> find(Class<E> type, Collection<ID> ids) {
+		return getRepository().find(type, ids);
 	}
 
 	@Override
-	@Transactional(TxType.REQUIRED)
-	public T find(Class<T> type, PK pk) {
-		return repository.find(type, pk);
+	public boolean exists(Class<E> type, ID id) {
+		return getRepository().exists(type, id);
 	}
 
 	@Override
-	@Transactional(TxType.REQUIRED)
-	public void save(T entity) {
-		repository.save(entity);
+	public E save(E entity) {
+		return getRepository().save(entity);
 	}
 
 	@Override
-	@Transactional(TxType.REQUIRED)
-	public void delete(Class<T> type, PK pk) {
-		repository.delete(type, pk);
+	public E update(E entity) {
+		return getRepository().update(entity);
 	}
 
 	@Override
-	@Transactional(TxType.REQUIRED)
-	public T update(T entity) {
-		return repository.update(entity);
+	public <C extends Collection<E>> C save(C entities) {
+		return getRepository().save(entities);
+	}
+
+	@Override
+	public List<E> update(Collection<E> entities) {
+		return getRepository().updateAll(entities);
+	}
+
+	@Override
+	public void delete(E entity) {
+		getRepository().delete(entity);
+	}
+
+	@Override
+	public void delete(Class<E> type, ID id) {
+		getRepository().delete(type, id);
+	}
+
+	@Override
+	public void delete(Collection<? extends E> entities) {
+		getRepository().delete(entities);
+	}
+
+	@Override
+	public int deleteAll(Class<E> type) {
+		return getRepository().deleteAll(type);
+	}
+
+	@Override
+	public PageFilter<E> filter(Filter<E> filter) {
+		return getRepository().filter(filter);
+	}
+
+	@Override
+	public PageFilter<E> filter(Filter<E> filter, int offset, int limit) {
+		return getRepository().filter(filter, offset, limit);
+	}
+
+	@Override
+	public List<E> list(Filter<E> filter, int offset, int limit) {
+		return getRepository().list(filter, offset, limit);
+	}
+
+	@Override
+	public List<E> listAll(Class<E> type) {
+		return getRepository().listAll(type);
+	}
+
+	@Override
+	public long count(Filter<E> filter) {
+		return getRepository().count(filter);
+	}
+
+	@Override
+	public long countAll(Class<E> type) {
+		return getRepository().countAll(type);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected Class<E> getEntityType() {
+		if (entityType == null) {
+			entityType = (Class<E>) ReflectionUtils.getParameterType(this, 0);
+		}
+		return entityType;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected Class<ID> getEntityIdType() {
+		if (entityIdType == null) {
+			entityIdType = (Class<ID>) ReflectionUtils.getParameterType(this, 1);
+		}
+		return entityIdType;
+	}
+
+	protected JpaFilterRepository getRepository() {
+		return repository;
 	}
 
 }
