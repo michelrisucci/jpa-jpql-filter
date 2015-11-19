@@ -16,8 +16,9 @@
 
 	<modules>
 		<module>core</module>
-		<module>cdi-plugin</module>
+		<module>cdi</module>
 		<module>jsf</module>
+		<module>spring</module>
 	</modules>
 
 	<build>
