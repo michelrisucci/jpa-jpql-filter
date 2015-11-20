@@ -13,7 +13,6 @@
 
 	<modules>
 		<module>core</module>
-		<module>cdi</module>
 		<module>jsf</module>
 		<module>spring</module>
 	</modules>
