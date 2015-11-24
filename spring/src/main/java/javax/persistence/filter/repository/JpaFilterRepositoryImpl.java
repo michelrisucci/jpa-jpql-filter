@@ -7,11 +7,11 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.filter.Filter;
 import javax.persistence.filter.PageFilter;
 import javax.persistence.filter.core.Filters;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +21,7 @@ public class JpaFilterRepositoryImpl implements JpaFilterRepository {
 
 	private static final String DELETE_ALL_QUERY = "DELETE FROM %s x ";
 
-	@Autowired
+	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Override
