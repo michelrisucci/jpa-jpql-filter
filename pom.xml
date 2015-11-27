@@ -7,7 +7,7 @@
 
 	<groupId>com.risucci</groupId>
 	<artifactId>jpa-jpql-filter</artifactId>
-	<version>1.8.2.GA</version>
+	<version>1.9.0.GA</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -110,5 +110,12 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<distributionManagement>
+		<repository>
+			<id>codata</id>
+			<url>http://nexuscodata.pb.gov.br/nexus/content/repositories/thirdparty/</url>
+		</repository>
+	</distributionManagement>
 
 </project>

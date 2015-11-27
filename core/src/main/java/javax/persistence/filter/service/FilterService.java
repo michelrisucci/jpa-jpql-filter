@@ -8,11 +8,11 @@ import javax.persistence.filter.repository.JpaFilterRepository;
 
 public interface FilterService<E, ID extends Serializable, R extends JpaFilterRepository> extends Filterable<E> {
 
-	E find(Class<E> type, ID id);
+	E find(ID id);
 
-	List<E> find(Class<E> type, Collection<ID> ids);
+	List<E> find(Collection<ID> ids);
 
-	boolean exists(Class<E> type, ID id);
+	boolean exists(ID id);
 
 	E save(E entity);
 
@@ -24,10 +24,14 @@ public interface FilterService<E, ID extends Serializable, R extends JpaFilterRe
 
 	void delete(E entity);
 
-	void delete(Class<E> type, ID id);
+	void delete(ID id);
 
 	void delete(Collection<? extends E> entities);
 
-	int deleteAll(Class<E> type);
+	int deleteAll();
+
+	List<E> listAll();
+
+	long countAll();
 
 }
