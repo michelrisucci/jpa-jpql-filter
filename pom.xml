@@ -111,11 +111,4 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<distributionManagement>
-		<repository>
-			<id>codata</id>
-			<url>http://nexuscodata.pb.gov.br/nexus/content/repositories/thirdparty/</url>
-		</repository>
-	</distributionManagement>
-
 </project>
