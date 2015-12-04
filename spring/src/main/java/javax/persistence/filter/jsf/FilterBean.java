@@ -26,7 +26,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
  * @param <E>
  * @param <F>
  */
-public abstract class FilterBean<ID extends Serializable, E, S extends FilterService<E, ID, ? extends JpaFilterRepository>>
+public abstract class FilterBean<E, ID extends Serializable, S extends FilterService<E, ID, ? extends JpaFilterRepository>>
 		extends SpringBeanAutowiringSupport {
 
 	protected static final int DEFAULT_MAX_RESULTS = 20;
