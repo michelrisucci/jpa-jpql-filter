@@ -7,11 +7,12 @@
 
 	<groupId>com.risucci</groupId>
 	<artifactId>jpa-jpql-filter</artifactId>
-	<version>1.9.0.GA</version>
+	<version>1.9.1.GA</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<modules.version>1.9.1.GA</modules.version>
 	</properties>
 
 	<modules>
@@ -40,6 +41,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
+					<version>2.4</version>
 					<executions>
 						<execution>
 							<id>attach-sources</id>
@@ -107,6 +109,23 @@
 				<artifactId>postgresql</artifactId>
 				<version>9.4-1205-jdbc41</version>
 				<scope>test</scope>
+			</dependency>
+
+			<!-- INTERNAL SUBMODULES -->
+			<dependency>
+				<groupId>com.risucci</groupId>
+				<artifactId>jpa-jpql-filter-core</artifactId>
+				<version>${modules.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.risucci</groupId>
+				<artifactId>jpa-jpql-filter-jsf</artifactId>
+				<version>${modules.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.risucci</groupId>
+				<artifactId>jpa-jpql-filter-spring</artifactId>
+				<version>${modules.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
