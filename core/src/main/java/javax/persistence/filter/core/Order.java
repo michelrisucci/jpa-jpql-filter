@@ -9,7 +9,18 @@ public class Order extends VolatilePath {
 	 * @author Michel Risucci
 	 */
 	public enum Direction {
-		ASC, DESC;
+		ASC {
+			@Override
+			public Direction invert() {
+				return DESC;
+			}
+		},
+		DESC {
+			@Override
+			public Direction invert() {
+				return ASC;
+			}
+		};
 
 		/**
 		 * Creates an order clause, using a {@link String} relativePath.
@@ -20,6 +31,13 @@ public class Order extends VolatilePath {
 		public Order createOrder(String path) {
 			return new Order(path, this);
 		}
+
+		/**
+		 * Gets the inverted order, according to current instance.
+		 * 
+		 * @return
+		 */
+		public abstract Direction invert();
 	}
 
 	private Direction direction;

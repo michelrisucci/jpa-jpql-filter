@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.filter.Filter;
+import javax.persistence.filter.PageFilter;
 import javax.persistence.filter.repository.JpaFilterRepository;
 
-public interface FilterService<E, ID extends Serializable, R extends JpaFilterRepository> extends Filterable<E> {
+public interface FilterService<E, ID extends Serializable, R extends JpaFilterRepository> {
 
 	E find(ID id);
 
@@ -33,5 +35,17 @@ public interface FilterService<E, ID extends Serializable, R extends JpaFilterRe
 	List<E> listAll();
 
 	long countAll();
+
+	PageFilter<E> filter(Filter<E> filter);
+
+	PageFilter<E> filter(Filter<E> filter, int offset, int limit);
+
+	E filterOne(Filter<E> filter);
+
+	List<E> list(Filter<E> filter);
+
+	List<E> list(Filter<E> filter, int offset, int limit);
+
+	long count(Filter<E> filter);
 
 }

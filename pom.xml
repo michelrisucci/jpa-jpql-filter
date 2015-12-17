@@ -7,7 +7,7 @@
 
 	<groupId>com.risucci</groupId>
 	<artifactId>jpa-jpql-filter</artifactId>
-	<version>1.9.1.GA</version>
+	<version>1.10.0.GA</version>
 	<packaging>pom</packaging>
 
 	<properties>

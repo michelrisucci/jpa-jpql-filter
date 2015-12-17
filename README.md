@@ -1,3 +1,3 @@
-# JPA JPQL Filter 1.8.1.GA
+# JPA JPQL Filter 1.10.0.GA
 
 General Availability (GA), but yet under development.

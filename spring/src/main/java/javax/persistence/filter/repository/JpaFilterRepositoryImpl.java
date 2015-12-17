@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.filter.Filter;
 import javax.persistence.filter.PageFilter;
@@ -112,8 +113,27 @@ public class JpaFilterRepositoryImpl implements JpaFilterRepository {
 	}
 
 	@Override
+	public <E> List<E> list(Filter<E> filter) {
+		return list(filter, -1, -1);
+	}
+
+	@Override
 	public <E> List<E> list(Filter<E> filter, int offset, int limit) {
 		return Filters.list(getEntityManager(), filter, offset, limit);
+	}
+
+	@Override
+	public <E> E filterOne(Filter<E> filter) throws NonUniqueResultException {
+		List<E> list = list(filter, 0, 1);
+		if (list.isEmpty()) {
+			return null;
+		}
+		int size = list.size();
+		if (size > 1) {
+			String message = "Conditionals does not ensure uniqueness: " + size + " results found.";
+			throw new NonUniqueResultException(message);
+		}
+		return list.get(0);
 	}
 
 	@Override

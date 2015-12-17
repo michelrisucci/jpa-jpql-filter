@@ -1,5 +1,7 @@
 package javax.persistence.filter.jsf;
 
+import static javax.persistence.filter.core.Order.Direction.ASC;
+
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -21,33 +23,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 /**
+ * Utility JSF Managed Bean with a complete JPA JPQL Filter infrastructure.
+ * 
  * @author Michel Risucci
  *
  * @param <E>
  * @param <F>
  */
-public abstract class FilterBean<E, ID extends Serializable, S extends FilterService<E, ID, ? extends JpaFilterRepository>>
-		extends SpringBeanAutowiringSupport {
+public abstract class FilterBean<E, ID extends Serializable, S extends FilterService<E, ID, ? extends JpaFilterRepository>> extends SpringBeanAutowiringSupport {
 
-	protected static final int DEFAULT_MAX_RESULTS = 20;
+	private static final int DEFAULT_MAX_RESULTS = 20;
 
 	@Autowired
-	protected S filterService;
+	private S filterService;
 	// Filter Conditional Params
-	protected Map<String, Object> filterMap;
+	private Map<String, Object> filterMap;
 	// Filter Ordinal Params
-	protected LinkedHashMap<String, Direction> orderMap;
+	private LinkedHashMap<String, Direction> orderMap;
 
 	// Pagination results
-	protected int currentPage;
-	protected int results;
-	protected PageFilter<E> pageFilter;
-
-	/**
-	 * 
-	 */
-	public FilterBean() {
-	}
+	private int currentPage;
+	private int results;
+	private PageFilter<E> pageFilter;
 
 	@PostConstruct
 	protected void postConstruct() {
@@ -76,17 +73,17 @@ public abstract class FilterBean<E, ID extends Serializable, S extends FilterSer
 	 * @param filter
 	 * @param page
 	 * @param qtdReg
-	 * @param fMap
+	 * @param filterMap
+	 * @param orderMap
 	 * @return
 	 */
-	protected PageFilter<E> doFilter(Filter<E> filter, int page, int qtdReg, Map<String, Object> fMap,
-			LinkedHashMap<String, Direction> oMap) {
+	protected PageFilter<E> doFilter(Filter<E> filter, int page, int qtdReg, Map<String, Object> filterMap, LinkedHashMap<String, Direction> orderMap) {
 
 		// Adding filter clauses;
-		this.addWheres(filter, fMap);
+		this.addWheres(filter, filterMap);
 
 		// Adding filter orders
-		Iterator<Entry<String, Direction>> oIter = oMap.entrySet().iterator();
+		Iterator<Entry<String, Direction>> oIter = orderMap.entrySet().iterator();
 		this.addOrders(filter, oIter);
 
 		// Filtering
@@ -153,15 +150,10 @@ public abstract class FilterBean<E, ID extends Serializable, S extends FilterSer
 	 * @param direction
 	 */
 	public void changeOrder(String path, Direction direction) {
-		if (orderMap.containsKey(path)) {
-			Direction current = orderMap.get(path);
-			if (Direction.ASC == current) {
-				orderMap.put(path, Direction.DESC);
-			} else if (Direction.DESC == current) {
-				orderMap.put(path, Direction.ASC);
-			}
-		} else if (direction == null) {
-			orderMap.put(path, Direction.ASC);
+		if (direction == null) {
+			// Getting current order.
+			direction = orderMap.getOrDefault(path, ASC);
+			orderMap.put(path, direction.invert());
 		} else {
 			orderMap.put(path, direction);
 		}
@@ -185,35 +177,53 @@ public abstract class FilterBean<E, ID extends Serializable, S extends FilterSer
 	}
 
 	/*
+	 * Utilities
+	 */
+
+	/**
+	 * @return
+	 */
+	protected Filter<E> eraseFilter() {
+		return eraseFilter(null);
+	}
+
+	/**
+	 * @param results
+	 * @return
+	 */
+	protected Filter<E> eraseFilter(Integer results) {
+		this.filterMap = new HashMap<String, Object>();
+		this.orderMap = new LinkedHashMap<String, Direction>();
+		this.currentPage = 1;
+		this.results = results == null ? DEFAULT_MAX_RESULTS : results.intValue();
+
+		return newFilter();
+	}
+
+	@SuppressWarnings("unchecked")
+	protected Filter<E> newFilter() {
+		Type superType = this.getClass().getGenericSuperclass();
+		ParameterizedType paramType = ParameterizedType.class.cast(superType);
+		Class<E> entityType = Class.class.cast(paramType.getActualTypeArguments()[0]);
+		return Filter.newInstance(entityType);
+	}
+
+	/*
 	 * Getters and Setters
 	 */
 
 	/**
 	 * @return
 	 */
-	public int getCurrentPage() {
-		return currentPage;
+	public S getFilterService() {
+		return filterService;
 	}
 
 	/**
-	 * @param currentPage
+	 * @param filterService
 	 */
-	public void setCurrentPage(int currentPage) {
-		this.currentPage = currentPage;
-	}
-
-	/**
-	 * @return
-	 */
-	public int getResults() {
-		return results;
-	}
-
-	/**
-	 * @param results
-	 */
-	public void setResults(int results) {
-		this.results = results;
+	public void setFilterService(S filterService) {
+		this.filterService = filterService;
 	}
 
 	/**
@@ -245,6 +255,37 @@ public abstract class FilterBean<E, ID extends Serializable, S extends FilterSer
 	}
 
 	/**
+	 * @return the number of current page, starting from 1.
+	 */
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	/**
+	 * @param currentPage
+	 */
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	/**
+	 * @return quantity of results per page or default
+	 *         {@value #DEFAULT_MAX_RESULTS}.
+	 */
+	public int getResults() {
+		return results;
+	}
+
+	/**
+	 * Sets the quantity of results per page
+	 * 
+	 * @param results
+	 */
+	public void setResults(int results) {
+		this.results = results;
+	}
+
+	/**
 	 * @return
 	 */
 	public PageFilter<E> getPageFilter() {
@@ -256,50 +297,6 @@ public abstract class FilterBean<E, ID extends Serializable, S extends FilterSer
 	 */
 	public void setPageFilter(PageFilter<E> pageFilter) {
 		this.pageFilter = pageFilter;
-	}
-
-	/*
-	 * Utilities
-	 */
-
-	/**
-	 * @return
-	 */
-	protected Filter<E> eraseFilter() {
-		return eraseFilter(DEFAULT_MAX_RESULTS);
-	}
-
-	/**
-	 * @param results
-	 * @return
-	 */
-	protected Filter<E> eraseFilter(int results) {
-		// Clearing filter
-		if (filterMap == null) {
-			filterMap = new HashMap<String, Object>();
-		} else {
-			filterMap.clear();
-		}
-
-		// Clearing orders
-		if (orderMap == null) {
-			orderMap = new LinkedHashMap<String, Direction>();
-		} else {
-			orderMap.clear();
-		}
-
-		this.currentPage = 1;
-		this.results = results;
-
-		return newFilter();
-	}
-
-	@SuppressWarnings("unchecked")
-	protected Filter<E> newFilter() {
-		Type superType = this.getClass().getGenericSuperclass();
-		ParameterizedType paramType = ParameterizedType.class.cast(superType);
-		Class<E> entityType = Class.class.cast(paramType.getActualTypeArguments()[0]);
-		return Filter.newInstance(entityType);
 	}
 
 }

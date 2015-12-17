@@ -14,8 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(propagation = Propagation.REQUIRED)
-public abstract class FilterServiceImpl<E, ID extends Serializable, R extends JpaFilterRepository>
-		implements FilterService<E, ID, R> {
+public abstract class FilterServiceImpl<E, ID extends Serializable, R extends JpaFilterRepository> implements FilterService<E, ID, R> {
 
 	private Class<E> entityType;
 	private Class<ID> entityIdType;
@@ -92,6 +91,18 @@ public abstract class FilterServiceImpl<E, ID extends Serializable, R extends Jp
 	}
 
 	@Override
+	public List<E> listAll() {
+		Class<E> type = getEntityType();
+		return getRepository().listAll(type);
+	}
+
+	@Override
+	public long countAll() {
+		Class<E> type = getEntityType();
+		return getRepository().countAll(type);
+	}
+
+	@Override
 	public PageFilter<E> filter(Filter<E> filter) {
 		return getRepository().filter(filter);
 	}
@@ -102,35 +113,23 @@ public abstract class FilterServiceImpl<E, ID extends Serializable, R extends Jp
 	}
 
 	@Override
+	public E filterOne(Filter<E> filter) {
+		return getRepository().filterOne(filter);
+	}
+
+	@Override
+	public List<E> list(Filter<E> filter) {
+		return getRepository().list(filter);
+	}
+
+	@Override
 	public List<E> list(Filter<E> filter, int offset, int limit) {
 		return getRepository().list(filter, offset, limit);
 	}
 
 	@Override
-	public List<E> listAll(Class<E> type) {
-		return getRepository().listAll(type);
-	}
-
-	@Override
-	public List<E> listAll() {
-		Class<E> type = getEntityType();
-		return listAll(type);
-	}
-
-	@Override
 	public long count(Filter<E> filter) {
 		return getRepository().count(filter);
-	}
-
-	@Override
-	public long countAll(Class<E> type) {
-		return getRepository().countAll(type);
-	}
-
-	@Override
-	public long countAll() {
-		Class<E> type = getEntityType();
-		return countAll(type);
 	}
 
 	@Transactional(propagation = Propagation.SUPPORTS)

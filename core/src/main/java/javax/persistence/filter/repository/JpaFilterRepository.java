@@ -37,7 +37,11 @@ public interface JpaFilterRepository {
 
 	<E> PageFilter<E> filter(Filter<E> filter, int offset, int limit);
 
+	<E> List<E> list(Filter<E> filter);
+
 	<E> List<E> list(Filter<E> filter, int offset, int limit);
+
+	<E> E filterOne(Filter<E> filter);
 
 	<E> List<E> listAll(Class<E> type);
 
