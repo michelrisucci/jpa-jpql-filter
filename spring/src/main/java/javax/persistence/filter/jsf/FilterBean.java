@@ -2,7 +2,6 @@ package javax.persistence.filter.jsf;
 
 import static javax.persistence.filter.core.Order.Direction.ASC;
 
-import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -16,7 +15,6 @@ import javax.persistence.filter.Filter;
 import javax.persistence.filter.PageFilter;
 import javax.persistence.filter.core.Order.Direction;
 import javax.persistence.filter.exception.OffsetOutOfRangeException;
-import javax.persistence.filter.repository.JpaFilterRepository;
 import javax.persistence.filter.service.FilterService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
  * @param <E>
  * @param <F>
  */
-public abstract class FilterBean<E, ID extends Serializable, S extends FilterService<E, ID, ? extends JpaFilterRepository>> extends SpringBeanAutowiringSupport {
+public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends SpringBeanAutowiringSupport {
 
 	private static final int DEFAULT_MAX_RESULTS = 20;
 
