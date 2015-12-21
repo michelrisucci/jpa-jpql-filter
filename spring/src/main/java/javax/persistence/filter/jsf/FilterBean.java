@@ -149,9 +149,9 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 	 */
 	public void changeOrder(String path, Direction direction) {
 		if (direction == null) {
-			// Getting current order.
-			direction = orderMap.getOrDefault(path, ASC);
-			orderMap.put(path, direction.invert());
+			// Getting last order direction.
+			Direction last = orderMap.get(path);
+			orderMap.put(path, last == null ? ASC : last.invert());
 		} else {
 			orderMap.put(path, direction);
 		}
