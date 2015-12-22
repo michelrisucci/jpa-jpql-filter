@@ -16,7 +16,7 @@ import javax.persistence.Version;
  */
 @MappedSuperclass
 @Access(AccessType.FIELD)
-public abstract class VersionedIdentity<I extends Number> extends Identity<I> {
+public abstract class VersionedIdentity<ID extends Number> extends Identity<ID> {
 
 	@Version
 	@Column(name = "version")

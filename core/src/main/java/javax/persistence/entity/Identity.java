@@ -17,12 +17,12 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 @Access(AccessType.FIELD)
-public abstract class Identity<I extends Number> {
+public abstract class Identity<ID extends Number> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "identity-sequence")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-	private I id;
+	private ID id;
 
 	/**
 	 * 
@@ -34,7 +34,7 @@ public abstract class Identity<I extends Number> {
 	/**
 	 * @return sequential number representing uniquely this entity
 	 */
-	public I getId() {
+	public ID getId() {
 		return id;
 	}
 
@@ -45,7 +45,7 @@ public abstract class Identity<I extends Number> {
 	 * @param id
 	 *            sequential number representing uniquely this entity
 	 */
-	public void setId(I id) {
+	public void setId(ID id) {
 		this.id = id;
 	}
 
