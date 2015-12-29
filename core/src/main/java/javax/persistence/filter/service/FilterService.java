@@ -48,4 +48,6 @@ public interface FilterService<E, ID extends Serializable, R extends JpaFilterRe
 
 	long count(Filter<E> filter);
 
+	ID getId(E entity);
+
 }

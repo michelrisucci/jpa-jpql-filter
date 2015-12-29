@@ -1,6 +1,7 @@
 package javax.persistence.filter.repository;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -12,7 +13,9 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.filter.Filter;
 import javax.persistence.filter.PageFilter;
 import javax.persistence.filter.core.Filters;
+import javax.persistence.metamodel.Metamodel;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -149,6 +152,28 @@ public class JpaFilterRepositoryImpl implements JpaFilterRepository {
 	@Override
 	public <E> long countAll(Class<E> type) {
 		return Filters.countAll(entityManager, type);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <ID extends Serializable, E> ID getId(E entity, Class<ID> idType) {
+		String idPropName = getIdPropertyName(entity.getClass(), idType);
+		try {
+			return (ID) PropertyUtils.getProperty(entity, idPropName);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} catch (InvocationTargetException e) {
+			throw new RuntimeException(e);
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException(e);
+		}
+		// These property accessing runtime exceptions should never be thrown!
+	}
+
+	@Override
+	public <ID extends Serializable, E> String getIdPropertyName(Class<E> entityType, Class<ID> idType) {
+		Metamodel metamodel = getEntityManager().getMetamodel();
+		return metamodel.entity(entityType).getId(idType).getName();
 	}
 
 	protected EntityManager getEntityManager() {

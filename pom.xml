@@ -7,17 +7,18 @@
 
 	<groupId>com.risucci</groupId>
 	<artifactId>jpa-jpql-filter</artifactId>
-	<version>1.12.0.GA</version>
+	<version>1.13.0.GA</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<modules.version>1.12.0.GA</modules.version>
+		<modules.version>1.13.0.GA</modules.version>
 	</properties>
 
 	<modules>
 		<module>core</module>
 		<module>spring</module>
+		<module>jsf-spring</module>
 	</modules>
 
 	<build>
@@ -80,6 +81,11 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.9.2</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>3.4</version>
@@ -88,6 +94,13 @@
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
 				<version>[1.1,)</version>
+			</dependency>
+
+			<!-- JSF MODULE -->
+			<dependency>
+				<groupId>org.primefaces</groupId>
+				<artifactId>primefaces</artifactId>
+				<version>[4.,)</version>
 			</dependency>
 
 			<!-- TEST SCOPE -->
@@ -118,12 +131,12 @@
 			</dependency>
 			<dependency>
 				<groupId>com.risucci</groupId>
-				<artifactId>jpa-jpql-filter-jsf</artifactId>
+				<artifactId>jpa-jpql-filter-spring</artifactId>
 				<version>${modules.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.risucci</groupId>
-				<artifactId>jpa-jpql-filter-spring</artifactId>
+				<artifactId>jpa-jpql-filter-jsf-spring</artifactId>
 				<version>${modules.version}</version>
 			</dependency>
 		</dependencies>

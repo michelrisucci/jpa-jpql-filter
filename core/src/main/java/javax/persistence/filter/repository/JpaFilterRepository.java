@@ -49,4 +49,8 @@ public interface JpaFilterRepository {
 
 	<E> long countAll(Class<E> type);
 
+	<ID extends Serializable, E> ID getId(E entity, Class<ID> idType);
+
+	<ID extends Serializable, E> String getIdPropertyName(Class<E> entityType, Class<ID> idType);
+
 }

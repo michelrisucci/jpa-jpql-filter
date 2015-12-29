@@ -30,7 +30,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
  */
 public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends SpringBeanAutowiringSupport {
 
-	private static final int DEFAULT_MAX_RESULTS = 20;
+	private static final int DEFAULT_PAGE_SIZE = 20;
 
 	@Autowired
 	private S filterService;
@@ -39,9 +39,9 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 	// Filter Ordinal Params
 	private LinkedHashMap<String, Direction> orderMap;
 
-	// Pagination results
+	// Pagination
 	private int currentPage;
-	private int results;
+	private int pageSize = DEFAULT_PAGE_SIZE;
 	private PageFilter<E> pageFilter;
 
 	@PostConstruct
@@ -53,16 +53,32 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 	 * 
 	 */
 	public void eraseAndFilter() {
+		this.pageFilter = eraseAndFilter(this.currentPage, this.pageSize);
+	}
+
+	/**
+	 * 
+	 */
+	public PageFilter<E> eraseAndFilter(int currentPage, int pageSize) {
 		Filter<E> filter = eraseFilter();
-		this.pageFilter = doFilter(filter, currentPage, results, filterMap, orderMap);
+		return doFilter(filter, currentPage, pageSize, filterMap, orderMap);
 	}
 
 	/**
 	 * 
 	 */
 	public void doFilter() {
+		this.pageFilter = doFilter(this.currentPage, this.pageSize);
+	}
+
+	/**
+	 * @param currentPage
+	 * @param pageSize
+	 * @return
+	 */
+	public PageFilter<E> doFilter(int currentPage, int pageSize) {
 		Filter<E> filter = newFilter();
-		this.pageFilter = doFilter(filter, currentPage, results, filterMap, orderMap);
+		return doFilter(filter, currentPage, pageSize, filterMap, orderMap);
 	}
 
 	/**
@@ -70,12 +86,13 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 	 * 
 	 * @param filter
 	 * @param page
-	 * @param qtdReg
+	 * @param pageSize
 	 * @param filterMap
 	 * @param orderMap
 	 * @return
 	 */
-	protected PageFilter<E> doFilter(Filter<E> filter, int page, int qtdReg, Map<String, Object> filterMap, LinkedHashMap<String, Direction> orderMap) {
+	protected PageFilter<E> doFilter(Filter<E> filter, int page, int pageSize, Map<String, Object> filterMap,
+			LinkedHashMap<String, Direction> orderMap) {
 
 		// Adding filter clauses;
 		this.addWheres(filter, filterMap);
@@ -85,7 +102,7 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 		this.addOrders(filter, oIter);
 
 		// Filtering
-		return doFilter(filter, page, qtdReg);
+		return doFilter(filter, page, pageSize);
 	}
 
 	/**
@@ -93,17 +110,17 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 	 * 
 	 * @param filter
 	 * @param page
-	 * @param results
+	 * @param pageSize
 	 * @return
 	 */
-	protected PageFilter<E> doFilter(Filter<E> filter, int page, int results) {
+	protected PageFilter<E> doFilter(Filter<E> filter, int page, int pageSize) {
 		try {
-			int initial = (page - 1) * results;
+			int initial = (page - 1) * pageSize;
 			initial = initial >= 0 ? initial : 0;
-			return filterService.filter(filter, initial, results);
+			return filterService.filter(filter, initial, pageSize);
 		} catch (OffsetOutOfRangeException e) {
 			this.currentPage = 1;
-			return doFilter(filter, currentPage, results);
+			return doFilter(filter, currentPage, pageSize);
 		}
 	}
 
@@ -186,14 +203,16 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 	}
 
 	/**
-	 * @param results
+	 * @param pageSize
 	 * @return
 	 */
-	protected Filter<E> eraseFilter(Integer results) {
+	protected Filter<E> eraseFilter(Integer pageSize) {
 		this.filterMap = new HashMap<String, Object>();
 		this.orderMap = new LinkedHashMap<String, Direction>();
 		this.currentPage = 1;
-		this.results = results == null ? DEFAULT_MAX_RESULTS : results.intValue();
+		if (pageSize != null) {
+			this.pageSize = pageSize;
+		}
 
 		return newFilter();
 	}
@@ -268,19 +287,22 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 
 	/**
 	 * @return quantity of results per page or default
-	 *         {@value #DEFAULT_MAX_RESULTS}.
+	 *         {@value #DEFAULT_PAGE_SIZE}.
 	 */
-	public int getResults() {
-		return results;
+	public int getPageSize() {
+		return pageSize;
 	}
 
 	/**
 	 * Sets the quantity of results per page
 	 * 
-	 * @param results
+	 * @param pageSize
 	 */
-	public void setResults(int results) {
-		this.results = results;
+	public void setPageSize(int pageSize) {
+		if (pageSize < 1) {
+			pageSize = DEFAULT_PAGE_SIZE;
+		}
+		this.pageSize = pageSize;
 	}
 
 	/**

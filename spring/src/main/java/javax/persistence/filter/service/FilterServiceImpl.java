@@ -132,6 +132,11 @@ public abstract class FilterServiceImpl<E, ID extends Serializable, R extends Jp
 		return getRepository().count(filter);
 	}
 
+	@Override
+	public ID getId(E entity) {
+		return getRepository().getId(entity, getEntityIdType());
+	}
+
 	@Transactional(propagation = Propagation.SUPPORTS)
 	@SuppressWarnings("unchecked")
 	protected Class<E> getEntityType() {
