@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.persistence.filter.Filter;
 import javax.persistence.filter.PageFilter;
 import javax.persistence.filter.core.Order.Direction;
@@ -29,6 +31,8 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
  * @param <F>
  */
 public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends SpringBeanAutowiringSupport {
+
+	private static final String ORDER_ENTITY_RELATIVE_PATH = "entityRelativePath";
 
 	private static final int DEFAULT_PAGE_SIZE = 20;
 
@@ -145,8 +149,23 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 		}
 	}
 
+	private String getOrderPathContextParam() {
+		return FacesContext.getCurrentInstance() //
+				.getExternalContext() //
+				.getRequestParameterMap() //
+				.get(ORDER_ENTITY_RELATIVE_PATH);
+	}
+
 	/**
-	 * @param relativePath
+	 * @param event
+	 */
+	public void changeOrderAndFilter(ActionEvent event) {
+		String path = getOrderPathContextParam();
+		changeOrderAndFilter(path);
+	}
+
+	/**
+	 * @param path
 	 */
 	public void changeOrderAndFilter(String path) {
 		changeOrder(path);
@@ -154,14 +173,14 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 	}
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 */
 	public void changeOrder(String path) {
 		changeOrder(path, null);
 	}
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @param direction
 	 */
 	public void changeOrder(String path, Direction direction) {
@@ -175,7 +194,7 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 	}
 
 	/**
-	 * @param relativePath
+	 * @param path
 	 * @return
 	 */
 	public int getOrderSequence(String path) {
@@ -189,6 +208,29 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 			count++;
 		}
 		return -1;
+	}
+
+	/**
+	 * @param event
+	 */
+	public void removeOrderAndFilter(ActionEvent event) {
+		String path = getOrderPathContextParam();
+		removeOrderAndFilter(path);
+	}
+
+	/**
+	 * @param path
+	 */
+	public void removeOrderAndFilter(String path) {
+		removeOrder(path);
+		doFilter();
+	}
+
+	/**
+	 * @param path
+	 */
+	public void removeOrder(String path) {
+		orderMap.remove(path);
 	}
 
 	/*
