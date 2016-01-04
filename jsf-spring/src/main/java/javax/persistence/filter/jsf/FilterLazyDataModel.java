@@ -9,13 +9,13 @@ import javax.persistence.filter.service.FilterService;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
 
-public class PrimitiveTypeFilterLazyDataModel<E, B extends FilterBean<E, FilterService<E, ?, ?>>> extends LazyDataModel<E> {
+public class FilterLazyDataModel<E, B extends FilterBean<E, FilterService<E, ?, ?>>> extends LazyDataModel<E> {
 
 	private static final long serialVersionUID = 1734399832369799534L;
 
 	private B bean;
 
-	public PrimitiveTypeFilterLazyDataModel(B bean) {
+	public FilterLazyDataModel(B bean) {
 		this.bean = bean;
 	}
 
