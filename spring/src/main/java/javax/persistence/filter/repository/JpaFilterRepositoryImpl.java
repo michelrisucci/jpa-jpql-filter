@@ -87,13 +87,6 @@ public class JpaFilterRepositoryImpl implements JpaFilterRepository {
 	}
 
 	@Override
-	public <E> void delete(Collection<? extends E> entities) {
-		for (E entity : entities) {
-			delete(entity);
-		}
-	}
-
-	@Override
 	public <E> int deleteAll(Class<E> type) {
 		String entityName = getEntityName(type);
 		String deleteStatement = String.format(DELETE_ALL_QUERY, entityName);

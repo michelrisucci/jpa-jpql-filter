@@ -28,8 +28,6 @@ public interface FilterService<E, ID extends Serializable, R extends JpaFilterRe
 
 	void delete(ID id);
 
-	void delete(Collection<? extends E> entities);
-
 	int deleteAll();
 
 	List<E> listAll();

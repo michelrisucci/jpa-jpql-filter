@@ -27,8 +27,6 @@ public interface JpaFilterRepository {
 
 	<E, ID extends Serializable> void delete(Class<E> type, ID id);
 
-	<E> void delete(Collection<? extends E> entities);
-
 	<E> int deleteAll(Class<E> type);
 
 	void flush();

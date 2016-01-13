@@ -79,12 +79,6 @@ public abstract class FilterServiceImpl<E, ID extends Serializable, R extends Jp
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void delete(Collection<? extends E> entities) {
-		getRepository().delete(entities);
-	}
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
 	public int deleteAll() {
 		Class<E> type = getEntityType();
 		return getRepository().deleteAll(type);
