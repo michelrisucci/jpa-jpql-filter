@@ -3,6 +3,8 @@ package javax.persistence.filter.core;
 import javax.persistence.TypedQuery;
 import javax.persistence.filter.core.conditional.Between;
 import javax.persistence.filter.core.conditional.In;
+import javax.persistence.filter.core.conditional.IsNotNull;
+import javax.persistence.filter.core.conditional.IsNull;
 import javax.persistence.filter.core.conditional.NotIn;
 import javax.persistence.filter.core.conditional.exact.Equal;
 import javax.persistence.filter.core.conditional.exact.GreaterThan;
@@ -206,6 +208,22 @@ public abstract class Where extends VolatilePath {
 	 */
 	public static Where notIn(String path, Object... values) {
 		return new NotIn(path, values);
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	public static Where isNull(String path) {
+		return new IsNull(path);
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	public static Where isNotNull(String path) {
+		return new IsNotNull(path);
 	}
 
 	/*
