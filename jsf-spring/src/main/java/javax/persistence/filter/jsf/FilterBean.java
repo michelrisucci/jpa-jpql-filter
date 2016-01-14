@@ -119,10 +119,16 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 	 */
 	protected PageFilter<E> doFilter(Filter<E> filter, int page, int pageSize) {
 		try {
+			// Ensuring page not lesser than 1
+			if (this.currentPage < 1) {
+				this.currentPage = 1;
+			}
+
 			int initial = (page - 1) * pageSize;
 			initial = initial >= 0 ? initial : 0;
 			return filterService.filter(filter, initial, pageSize);
 		} catch (OffsetOutOfRangeException e) {
+			// Ensuring page not bigger than max allowed
 			this.currentPage = 1;
 			return doFilter(filter, currentPage, pageSize);
 		}
