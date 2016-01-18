@@ -265,12 +265,28 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 		return newFilter();
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Filter<E> newFilter() {
+	protected Class<?> getParameterizedType(int index) {
 		Type superType = this.getClass().getGenericSuperclass();
 		ParameterizedType paramType = ParameterizedType.class.cast(superType);
-		Class<E> entityType = Class.class.cast(paramType.getActualTypeArguments()[0]);
+		return Class.class.cast(paramType.getActualTypeArguments()[index]);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected Filter<E> newFilter() {
+		Class<E> entityType = (Class<E>) getParameterizedType(0);
 		return Filter.newInstance(entityType);
+	}
+
+	/**
+	 * Factory method to be used on views.
+	 * 
+	 * @return new instance of entity parameter type
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	@SuppressWarnings("unchecked")
+	public E newEntity() throws InstantiationException, IllegalAccessException {
+		return (E) getParameterizedType(0).newInstance();
 	}
 
 	/*

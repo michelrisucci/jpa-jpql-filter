@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.risucci</groupId>
 		<artifactId>jpa-jpql-filter</artifactId>
-		<version>1.14.1.GA</version>
+		<version>1.14.2.GA</version>
 	</parent>
 
 	<artifactId>jpa-jpql-filter-core</artifactId>
