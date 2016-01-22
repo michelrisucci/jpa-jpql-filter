@@ -102,8 +102,7 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 		this.addWheres(filter, filterMap);
 
 		// Adding filter orders
-		Iterator<Entry<String, Direction>> oIter = orderMap.entrySet().iterator();
-		this.addOrders(filter, oIter);
+		this.addOrders(filter, orderMap);
 
 		// Filtering
 		return doFilter(filter, page, pageSize);
@@ -139,16 +138,24 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 	 */
 
 	/**
-	 * Adds filter conditional clauses;
+	 * Adds filter conditional clauses.
+	 * 
+	 * @param filter
+	 * @param filterMap
 	 */
-	protected abstract void addWheres(Filter<E> filter, Map<String, Object> map);
+	protected abstract void addWheres(Filter<E> filter, Map<String, Object> filterMap);
 
 	/**
-	 * Adds filter ordering clauses;
+	 * Adds filter ordering clauses.
+	 * 
+	 * @param filter
+	 * @param orderMap
 	 */
-	protected void addOrders(Filter<E> filter, Iterator<Entry<String, Direction>> iterator) {
-		while (iterator.hasNext()) {
-			Entry<String, Direction> entry = iterator.next();
+	protected void addOrders(Filter<E> filter, LinkedHashMap<String, Direction> orderMap) {
+		Iterator<Entry<String, Direction>> i = orderMap.entrySet().iterator();
+
+		while (i.hasNext()) {
+			Entry<String, Direction> entry = i.next();
 			Direction direction = entry.getValue();
 			String path = entry.getKey();
 			filter.add(direction.createOrder(path));
@@ -271,6 +278,9 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 		return Class.class.cast(paramType.getActualTypeArguments()[index]);
 	}
 
+	/**
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	protected Filter<E> newFilter() {
 		Class<E> entityType = (Class<E>) getParameterizedType(0);
