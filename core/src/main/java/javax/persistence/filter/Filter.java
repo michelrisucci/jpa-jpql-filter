@@ -1,6 +1,5 @@
 package javax.persistence.filter;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -27,6 +26,7 @@ public class Filter<T> {
 	private boolean distinct;
 	private Set<Where> wheres;
 	private Set<Order> orders;
+	private int pathIncrementor = 0;
 
 	/**
 	 * Empty Filter constructor that initializes minimal filter functions.
@@ -213,6 +213,13 @@ public class Filter<T> {
 	}
 
 	/**
+	 * @return
+	 */
+	public int incrementPathSuffix() {
+		return pathIncrementor++;
+	}
+
+	/**
 	 * Adds {@link Where} conditionals to this {@link Filter} model
 	 * 
 	 * @param wheres
@@ -223,7 +230,10 @@ public class Filter<T> {
 		if (this.wheres == null) {
 			this.wheres = new LinkedHashSet<Where>();
 		}
-		this.wheres.addAll(Arrays.asList(wheres));
+		for (Where where : wheres) {
+			this.wheres.add(where);
+			where.postProcess(this);
+		}
 		return this;
 	}
 
@@ -238,7 +248,10 @@ public class Filter<T> {
 		if (this.orders == null) {
 			this.orders = new LinkedHashSet<Order>();
 		}
-		this.orders.addAll(Arrays.asList(orders));
+		for (Order order : orders) {
+			this.orders.add(order);
+			order.postProcess(this);
+		}
 		return this;
 	}
 

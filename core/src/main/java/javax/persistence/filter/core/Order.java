@@ -64,7 +64,6 @@ public class Order extends VolatilePath {
 			this.valueFieldName = fullRelativePath;
 		}
 
-		this.queryParamName = createQueryParamName();
 		this.direction = direction;
 	}
 

@@ -61,7 +61,6 @@ public abstract class Where extends VolatilePath {
 			this.valueFieldName = fullRelativePath;
 		}
 
-		this.queryParamName = createQueryParamName();
 		this.values = values;
 	}
 

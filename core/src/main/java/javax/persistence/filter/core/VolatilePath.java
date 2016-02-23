@@ -3,6 +3,8 @@ package javax.persistence.filter.core;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.persistence.filter.Filter;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -33,13 +35,21 @@ public abstract class VolatilePath {
 	 * 
 	 * @return
 	 */
-	protected String createQueryParamName() {
+	protected String createQueryParamName(Filter<?> filter) {
 		StringBuilder builder = new StringBuilder("_");
 		if (relativePath != null) {
 			builder.append(relativePath.replaceAll(SEPARATOR_REGEX, ""));
 		}
 		builder.append(valueFieldName);
+		builder.append(filter.incrementPathSuffix());
 		return builder.toString();
+	}
+
+	/**
+	 * @param filter
+	 */
+	public void postProcess(Filter<?> filter) {
+		this.queryParamName = createQueryParamName(filter);
 	}
 
 	/**
