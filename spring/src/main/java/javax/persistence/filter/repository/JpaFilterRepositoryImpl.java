@@ -59,11 +59,10 @@ public class JpaFilterRepositoryImpl implements JpaFilterRepository {
 	}
 
 	@Override
-	public <E, C extends Collection<E>> C save(C entities) {
+	public <E> void save(Collection<E> entities) {
 		for (E entity : entities) {
 			save(entity);
 		}
-		return entities;
 	}
 
 	@Override

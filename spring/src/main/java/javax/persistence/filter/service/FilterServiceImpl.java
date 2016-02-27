@@ -54,8 +54,8 @@ public abstract class FilterServiceImpl<E, ID extends Serializable, R extends Jp
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public <C extends Collection<E>> C save(C entities) {
-		return getRepository().save(entities);
+	public void save(Collection<E> entities) {
+		getRepository().save(entities);
 	}
 
 	@Override

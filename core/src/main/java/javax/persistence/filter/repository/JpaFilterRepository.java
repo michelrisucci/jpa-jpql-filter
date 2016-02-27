@@ -19,7 +19,7 @@ public interface JpaFilterRepository {
 
 	<E> E update(E entity);
 
-	<E, C extends Collection<E>> C save(C entities);
+	<E> void save(Collection<E> entities);
 
 	<E> List<E> updateAll(Collection<E> entities);
 

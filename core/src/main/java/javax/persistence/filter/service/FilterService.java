@@ -20,7 +20,7 @@ public interface FilterService<E, ID extends Serializable, R extends JpaFilterRe
 
 	E update(E entity);
 
-	<C extends Collection<E>> C save(C entities);
+	void save(Collection<E> entities);
 
 	List<E> update(Collection<E> entities);
 
