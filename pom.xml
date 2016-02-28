@@ -96,13 +96,6 @@
 				<version>[1.1,)</version>
 			</dependency>
 
-			<!-- JSF MODULE -->
-			<dependency>
-				<groupId>org.primefaces</groupId>
-				<artifactId>primefaces</artifactId>
-				<version>[4.,)</version>
-			</dependency>
-
 			<!-- TEST SCOPE -->
 			<dependency>
 				<groupId>junit</groupId>
