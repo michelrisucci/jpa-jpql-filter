@@ -274,11 +274,10 @@ public class Filters {
 
 		for (Iterator<Where> i = wheres.iterator(); i.hasNext();) {
 			Where where = i.next();
-			b.append(where.getClause());
+			b.append(where.getJpqlClause());
 
 			if (i.hasNext()) {
-				b.append("AND");
-				b.append(" ");
+				b.append("AND ");
 			}
 		}
 	}
@@ -295,7 +294,7 @@ public class Filters {
 		b.append("ORDER BY ");
 		for (Iterator<Order> i = orders.iterator(); i.hasNext();) {
 			Order order = i.next();
-			b.append(order.getClause());
+			b.append(order.getJpqlClause());
 
 			if (i.hasNext()) {
 				b.append(",");

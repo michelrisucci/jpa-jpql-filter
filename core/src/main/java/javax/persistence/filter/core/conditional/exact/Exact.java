@@ -28,7 +28,7 @@ public abstract class Exact extends Where {
 	}
 
 	@Override
-	protected String getClause() {
+	protected String getJpqlClause() {
 		return getRealPath() + " " + operation.getOperand() + " :" + queryParamName + " ";
 	}
 

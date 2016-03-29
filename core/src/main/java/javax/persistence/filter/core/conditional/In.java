@@ -20,7 +20,7 @@ public class In extends Where {
 	}
 
 	@Override
-	protected String getClause() {
+	protected String getJpqlClause() {
 		return getRealPath() + " IN (:" + queryParamName + ") ";
 	}
 

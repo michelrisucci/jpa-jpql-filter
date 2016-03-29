@@ -16,7 +16,7 @@ public class IsNotNull extends Where {
 	}
 
 	@Override
-	protected String getClause() {
+	protected String getJpqlClause() {
 		return getRealPath() + " IS NOT NULL ";
 	}
 

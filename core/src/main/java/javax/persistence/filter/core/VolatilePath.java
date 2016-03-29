@@ -196,6 +196,6 @@ public abstract class VolatilePath {
 	 * 
 	 * @return
 	 */
-	protected abstract String getClause();
+	protected abstract String getJpqlClause();
 
 }

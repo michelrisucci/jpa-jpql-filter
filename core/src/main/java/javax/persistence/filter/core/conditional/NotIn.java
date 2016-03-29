@@ -14,7 +14,7 @@ public class NotIn extends In {
 	}
 
 	@Override
-	protected String getClause() {
+	protected String getJpqlClause() {
 		return getRealPath() + " NOT IN (:" + queryParamName + ") ";
 	}
 

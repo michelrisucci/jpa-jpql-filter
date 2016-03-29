@@ -14,10 +14,12 @@ import javax.persistence.filter.core.conditional.exact.LesserThanOrEqual;
 import javax.persistence.filter.core.conditional.exact.NotEqual;
 import javax.persistence.filter.core.conditional.like.EndsWith;
 import javax.persistence.filter.core.conditional.like.IEndsWith;
-import javax.persistence.filter.core.conditional.like.IEquals;
+import javax.persistence.filter.core.conditional.like.IEqual;
 import javax.persistence.filter.core.conditional.like.ILike;
+import javax.persistence.filter.core.conditional.like.ILikeAny;
 import javax.persistence.filter.core.conditional.like.IStartsWith;
 import javax.persistence.filter.core.conditional.like.Like;
+import javax.persistence.filter.core.conditional.like.LikeAny;
 import javax.persistence.filter.core.conditional.like.StartsWith;
 
 /**
@@ -148,11 +150,29 @@ public abstract class Where extends VolatilePath {
 
 	/**
 	 * @param path
+	 * @param values
+	 * @return
+	 */
+	public static Where likeAny(String path, String... values) {
+		return new LikeAny(path, values);
+	}
+
+	/**
+	 * @param path
+	 * @param values
+	 * @return
+	 */
+	public static Where iLikeAny(String path, String... values) {
+		return new ILikeAny(path, values);
+	}
+
+	/**
+	 * @param path
 	 * @param value
 	 * @return
 	 */
-	public static Where iEquals(String path, String value) {
-		return new IEquals(path, value);
+	public static Where iEqual(String path, String value) {
+		return new IEqual(path, value);
 	}
 
 	/**
@@ -251,7 +271,7 @@ public abstract class Where extends VolatilePath {
 
 	@Override
 	public String toString() {
-		return getClause();
+		return getJpqlClause();
 	}
 
 }

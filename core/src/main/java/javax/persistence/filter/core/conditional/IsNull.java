@@ -15,8 +15,7 @@ public class IsNull extends Where {
 		super(path);
 	}
 
-	@Override
-	protected String getClause() {
+	protected String getJpqlClause() {
 		return getRealPath() + " IS NULL ";
 	}
 

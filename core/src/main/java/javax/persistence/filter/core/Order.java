@@ -88,7 +88,7 @@ public class Order extends VolatilePath {
 	 */
 
 	@Override
-	protected String getClause() {
+	protected String getJpqlClause() {
 		return getRealPath() + " " + direction.name() + " ";
 	}
 

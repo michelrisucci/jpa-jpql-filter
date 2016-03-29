@@ -25,13 +25,13 @@ public class ILike extends Like {
 	}
 
 	@Override
-	protected String getClause() {
-		return "UPPER(" + getRealPath() + ") LIKE UPPER(:" + queryParamName + ") ";
+	protected String mountClausePart(int index) {
+		return "UPPER(" + getRealPath() + ") LIKE UPPER(:" + getQueryParamName(index) + ")";
 	}
 
 	@Override
-	protected String generateParamValue() {
-		return super.generateParamValue().toUpperCase();
+	protected String generateParamValue(int index) {
+		return super.generateParamValue(index).toUpperCase();
 	}
 
 }
