@@ -1,5 +1,7 @@
 package javax.persistence.filter.core;
 
+import java.util.Collection;
+
 import javax.persistence.TypedQuery;
 import javax.persistence.filter.core.conditional.Between;
 import javax.persistence.filter.core.conditional.In;
@@ -39,7 +41,7 @@ public abstract class Where extends VolatilePath {
 	 * @param fullRelativePath
 	 * @param values
 	 */
-	protected Where(String fullRelativePath, Object... values) {
+	protected Where(String fullRelativePath, Object[] values) {
 		this(fullRelativePath, null, values);
 	}
 
@@ -48,7 +50,7 @@ public abstract class Where extends VolatilePath {
 	 * @param join
 	 * @param values
 	 */
-	protected Where(String fullRelativePath, Join[] joins, Object... values) {
+	protected Where(String fullRelativePath, Join[] joins, Object[] values) {
 
 		if (fullRelativePath.contains(".")) {
 			int valueDotIndex = fullRelativePath.lastIndexOf('.');
@@ -153,7 +155,16 @@ public abstract class Where extends VolatilePath {
 	 * @param values
 	 * @return
 	 */
-	public static Where likeAny(String path, String... values) {
+	public static Where likeAny(String path, Collection<String> values) {
+		return new LikeAny(path, values.toArray(new String[values.size()]));
+	}
+
+	/**
+	 * @param path
+	 * @param values
+	 * @return
+	 */
+	public static Where likeAny(String path, String[] values) {
 		return new LikeAny(path, values);
 	}
 
@@ -162,7 +173,16 @@ public abstract class Where extends VolatilePath {
 	 * @param values
 	 * @return
 	 */
-	public static Where iLikeAny(String path, String... values) {
+	public static Where iLikeAny(String path, Collection<String> values) {
+		return new ILikeAny(path, values.toArray(new String[values.size()]));
+	}
+
+	/**
+	 * @param path
+	 * @param values
+	 * @return
+	 */
+	public static Where iLikeAny(String path, String[] values) {
 		return new ILikeAny(path, values);
 	}
 
@@ -216,7 +236,16 @@ public abstract class Where extends VolatilePath {
 	 * @param values
 	 * @return
 	 */
-	public static Where in(String path, Object... values) {
+	public static Where in(String path, Collection<?> values) {
+		return new In(path, values.toArray());
+	}
+
+	/**
+	 * @param path
+	 * @param values
+	 * @return
+	 */
+	public static Where in(String path, Object[] values) {
 		return new In(path, values);
 	}
 
@@ -225,7 +254,16 @@ public abstract class Where extends VolatilePath {
 	 * @param values
 	 * @return
 	 */
-	public static Where notIn(String path, Object... values) {
+	public static Where notIn(String path, Collection<?> values) {
+		return new NotIn(path, values.toArray());
+	}
+
+	/**
+	 * @param path
+	 * @param values
+	 * @return
+	 */
+	public static Where notIn(String path, Object[] values) {
 		return new NotIn(path, values);
 	}
 

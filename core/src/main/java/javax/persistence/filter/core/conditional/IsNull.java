@@ -12,7 +12,7 @@ public class IsNull extends Where {
 	 * @param path
 	 */
 	public IsNull(String path) {
-		super(path);
+		super(path, null);
 	}
 
 	protected String getJpqlClause() {

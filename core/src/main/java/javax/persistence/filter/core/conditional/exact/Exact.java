@@ -16,7 +16,7 @@ public abstract class Exact extends Where {
 	 * @param value
 	 */
 	protected Exact(String path, Operation operation, Object value) {
-		super(path, value);
+		super(path, new Object[] { value });
 		this.operation = operation;
 	}
 

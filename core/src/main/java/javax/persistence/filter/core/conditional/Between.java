@@ -17,7 +17,7 @@ public class Between extends Where {
 	 * @param finalValue
 	 */
 	public Between(String path, Object initialValue, Object finalValue) {
-		super(path, initialValue, finalValue);
+		super(path, new Object[] { initialValue, finalValue });
 	}
 
 	@Override

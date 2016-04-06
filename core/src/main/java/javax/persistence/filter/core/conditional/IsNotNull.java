@@ -12,7 +12,7 @@ public class IsNotNull extends Where {
 	 * @param path
 	 */
 	public IsNotNull(String path) {
-		super(path);
+		super(path, null);
 	}
 
 	@Override
