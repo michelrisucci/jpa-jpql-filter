@@ -64,7 +64,7 @@ public class Hibernate {
 	public Map<String, ?> jpaPropertiesMap() {
 		Map<String, Object> bean = new HashMap<String, Object>();
 		bean.put("hibernate.hbm2ddl.auto", Hbm2Ddl.NONE.getValue());
-		bean.put("hibernate.format_sql", true);
+		bean.put("hibernate.format_sql", false);
 		// Prevents the throwing of LazyInitializationException.
 		bean.put("hibernate.enable_lazy_load_no_trans", true);
 		return bean;

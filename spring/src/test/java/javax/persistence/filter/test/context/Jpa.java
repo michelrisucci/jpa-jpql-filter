@@ -90,7 +90,7 @@ public class Jpa {
 
 	@Bean(autowire = Autowire.BY_NAME)
 	public Boolean showSql() {
-		return Boolean.TRUE;
+		return Boolean.FALSE;
 	}
 
 	@Bean(autowire = Autowire.BY_NAME)

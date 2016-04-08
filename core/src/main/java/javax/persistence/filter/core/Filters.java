@@ -150,7 +150,7 @@ public class Filters {
 
 		// Generating and logging final JPQL query.
 		String jpql = b.toString();
-		log.info(jpql);
+		log.debug(jpql);
 
 		// Creating JPA query.
 		TypedQuery<Number> query = em.createQuery(jpql, Number.class);
@@ -161,7 +161,7 @@ public class Filters {
 
 		// Fetching and logging count result.
 		long count = query.getSingleResult().longValue();
-		log.info(String.format(COUNTING, name, count));
+		log.debug(String.format(COUNTING, name, count));
 		return count;
 	}
 
@@ -212,7 +212,7 @@ public class Filters {
 
 		// Generating and logging final JPQL query.
 		String jpql = b.toString();
-		log.info(jpql);
+		log.debug(jpql);
 
 		// Creating JPA query.
 		TypedQuery<E> query = em.createQuery(jpql, filter.getRootType());
@@ -224,7 +224,7 @@ public class Filters {
 		// Fetching and logging list result.
 		setQueryFetchRange(query, limit, offset);
 		List<E> list = query.getResultList();
-		log.info(String.format(LISTING, name, list.size()));
+		log.debug(String.format(LISTING, name, list.size()));
 		return list;
 	}
 
