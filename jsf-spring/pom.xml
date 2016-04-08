@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.risucci</groupId>
 		<artifactId>jpa-jpql-filter</artifactId>
-		<version>1.17.3.GA</version>
+		<version>1.17.4.GA</version>
 	</parent>
 
 	<artifactId>jpa-jpql-filter-jsf-spring</artifactId>

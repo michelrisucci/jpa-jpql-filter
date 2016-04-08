@@ -69,18 +69,27 @@ public class Order extends VolatilePath {
 
 	/**
 	 * @param fullRelativePath
+	 * @param direction
 	 * @return
 	 */
-	public static Order ascending(String fullRelativePath) {
-		return new Order(fullRelativePath, Direction.ASC);
+	public static Order by(String fullRelativePath, Direction direction) {
+		return new Order(fullRelativePath, direction);
 	}
 
 	/**
 	 * @param fullRelativePath
 	 * @return
 	 */
-	public static Order descending(String fullRelativePath) {
-		return new Order(fullRelativePath, Direction.DESC);
+	public static Order byAscending(String fullRelativePath) {
+		return by(fullRelativePath, Direction.ASC);
+	}
+
+	/**
+	 * @param fullRelativePath
+	 * @return
+	 */
+	public static Order byDescending(String fullRelativePath) {
+		return by(fullRelativePath, Direction.DESC);
 	}
 
 	/*
