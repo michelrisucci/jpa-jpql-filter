@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.filter.Filter;
-import javax.persistence.filter.core.Order;
 import javax.persistence.filter.core.Where;
 import javax.persistence.filter.test.context.Database;
 import javax.persistence.filter.test.context.Hibernate;
@@ -13,8 +12,6 @@ import javax.persistence.filter.test.domain.Country;
 import javax.persistence.filter.test.service.CountryService;
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,11 +32,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, //
 		classes = { JpaJpqlFilterTests.class, Database.class, Jpa.class, Hibernate.class })
 @Configuration
-@ComponentScan(basePackages = "javax")
+@ComponentScan(basePackages = "javax.persistence.filter")
 @EnableTransactionManagement
 public class JpaJpqlFilterTests {
-
-	private static final Log log = LogFactory.getLog(JpaJpqlFilterTests.class);
 
 	private static boolean isDatabaseStarted;
 
@@ -61,57 +56,139 @@ public class JpaJpqlFilterTests {
 
 	@Test
 	public void between() {
+		final float lesserVal = 35.0f;
+		final float greaterVal = 50.0f;
+
 		Filter<Country> filter = Filter.newInstance(Country.class);
-		filter.add(Where.between("lifeExpectancy", 35.0f, 50.0f));
-		filter.add(Order.byAscending("lifeExpectancy"));
+		filter.add(Where.between("lifeExpectancy", lesserVal, greaterVal));
 
 		List<Country> results = countryService.filter(filter).getList();
 		Assert.assertFalse(results.isEmpty());
 		for (Country result : results) {
-			Assert.assertTrue(result.getLifeExpectancy().floatValue() >= 35.0f);
-			Assert.assertTrue(result.getLifeExpectancy().floatValue() <= 50.0f);
+			Assert.assertTrue(result.getLifeExpectancy().floatValue() >= lesserVal);
+			Assert.assertTrue(result.getLifeExpectancy().floatValue() <= greaterVal);
 		}
-		log.info("Between succeed!");
 	}
 
 	@Test
 	public void endsWith() {
+		final String endsWithVal = "States";
+
 		Filter<Country> filter = Filter.newInstance(Country.class);
-		filter.add(Where.endsWith("name", "States"));
+		filter.add(Where.endsWith("name", endsWithVal));
 
 		List<Country> results = countryService.filter(filter).getList();
 		Assert.assertFalse(results.isEmpty());
 		for (Country result : results) {
-			Assert.assertTrue(result.getName().endsWith("States"));
+			Assert.assertTrue(result.getName().endsWith(endsWithVal));
 		}
-		log.info("EndsWith succeed!");
 	}
 
 	@Test
 	public void equal() {
+		final String equalVal = "USA";
+
 		Filter<Country> filter = Filter.newInstance(Country.class);
-		filter.add(Where.equal("code", "USA"));
-		filter.add(Order.byAscending("code"));
+		filter.add(Where.equal("code", equalVal));
 
 		List<Country> results = countryService.filter(filter).getList();
 		Assert.assertTrue(results.size() == 1);
 		for (Country result : results) {
-			Assert.assertTrue(result.getCode().equals("USA"));
+			Assert.assertTrue(result.getCode().equals(equalVal));
 		}
-		log.info("Equals succeed!");
 	}
 
 	@Test
-	public void insensitiveEndsWith() {
+	public void greaterThan() {
+		final float greaterThanVal = 9970610.0f;
+
 		Filter<Country> filter = Filter.newInstance(Country.class);
-		filter.add(Where.iEndsWith("name", "STATES"));
+		filter.add(Where.greaterThan("surfaceArea", greaterThanVal));
+
+		List<Country> results = countryService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		Assert.assertTrue(results.size() == 2);
+		for (Country result : results) {
+			Assert.assertTrue(result.getSurfacearea() > greaterThanVal);
+		}
+	}
+
+	@Test
+	public void greaterThanOrEqual() {
+		final float greaterThanVal = 9970610.0f;
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.greaterThanOrEqual("surfaceArea", greaterThanVal));
+
+		List<Country> results = countryService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		Assert.assertTrue(results.size() == 3);
+		for (Country result : results) {
+			Assert.assertTrue(result.getSurfacearea() >= greaterThanVal);
+		}
+	}
+
+	@Test
+	public void iEndsWith() {
+		final String insensitiveEndsWithVal = "STATES";
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.iEndsWith("name", insensitiveEndsWithVal));
 
 		List<Country> results = countryService.filter(filter).getList();
 		Assert.assertFalse(results.isEmpty());
 		for (Country result : results) {
-			Assert.assertTrue(result.getName().toUpperCase().endsWith("STATES"));
+			Assert.assertTrue(result.getName().toUpperCase().endsWith(insensitiveEndsWithVal));
 		}
-		log.info("InsensitiveEndsWith succeed!");
+	}
+
+	@Test
+	public void iEqual() {
+		final String iEqualVal = "usa";
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.iEqual("code", iEqualVal));
+
+		List<Country> results = countryService.filter(filter).getList();
+		Assert.assertTrue(results.size() == 1);
+		for (Country result : results) {
+			Assert.assertTrue(result.getCode().toUpperCase().equals(iEqualVal.toUpperCase()));
+		}
+	}
+
+	@Test
+	public void iLike() {
+		final String iLikeVal = "republic";
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.iLike("name", iLikeVal));
+
+		List<Country> results = countryService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		for (Country result : results) {
+			Assert.assertTrue(result.getName().toUpperCase().contains(iLikeVal.toUpperCase()));
+		}
+	}
+
+	@Test
+	public void iLikeAny() {
+		final String[] iLikeAnyVal = { "republic", "democratic" };
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.iLikeAny("name", iLikeAnyVal));
+
+		List<Country> results = countryService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		for (Country result : results) {
+			System.out.println(result.getName());
+
+			String nameUpper = result.getName().toUpperCase();
+			boolean containsAny = false;
+			for (String value : iLikeAnyVal) {
+				containsAny |= nameUpper.contains(value.toUpperCase());
+			}
+			Assert.assertTrue(containsAny);
+		}
 	}
 
 }
