@@ -20,17 +20,17 @@ public class Country {
 	private String governmentForm;
 	private String headOfState;
 	private Integer indepYear;
-	private Float lifeExpectancy;
+	private BigDecimal lifeExpectancy;
 	private String localName;
 	private String name;
 	private Integer population;
 	private String region;
-	private float surfaceArea;
+	private BigDecimal surfaceArea;
 	@OneToMany(mappedBy = "country")
 	private Set<City> cities;
 	@ManyToOne
 	@JoinColumn(name = "capital")
-	private City city;
+	private City capital;
 	@ManyToOne
 	@JoinColumn(name = "continent")
 	private Continent continent;
@@ -96,11 +96,11 @@ public class Country {
 		this.indepYear = indepYear;
 	}
 
-	public Float getLifeExpectancy() {
+	public BigDecimal getLifeExpectancy() {
 		return this.lifeExpectancy;
 	}
 
-	public void setLifeExpectancy(Float lifeExpectancy) {
+	public void setLifeExpectancy(BigDecimal lifeExpectancy) {
 		this.lifeExpectancy = lifeExpectancy;
 	}
 
@@ -136,11 +136,11 @@ public class Country {
 		this.region = region;
 	}
 
-	public float getSurfacearea() {
+	public BigDecimal getSurfacearea() {
 		return this.surfaceArea;
 	}
 
-	public void setSurfacearea(float surfacearea) {
+	public void setSurfacearea(BigDecimal surfacearea) {
 		this.surfaceArea = surfacearea;
 	}
 
@@ -152,12 +152,12 @@ public class Country {
 		this.cities = cities;
 	}
 
-	public City getCity() {
-		return this.city;
+	public City getCapital() {
+		return this.capital;
 	}
 
-	public void setCity(City city) {
-		this.city = city;
+	public void setCapital(City capital) {
+		this.capital = capital;
 	}
 
 	public Continent getContinent() {
@@ -174,6 +174,11 @@ public class Country {
 
 	public void setLanguages(Set<CountryLanguage> countryLanguages) {
 		this.languages = countryLanguages;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + code + "] - " + name;
 	}
 
 }

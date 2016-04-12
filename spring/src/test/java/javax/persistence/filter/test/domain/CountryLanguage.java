@@ -1,5 +1,7 @@
 package javax.persistence.filter.test.domain;
 
+import java.math.BigDecimal;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -11,7 +13,7 @@ public class CountryLanguage {
 	@EmbeddedId
 	private CountryLanguagePK id;
 	private Boolean isOfficial;
-	private float percentage;
+	private BigDecimal percentage;
 	@ManyToOne
 	@JoinColumn(name = "countryCode", insertable = false, updatable = false)
 	private Country country;
@@ -32,11 +34,11 @@ public class CountryLanguage {
 		this.isOfficial = isOfficial;
 	}
 
-	public float getPercentage() {
+	public BigDecimal getPercentage() {
 		return this.percentage;
 	}
 
-	public void setPercentage(float percentage) {
+	public void setPercentage(BigDecimal percentage) {
 		this.percentage = percentage;
 	}
 
