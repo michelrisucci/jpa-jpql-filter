@@ -40,9 +40,9 @@ public class LikeAny extends Where {
 		StringBuilder clause = new StringBuilder("( ");
 
 		for (int i = 0; i < values.length; i++) {
-			clause.append(mountClausePart(i));
+			clause.append(mountClausePart(i)).append(" ");
 			if (i + 1 < values.length) {
-				clause.append(" OR ");
+				clause.append("OR ");
 			}
 		}
 		return clause.append(") ").toString();

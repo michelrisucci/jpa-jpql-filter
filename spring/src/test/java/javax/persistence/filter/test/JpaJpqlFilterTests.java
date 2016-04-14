@@ -2,7 +2,11 @@ package javax.persistence.filter.test;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.filter.Filter;
 import javax.persistence.filter.core.Order;
@@ -10,9 +14,12 @@ import javax.persistence.filter.core.Where;
 import javax.persistence.filter.test.context.Database;
 import javax.persistence.filter.test.context.Hibernate;
 import javax.persistence.filter.test.context.Jpa;
+import javax.persistence.filter.test.domain.City;
+import javax.persistence.filter.test.domain.Continent;
 import javax.persistence.filter.test.domain.Country;
 import javax.persistence.filter.test.domain.CountryLanguage;
 import javax.persistence.filter.test.service.CityService;
+import javax.persistence.filter.test.service.ContinentService;
 import javax.persistence.filter.test.service.CountryLanguageService;
 import javax.persistence.filter.test.service.CountryService;
 import javax.sql.DataSource;
@@ -52,6 +59,8 @@ public class JpaJpqlFilterTests {
 	private CountryService countryService;
 	@Autowired
 	private CountryLanguageService countryLanguageService;
+	@Autowired
+	private ContinentService continentService;
 	@Autowired
 	private CityService cityService;
 
@@ -279,46 +288,174 @@ public class JpaJpqlFilterTests {
 
 	@Test
 	public void iStartsWith() {
-		final String iStartsWithVal = "NeW";
+		final String val = "NeW";
 
 		Filter<CountryLanguage> filter = Filter.newInstance(CountryLanguage.class);
-		filter.add(Where.iStartsWith("country.capital.name", iStartsWithVal));
+		filter.add(Where.iStartsWith("country.capital.name", val));
 
 		List<CountryLanguage> results = countryLanguageService.filter(filter).getList();
 		Assert.assertFalse(results.isEmpty());
 		for (CountryLanguage result : results) {
 			String name = result.getCountry().getCapital().getName();
-			Assert.assertTrue(name.toUpperCase().startsWith(iStartsWithVal.toUpperCase()));
+			Assert.assertTrue(name.toUpperCase().startsWith(val.toUpperCase()));
 		}
 	}
 
 	@Test
 	public void lesserThan() {
-		final BigDecimal lesserThanVal = new BigDecimal("0.1");
+		final BigDecimal val = new BigDecimal("0.1");
 
 		Filter<CountryLanguage> filter = Filter.newInstance(CountryLanguage.class);
-		filter.add(Where.lesserThan("percentage", lesserThanVal));
+		filter.add(Where.lesserThan("percentage", val));
 		filter.add(Order.byDescending("percentage"));
 
 		List<CountryLanguage> results = countryLanguageService.filter(filter).getList();
 		Assert.assertFalse(results.isEmpty());
 		for (CountryLanguage result : results) {
-			Assert.assertTrue(lesserThanVal.compareTo(result.getPercentage()) == 1);
+			Assert.assertTrue(val.compareTo(result.getPercentage()) == 1);
 		}
 	}
 
 	@Test
 	public void lesserThanOrEqual() {
-		final BigDecimal lesserThanOrEqualVal = new BigDecimal("0.1");
+		final BigDecimal val = new BigDecimal("0.1");
 
 		Filter<CountryLanguage> filter = Filter.newInstance(CountryLanguage.class);
-		filter.add(Where.lesserThanOrEqual("percentage", lesserThanOrEqualVal));
+		filter.add(Where.lesserThanOrEqual("percentage", val));
 		filter.add(Order.byDescending("percentage"));
 
 		List<CountryLanguage> results = countryLanguageService.filter(filter).getList();
 		Assert.assertFalse(results.isEmpty());
 		for (CountryLanguage result : results) {
-			Assert.assertTrue(lesserThanOrEqualVal.compareTo(result.getPercentage()) != -1);
+			Assert.assertTrue(val.compareTo(result.getPercentage()) != -1);
+		}
+	}
+
+	@Test
+	public void like() {
+		final String val = "Republic";
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.iLike("name", val));
+
+		List<Country> results = countryService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		for (Country result : results) {
+			Assert.assertTrue(result.getName().contains(val));
+		}
+	}
+
+	@Test
+	public void likeAny() {
+		final String[] valArray = { "Republic", "Democratic" };
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.likeAny("name", valArray));
+
+		List<Country> results = countryService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		for (Country result : results) {
+			String name = result.getName();
+			boolean containsAny = false;
+			for (String val : valArray) {
+				containsAny |= name.contains(val);
+			}
+			Assert.assertTrue(containsAny);
+		}
+	}
+
+	@Test
+	public void notEqual() {
+		final String val = "South America";
+
+		Filter<Continent> filter = Filter.newInstance(Continent.class);
+		filter.add(Where.notEqual("name", val));
+
+		List<Continent> results = continentService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		for (Continent result : results) {
+			Assert.assertFalse(result.getName().equals(val));
+		}
+	}
+
+	@Test
+	public void notIn() {
+		final String[] valArray = { "Europe", "Oceania", "Asia", "North America", "Africa", "Antarctica" };
+
+		Filter<City> filter = Filter.newInstance(City.class);
+		filter.add(Where.notIn("country.continent.name", valArray));
+
+		List<City> results = cityService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		for (City result : results) {
+			Assert.assertTrue(result.getCountry().getContinent().getName().equals("South America"));
+		}
+	}
+
+	@Test
+	public void startsWith() {
+		final String val = "New";
+
+		Filter<CountryLanguage> filter = Filter.newInstance(CountryLanguage.class);
+		filter.add(Where.startsWith("country.capital.name", val));
+
+		List<CountryLanguage> results = countryLanguageService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		for (CountryLanguage result : results) {
+			String name = result.getCountry().getCapital().getName();
+			Assert.assertTrue(name.startsWith(val));
+		}
+	}
+
+	@Test
+	public void orderingOne() {
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.iLike("name", "rEpUbLiC"));
+		filter.add(Order.byAscending("name"));
+
+		List<Country> results = countryService.filter(filter).getList();
+		SortedSet<Country> manuallySortedResults = new TreeSet<>(new Comparator<Country>() {
+			@Override
+			public int compare(Country o1, Country o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		manuallySortedResults.addAll(results);
+
+		Iterator<Country> ri = results.iterator();
+		Iterator<Country> msri = manuallySortedResults.iterator();
+
+		while (ri.hasNext()) {
+			Assert.assertEquals(ri.next(), msri.next());
+		}
+	}
+
+	@Test
+	public void orderingMany() {
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.iLike("name", "rEpUbLiC"));
+		filter.add(Order.byDescending("continent.name"), //
+				Order.byAscending("name"));
+
+		List<Country> results = countryService.filter(filter).getList();
+		SortedSet<Country> manuallySortedResults = new TreeSet<>(new Comparator<Country>() {
+			@Override
+			public int compare(Country o1, Country o2) {
+				// Comparing descending Continent name
+				int continentNameDescComparison = o2.getContinent().getName().compareTo(o1.getContinent().getName());
+				if (continentNameDescComparison != 0) {
+					return continentNameDescComparison;
+				}
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		manuallySortedResults.addAll(results);
+
+		Iterator<Country> ri = results.iterator();
+		Iterator<Country> msri = manuallySortedResults.iterator();
+
+		while (ri.hasNext()) {
+			Assert.assertEquals(ri.next(), msri.next());
 		}
 	}
 
