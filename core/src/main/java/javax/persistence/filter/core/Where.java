@@ -19,9 +19,11 @@ import javax.persistence.filter.core.conditional.like.IEndsWith;
 import javax.persistence.filter.core.conditional.like.IEqual;
 import javax.persistence.filter.core.conditional.like.ILike;
 import javax.persistence.filter.core.conditional.like.ILikeAny;
+import javax.persistence.filter.core.conditional.like.INotLike;
 import javax.persistence.filter.core.conditional.like.IStartsWith;
 import javax.persistence.filter.core.conditional.like.Like;
 import javax.persistence.filter.core.conditional.like.LikeAny;
+import javax.persistence.filter.core.conditional.like.NotLike;
 import javax.persistence.filter.core.conditional.like.StartsWith;
 
 /**
@@ -170,6 +172,15 @@ public abstract class Where extends VolatilePath {
 
 	/**
 	 * @param path
+	 * @param value
+	 * @return
+	 */
+	public static Where notLike(String path, String value) {
+		return new NotLike(path, value);
+	}
+
+	/**
+	 * @param path
 	 * @param values
 	 * @return
 	 */
@@ -184,6 +195,15 @@ public abstract class Where extends VolatilePath {
 	 */
 	public static Where iLikeAny(String path, String[] values) {
 		return new ILikeAny(path, values);
+	}
+
+	/**
+	 * @param path
+	 * @param value
+	 * @return
+	 */
+	public static Where iNotLike(String path, String value) {
+		return new INotLike(path, value);
 	}
 
 	/**

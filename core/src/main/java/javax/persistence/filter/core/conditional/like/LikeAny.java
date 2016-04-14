@@ -15,7 +15,7 @@ public class LikeAny extends Where {
 		NONE, LEFT, RIGHT, AROUND;
 	}
 
-	private PercentPosition percentPosition;
+	protected PercentPosition percentPosition;
 
 	/**
 	 * @param path

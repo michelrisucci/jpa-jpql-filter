@@ -263,6 +263,20 @@ public class JpaJpqlFilterTests {
 	}
 
 	@Test
+	public void iNotLike() {
+		final String val = "RePuBlIc";
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.iNotLike("name", val));
+
+		List<Country> results = countryService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		for (Country result : results) {
+			Assert.assertFalse(result.getName().toUpperCase().contains(val.toUpperCase()));
+		}
+	}
+
+	@Test
 	public void isNotNull() {
 		Filter<Country> filter = Filter.newInstance(Country.class);
 		filter.add(Where.isNotNull("capital"));
@@ -389,6 +403,20 @@ public class JpaJpqlFilterTests {
 		Assert.assertFalse(results.isEmpty());
 		for (City result : results) {
 			Assert.assertTrue(result.getCountry().getContinent().getName().equals("South America"));
+		}
+	}
+
+	@Test
+	public void notLike() {
+		final String val = "Republic";
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.iNotLike("name", val));
+
+		List<Country> results = countryService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		for (Country result : results) {
+			Assert.assertFalse(result.getName().contains(val));
 		}
 	}
 
