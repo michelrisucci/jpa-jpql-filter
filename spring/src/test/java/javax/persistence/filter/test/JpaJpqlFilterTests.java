@@ -2,6 +2,8 @@ package javax.persistence.filter.test;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -38,14 +40,12 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, //
 		classes = { JpaJpqlFilterTests.class, Database.class, Jpa.class, Hibernate.class })
 @Configuration
 @ComponentScan(basePackages = "javax.persistence.filter")
-@EnableTransactionManagement
 public class JpaJpqlFilterTests {
 
 	private static boolean isDatabaseStarted;
@@ -442,48 +442,54 @@ public class JpaJpqlFilterTests {
 		filter.add(Order.byAscending("name"));
 
 		List<Country> results = countryService.filter(filter).getList();
-		SortedSet<Country> manuallySortedResults = new TreeSet<>(new Comparator<Country>() {
+		manualCompareOrdering(results, new Comparator<Country>() {
 			@Override
 			public int compare(Country o1, Country o2) {
 				return o1.getName().compareTo(o2.getName());
 			}
 		});
-		manuallySortedResults.addAll(results);
-
-		Iterator<Country> ri = results.iterator();
-		Iterator<Country> msri = manuallySortedResults.iterator();
-
-		while (ri.hasNext()) {
-			Assert.assertEquals(ri.next(), msri.next());
-		}
 	}
 
 	@Test
 	public void orderingMany() {
 		Filter<Country> filter = Filter.newInstance(Country.class);
 		filter.add(Where.iLike("name", "rEpUbLiC"));
-		filter.add(Order.byDescending("continent.name"), //
-				Order.byAscending("name"));
+		filter.add(Order.byDescending("continent.name"), Order.byAscending("name"));
 
 		List<Country> results = countryService.filter(filter).getList();
-		SortedSet<Country> manuallySortedResults = new TreeSet<>(new Comparator<Country>() {
-			@Override
+		manualCompareOrdering(results, new Comparator<Country>() {
 			public int compare(Country o1, Country o2) {
 				// Comparing descending Continent name
 				int continentNameDescComparison = o2.getContinent().getName().compareTo(o1.getContinent().getName());
 				if (continentNameDescComparison != 0) {
 					return continentNameDescComparison;
 				}
+				// Then comparing Country name
 				return o1.getName().compareTo(o2.getName());
 			}
 		});
-		manuallySortedResults.addAll(results);
+	}
 
-		Iterator<Country> ri = results.iterator();
-		Iterator<Country> msri = manuallySortedResults.iterator();
+	private <E> void manualCompareOrdering(List<E> ordered, Comparator<E> manualComparator) {
+		// Preparing a new list to reverse the results
+		List<E> reversed = new ArrayList<>(ordered);
+		Collections.reverse(reversed);
+		// Assert that the objects of both lists are not equal.
+		Assert.assertFalse(ordered.get(0) == reversed.get(0));
+		Assert.assertFalse(ordered.get(ordered.size() - 1) == reversed.get(reversed.size() - 1));
 
-		while (ri.hasNext()) {
-			Assert.assertEquals(ri.next(), msri.next());
+		// Creating a manually sorted set with proper comparator
+		SortedSet<E> manuallySorted = new TreeSet<>(manualComparator);
+		// Manually sorting results
+		manuallySorted.addAll(reversed);
+
+		Iterator<E> orderedIter = ordered.iterator();
+		Iterator<E> manuallySortedIter = manuallySorted.iterator();
+		while (orderedIter.hasNext()) {
+			E expected = orderedIter.next();
+			E actual = manuallySortedIter.next();
+			// Object reference equality
+			Assert.assertTrue(expected == actual);
 		}
 	}
 
