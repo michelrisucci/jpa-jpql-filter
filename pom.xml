@@ -7,12 +7,12 @@
 
 	<groupId>com.risucci</groupId>
 	<artifactId>jpa-jpql-filter</artifactId>
-	<version>1.18.1.GA</version>
+	<version>1.19.1.GA</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<modules.version>1.18.1.GA</modules.version>
+		<modules.version>1.19.1.GA</modules.version>
 	</properties>
 
 	<modules>
@@ -134,5 +134,19 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<distributionManagement>
+		<repository>
+			<id>dynavideo</id>
+			<url>http://services.dynavideo.com.br:8081/nexus/content/repositories/dynavideo/</url>
+		</repository>
+	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>dynavideo</id>
+			<url>http://services.dynavideo.com.br:8081/nexus/content/repositories/dynavideo/</url>
+		</repository>
+	</repositories>
 
 </project>

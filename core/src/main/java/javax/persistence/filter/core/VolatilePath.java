@@ -12,22 +12,43 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class VolatilePath {
 
+	protected static final String UNDERSCORE = "_";
 	protected static final String ROOT_PREFIX = "x";
 	protected static final String SEPARATOR = ".";
+	protected static final String PSEUDO_SEPARATOR = "!";
 	protected static final String SEPARATOR_REGEX = Pattern.quote(SEPARATOR);
+	protected static final String PSEUDO_SEPARATOR_REGEX = Pattern.quote(PSEUDO_SEPARATOR);
 
 	protected String relativePath;
 	protected String[] relativePathParts;
-	protected String valueFieldName;
 	protected String queryParamName;
+
+	private String valueFieldName;
 
 	// Must be PRIVATE to prevent direct access: use getter instead.
 	private String realPath;
 
 	/**
-	 * 
+	 * @param fullRelativePath
 	 */
-	public VolatilePath() {
+	protected VolatilePath(String fullRelativePath) {
+		if (fullRelativePath.contains(".")) {
+			int valueDotIndex = fullRelativePath.lastIndexOf('.');
+
+			// Relative path without value field name;
+			this.relativePath = fullRelativePath.substring(0, valueDotIndex);
+			// Relative path parts according to separator REGEX;
+			this.relativePathParts = relativePath.split(SEPARATOR_REGEX);
+			// Processing pseudo-separators for implicit joins or custom embedded IDs.
+			for (int i = 0; i < relativePathParts.length; i++) {
+				relativePathParts[i] = relativePathParts[i].replaceAll(PSEUDO_SEPARATOR_REGEX, SEPARATOR);
+			}
+
+			// Value field name (only last word);
+			this.valueFieldName = fullRelativePath.substring(valueDotIndex + 1);
+		} else {
+			this.valueFieldName = fullRelativePath;
+		}
 	}
 
 	/**
@@ -40,7 +61,7 @@ public abstract class VolatilePath {
 		if (relativePath != null) {
 			builder.append(relativePath.replaceAll(SEPARATOR_REGEX, ""));
 		}
-		builder.append(valueFieldName);
+		builder.append(getPseudoValueFieldName());
 		builder.append(filter.incrementPathSuffix());
 		return builder.toString();
 	}
@@ -60,13 +81,13 @@ public abstract class VolatilePath {
 		StringBuilder processed = new StringBuilder();
 		if (relativePath != null && relativePathParts != null) {
 			String prefix = ROOT_PREFIX + StringUtils.join(relativePathParts);
-			this.setRealPath(prefix + SEPARATOR + valueFieldName);
+			this.setRealPath(prefix + SEPARATOR + getValueFieldName(false));
 			if (!aliases.contains(prefix)) {
 				StringBuilder joins = new StringBuilder();
 				processed.append(processJoins(aliases, joins, -1, null));
 			}
 		} else {
-			this.setRealPath(ROOT_PREFIX + SEPARATOR + valueFieldName);
+			this.setRealPath(ROOT_PREFIX + SEPARATOR + getValueFieldName(true));
 		}
 		return processed.toString();
 	}
@@ -99,7 +120,7 @@ public abstract class VolatilePath {
 
 			return processJoins(aliases, joins, currentIndex, lastAlias);
 		} else {
-			this.setRealPath(last + SEPARATOR + valueFieldName);
+			this.setRealPath(last + SEPARATOR + getPseudoValueFieldName());
 			return joins.toString();
 		}
 	}
@@ -125,8 +146,15 @@ public abstract class VolatilePath {
 	/**
 	 * @return
 	 */
-	public String getValueFieldName() {
-		return valueFieldName;
+	public String getValueFieldName(boolean replace) {
+		return replace ? valueFieldName.replaceAll(PSEUDO_SEPARATOR_REGEX, SEPARATOR) : valueFieldName;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getPseudoValueFieldName() {
+		return valueFieldName.replaceAll(PSEUDO_SEPARATOR_REGEX, UNDERSCORE);
 	}
 
 	/**

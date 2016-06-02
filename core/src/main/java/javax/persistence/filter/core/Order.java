@@ -50,20 +50,7 @@ public class Order extends VolatilePath {
 	 * 
 	 */
 	private Order(String fullRelativePath, Direction direction) {
-
-		if (fullRelativePath.contains(".")) {
-			int valueDotIndex = fullRelativePath.lastIndexOf('.');
-
-			// Relative path without value field name;
-			this.relativePath = fullRelativePath.substring(0, valueDotIndex);
-			// Relative path parts according to separator REGEX;
-			this.relativePathParts = relativePath.split(SEPARATOR_REGEX);
-			// Value field name (only last word);
-			this.valueFieldName = fullRelativePath.substring(valueDotIndex + 1);
-		} else {
-			this.valueFieldName = fullRelativePath;
-		}
-
+		super(fullRelativePath);
 		this.direction = direction;
 	}
 

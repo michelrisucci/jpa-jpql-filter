@@ -78,7 +78,8 @@ public class JpaJpqlFilterTests {
 		final BigDecimal greaterVal = new BigDecimal("50.0");
 
 		Filter<CountryLanguage> filter = Filter.newInstance(CountryLanguage.class);
-		filter.add(Where.equal("id.language", "English"));
+		// Using PSEUDO separator "!" instead of "." to prevent unnecessary joins.
+		filter.add(Where.equal("id!language", "English"));
 		filter.add(Where.between("country.lifeExpectancy", lesserVal, greaterVal));
 
 		List<CountryLanguage> results = countryLanguageService.filter(filter).getList();
@@ -397,7 +398,8 @@ public class JpaJpqlFilterTests {
 		final String[] valArray = { "Europe", "Oceania", "Asia", "North America", "Africa", "Antarctica" };
 
 		Filter<City> filter = Filter.newInstance(City.class);
-		filter.add(Where.notIn("country.continent.name", valArray));
+		// Using PSEUDO separator "!" instead of "." to prevent unnecessary joins.
+		filter.add(Where.notIn("country!continent!name", valArray));
 
 		List<City> results = cityService.filter(filter).getList();
 		Assert.assertFalse(results.isEmpty());
@@ -425,7 +427,8 @@ public class JpaJpqlFilterTests {
 		final String val = "New";
 
 		Filter<CountryLanguage> filter = Filter.newInstance(CountryLanguage.class);
-		filter.add(Where.startsWith("country.capital.name", val));
+		// Using PSEUDO separator "!" instead of "." to prevent unnecessary joins.
+		filter.add(Where.startsWith("country!capital!name", val));
 
 		List<CountryLanguage> results = countryLanguageService.filter(filter).getList();
 		Assert.assertFalse(results.isEmpty());
