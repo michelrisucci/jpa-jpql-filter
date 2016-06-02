@@ -135,18 +135,4 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<distributionManagement>
-		<repository>
-			<id>dynavideo</id>
-			<url>http://services.dynavideo.com.br:8081/nexus/content/repositories/dynavideo/</url>
-		</repository>
-	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>dynavideo</id>
-			<url>http://services.dynavideo.com.br:8081/nexus/content/repositories/dynavideo/</url>
-		</repository>
-	</repositories>
-
 </project>
