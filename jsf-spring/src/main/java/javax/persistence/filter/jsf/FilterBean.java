@@ -295,8 +295,12 @@ public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends Sp
 	 * @throws IllegalAccessException
 	 */
 	@SuppressWarnings("unchecked")
-	public E newEntity() throws InstantiationException, IllegalAccessException {
-		return (E) getParameterizedType(0).newInstance();
+	public E newEntity() {
+		try {
+			return (E) getParameterizedType(0).newInstance();
+		} catch (IllegalAccessException | InstantiationException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/*

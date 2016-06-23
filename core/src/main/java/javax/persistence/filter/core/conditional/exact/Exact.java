@@ -8,6 +8,7 @@ import javax.persistence.filter.core.Where;
  */
 public abstract class Exact extends Where {
 
+	private boolean allowNulls = false;
 	private Operation operation;
 
 	/**
@@ -29,7 +30,12 @@ public abstract class Exact extends Where {
 
 	@Override
 	protected String getJpqlClause() {
-		return getRealPath() + " " + operation.getOperand() + " :" + queryParamName + " ";
+		String clause = getRealPath() + " " + operation.getOperand() + " :" + queryParamName + " ";
+		if (allowNulls) {
+			return "(" + clause + "OR " + getRealPath() + " IS NULL) ";
+		} else {
+			return clause;
+		}
 	}
 
 	@Override
@@ -63,6 +69,11 @@ public abstract class Exact extends Where {
 		public String getOperand() {
 			return operand;
 		}
+	}
+
+	public Exact orNull() {
+		allowNulls = true;
+		return this;
 	}
 
 }

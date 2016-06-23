@@ -42,8 +42,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, //
-		classes = { JpaJpqlFilterTests.class, Database.class, Jpa.class, Hibernate.class })
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { JpaJpqlFilterTests.class, Database.class, Jpa.class, Hibernate.class })
 @Configuration
 @ComponentScan(basePackages = "javax.persistence.filter")
 public class JpaJpqlFilterTests {
@@ -78,7 +77,10 @@ public class JpaJpqlFilterTests {
 		final BigDecimal greaterVal = new BigDecimal("50.0");
 
 		Filter<CountryLanguage> filter = Filter.newInstance(CountryLanguage.class);
-		// Using PSEUDO separator "!" instead of "." to prevent unnecessary joins.
+		/*
+		 * Using PSEUDO separator "!" instead of "." to prevent unnecessary
+		 * joins on composite IDs.
+		 */
 		filter.add(Where.equal("id!language", "English"));
 		filter.add(Where.between("country.lifeExpectancy", lesserVal, greaterVal));
 
@@ -347,6 +349,86 @@ public class JpaJpqlFilterTests {
 	}
 
 	@Test
+	public void exactOrNull() {
+		final Integer year = 0;
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.lesserThan("indepYear", year).orNull());
+
+		List<Country> results = countryService.filter(filter).getList();
+		
+		Assert.assertFalse(results.isEmpty());
+		for (Country result : results) {
+			Integer indepYear = result.getIndepYear();
+			if (indepYear != null && indepYear >= 0)
+				Assert.fail();
+		}
+	}
+
+	@Test
+	public void exactOrEqualOrNull() {
+		final Integer year = 0;
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(Where.lesserThanOrEqual("indepYear", year).orNull());
+
+		List<Country> results = countryService.filter(filter).getList();
+		
+		Assert.assertFalse(results.isEmpty());
+		for (Country result : results) {
+			Integer indepYear = result.getIndepYear();
+			if (indepYear != null && indepYear > 0)
+				Assert.fail();
+		}
+	}
+	
+	@Test
+	public void exactOrNullWithJoins() {
+		final Integer year = 0;
+
+		Filter<Continent> filter = Filter.newInstance(Continent.class);
+		filter.add(Where.lesserThan("countries.indepYear", year).orNull());
+
+		List<Continent> results = continentService.filter(filter).getList();
+		
+		Assert.assertFalse(results.isEmpty());
+		for (Continent result : results) {
+			boolean invalid = true;
+			for (Country c : result.getCountries()) {
+				Integer indepYear = c.getIndepYear();
+				if (indepYear == null || indepYear < 0)
+					invalid = false;
+			}
+			
+			if (invalid)
+				Assert.fail();
+		}
+	}
+	
+	@Test
+	public void exactOrEqualOrNullWithJoins() {
+		final Integer year = 0;
+
+		Filter<Continent> filter = Filter.newInstance(Continent.class);
+		filter.add(Where.lesserThanOrEqual("countries.indepYear", year).orNull());
+
+		List<Continent> results = continentService.filter(filter).getList();
+		
+		Assert.assertFalse(results.isEmpty());
+		for (Continent result : results) {
+			boolean invalid = true;
+			for (Country c : result.getCountries()) {
+				Integer indepYear = c.getIndepYear();
+				if (indepYear == null || indepYear <= 0)
+					invalid = false;
+			}
+			
+			if (invalid)
+				Assert.fail();
+		}
+	}
+
+	@Test
 	public void like() {
 		final String val = "Republic";
 
@@ -398,7 +480,10 @@ public class JpaJpqlFilterTests {
 		final String[] valArray = { "Europe", "Oceania", "Asia", "North America", "Africa", "Antarctica" };
 
 		Filter<City> filter = Filter.newInstance(City.class);
-		// Using PSEUDO separator "!" instead of "." to prevent unnecessary joins.
+		/*
+		 * Using PSEUDO separator "!" instead of "." to prevent unnecessary
+		 * joins on composite IDs.
+		 */
 		filter.add(Where.notIn("country!continent!name", valArray));
 
 		List<City> results = cityService.filter(filter).getList();
@@ -427,7 +512,10 @@ public class JpaJpqlFilterTests {
 		final String val = "New";
 
 		Filter<CountryLanguage> filter = Filter.newInstance(CountryLanguage.class);
-		// Using PSEUDO separator "!" instead of "." to prevent unnecessary joins.
+		/*
+		 * Using PSEUDO separator "!" instead of "." to prevent unnecessary
+		 * joins on composite IDs.
+		 */
 		filter.add(Where.startsWith("country!capital!name", val));
 
 		List<CountryLanguage> results = countryLanguageService.filter(filter).getList();

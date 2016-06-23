@@ -9,6 +9,7 @@ import javax.persistence.filter.core.conditional.IsNotNull;
 import javax.persistence.filter.core.conditional.IsNull;
 import javax.persistence.filter.core.conditional.NotIn;
 import javax.persistence.filter.core.conditional.exact.Equal;
+import javax.persistence.filter.core.conditional.exact.Exact;
 import javax.persistence.filter.core.conditional.exact.GreaterThan;
 import javax.persistence.filter.core.conditional.exact.GreaterThanOrEqual;
 import javax.persistence.filter.core.conditional.exact.LesserThan;
@@ -62,7 +63,7 @@ public abstract class Where extends VolatilePath {
 	 * @param value
 	 * @return
 	 */
-	public static Where equal(String path, Object value) {
+	public static Exact equal(String path, Object value) {
 		return new Equal(path, value);
 	}
 
@@ -71,7 +72,7 @@ public abstract class Where extends VolatilePath {
 	 * @param value
 	 * @return
 	 */
-	public static Where notEqual(String path, Object value) {
+	public static Exact notEqual(String path, Object value) {
 		return new NotEqual(path, value);
 	}
 
@@ -80,7 +81,7 @@ public abstract class Where extends VolatilePath {
 	 * @param value
 	 * @return
 	 */
-	public static Where lesserThan(String path, Object value) {
+	public static Exact lesserThan(String path, Object value) {
 		return new LesserThan(path, value);
 	}
 
@@ -89,7 +90,7 @@ public abstract class Where extends VolatilePath {
 	 * @param value
 	 * @return
 	 */
-	public static Where lesserThanOrEqual(String path, Object value) {
+	public static Exact lesserThanOrEqual(String path, Object value) {
 		return new LesserThanOrEqual(path, value);
 	}
 
@@ -98,7 +99,7 @@ public abstract class Where extends VolatilePath {
 	 * @param value
 	 * @return
 	 */
-	public static Where greaterThan(String path, Object value) {
+	public static Exact greaterThan(String path, Object value) {
 		return new GreaterThan(path, value);
 	}
 
@@ -107,7 +108,7 @@ public abstract class Where extends VolatilePath {
 	 * @param value
 	 * @return
 	 */
-	public static Where greaterThanOrEqual(String path, Object value) {
+	public static Exact greaterThanOrEqual(String path, Object value) {
 		return new GreaterThanOrEqual(path, value);
 	}
 
