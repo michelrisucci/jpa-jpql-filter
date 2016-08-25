@@ -10,6 +10,7 @@ import javax.persistence.filter.core.conditional.IsNull;
 import javax.persistence.filter.core.conditional.NotIn;
 import javax.persistence.filter.core.conditional.exact.Equal;
 import javax.persistence.filter.core.conditional.exact.Exact;
+import javax.persistence.filter.core.conditional.exact.Exact.Operation;
 import javax.persistence.filter.core.conditional.exact.GreaterThan;
 import javax.persistence.filter.core.conditional.exact.GreaterThanOrEqual;
 import javax.persistence.filter.core.conditional.exact.LesserThan;
@@ -289,6 +290,18 @@ public abstract class Where extends VolatilePath {
 	 */
 	public static Where isNotNull(String path) {
 		return new IsNotNull(path);
+	}
+
+	/**
+	 * Creates a raw clause without post-processing. Remember to use {@code "x"} as root prefix.
+	 * 
+	 * @param rawJpql
+	 * @param operation
+	 * @param value
+	 * @return
+	 */
+	public static Where passthroughRawClause(String rawJpql, Operation operation, Object value) {
+		return new PassthroughRawClause(rawJpql, operation, value);
 	}
 
 	/*

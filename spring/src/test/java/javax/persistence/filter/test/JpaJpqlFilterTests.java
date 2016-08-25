@@ -12,7 +12,9 @@ import java.util.TreeSet;
 
 import javax.persistence.filter.Filter;
 import javax.persistence.filter.core.Order;
+import javax.persistence.filter.core.PassthroughRawClause;
 import javax.persistence.filter.core.Where;
+import javax.persistence.filter.core.conditional.exact.Exact.Operation;
 import javax.persistence.filter.test.context.Database;
 import javax.persistence.filter.test.context.Hibernate;
 import javax.persistence.filter.test.context.Jpa;
@@ -581,6 +583,22 @@ public class JpaJpqlFilterTests {
 			E actual = manuallySortedIter.next();
 			// Object reference equality
 			Assert.assertTrue(expected == actual);
+		}
+	}
+
+	@Test
+	public void rawJpql() {
+		final Number val = Integer.valueOf(140000000);
+		final int customAdd = 10000000;
+		final int customFinalVal = val.intValue() + customAdd;
+
+		Filter<Country> filter = Filter.newInstance(Country.class);
+		filter.add(new PassthroughRawClause("(x.population + " + customAdd + ")", Operation.GREATER_THAN_OR_EQUAL, val));
+
+		List<Country> results = countryService.filter(filter).getList();
+		Assert.assertFalse(results.isEmpty());
+		for (Country result : results) {
+			Assert.assertTrue(result.getPopulation() + customAdd >= customFinalVal);
 		}
 	}
 

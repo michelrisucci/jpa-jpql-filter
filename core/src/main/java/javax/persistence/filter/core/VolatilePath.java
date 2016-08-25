@@ -12,8 +12,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class VolatilePath {
 
-	protected static final String UNDERSCORE = "_";
 	protected static final String ROOT_PREFIX = "x";
+	protected static final String UNDERSCORE = "_";
 	protected static final String SEPARATOR = ".";
 	protected static final String PSEUDO_SEPARATOR = "!";
 	protected static final String SEPARATOR_REGEX = Pattern.quote(SEPARATOR);

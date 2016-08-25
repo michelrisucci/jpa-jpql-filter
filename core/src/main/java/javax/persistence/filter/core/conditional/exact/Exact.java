@@ -8,8 +8,8 @@ import javax.persistence.filter.core.Where;
  */
 public abstract class Exact extends Where {
 
-	private boolean allowNulls = false;
-	private Operation operation;
+	protected boolean allowNulls = false;
+	protected Operation operation;
 
 	/**
 	 * @param path
@@ -46,7 +46,7 @@ public abstract class Exact extends Where {
 	/**
 	 * @author Michel Risucci
 	 */
-	protected enum Operation {
+	public enum Operation {
 		EQUAL("="), //
 		NOT_EQUAL("<>"), //
 		LESSER_THAN("<"), //
