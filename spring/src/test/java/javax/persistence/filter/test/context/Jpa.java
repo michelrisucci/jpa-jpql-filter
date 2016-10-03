@@ -1,34 +1,38 @@
 package javax.persistence.filter.test.context;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.SharedCacheMode;
+import javax.persistence.filter.test.JpaJpqlFilterTests;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.dialect.H2Dialect;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
+@EnableJpaRepositories(basePackages = JpaJpqlFilterTests.BASE_PACKAGE)
 public class Jpa {
 
 	private static final Log log = LogFactory.getLog(Jpa.class);
-	private static final String DOT_PATTERN = Pattern.quote(".");
 
 	@Bean
 	@Autowired
-	public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean( //
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory( //
 			DataSource dataSource, //
 			JpaVendorAdapter jpaVendorAdapter, //
 			@Value("#{packagesToScan}") String[] packagesToScan, //
@@ -42,6 +46,7 @@ public class Jpa {
 		bean.setPackagesToScan(packagesToScan);
 		bean.setSharedCacheMode(sharedCacheMode);
 		bean.setJpaPropertyMap(jpaPropertiesMap);
+		bean.afterPropertiesSet();
 		return bean;
 	}
 
@@ -62,9 +67,9 @@ public class Jpa {
 	 */
 	@Bean
 	@Autowired
-	public PlatformTransactionManager platformTransactionManager(DataSource dataSource, EntityManagerFactory emf) {
+	public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
 		log.info("Loading JPA Transaction Management.");
-		return new JpaTransactionManager(emf);
+		return new JpaTransactionManager(entityManagerFactory);
 	}
 
 	/*
@@ -73,9 +78,7 @@ public class Jpa {
 
 	@Bean(autowire = Autowire.BY_NAME)
 	public String[] packagesToScan() {
-		Package thisPackage = Jpa.class.getPackage();
-		String rootPackage = thisPackage.getName().split(DOT_PATTERN)[0];
-		return new String[] { rootPackage };
+		return new String[] { JpaJpqlFilterTests.BASE_PACKAGE };
 	}
 
 	@Bean(autowire = Autowire.BY_NAME)
@@ -90,12 +93,66 @@ public class Jpa {
 
 	@Bean(autowire = Autowire.BY_NAME)
 	public Boolean showSql() {
-		return Boolean.FALSE;
+		return Boolean.TRUE;
 	}
 
 	@Bean(autowire = Autowire.BY_NAME)
 	public SharedCacheMode sharedCacheMode() {
 		return SharedCacheMode.ENABLE_SELECTIVE;
+	}
+
+	/*
+	 * Hibernate Specific Configuration
+	 */
+
+	public enum Hbm2Ddl {
+		NONE("none"), //
+		VALIDATE("validate"), //
+		UPDATE("update"), //
+		CREATE("create"), //
+		CREATE_AND_DROP("create-drop");
+
+		private String value;
+
+		private Hbm2Ddl(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+
+	@Bean
+	@Autowired
+	public JpaVendorAdapter jpaVendorAdapter( //
+			@Value("#{jpaVendorDatabase}") Database jpaVendorDatabase, //
+			@Value("#{jpaVendorDialect}") String jpaVendorDialect, //
+			@Value("#{generateDdl}") Boolean generateDdl, //
+			@Value("#{showSql}") Boolean showSql) {
+
+		log.info("Loading Hibernate as JPA vendor.");
+		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+		adapter.setDatabase(jpaVendorDatabase);
+		adapter.setDatabasePlatform(jpaVendorDialect);
+		adapter.setGenerateDdl(generateDdl);
+		adapter.setShowSql(showSql);
+		return adapter;
+	}
+
+	@Bean(autowire = Autowire.BY_NAME)
+	public String jpaVendorDialect() {
+		return H2Dialect.class.getName();
+	}
+
+	@Bean(autowire = Autowire.BY_NAME)
+	public Map<String, ?> jpaPropertiesMap() {
+		Map<String, Object> bean = new HashMap<String, Object>();
+		bean.put("hibernate.hbm2ddl.auto", Hbm2Ddl.NONE.getValue());
+		bean.put("hibernate.format_sql", true);
+		// Prevents the throwing of LazyInitializationException.
+		bean.put("hibernate.enable_lazy_load_no_trans", true);
+		return bean;
 	}
 
 }

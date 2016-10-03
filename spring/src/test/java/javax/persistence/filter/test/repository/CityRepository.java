@@ -1,7 +1,9 @@
 package javax.persistence.filter.test.repository;
 
-import javax.persistence.filter.repository.JpaFilterRepository;
+import javax.persistence.filter.test.domain.City;
 
-public interface CityRepository extends JpaFilterRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CityRepository extends JpaRepository<City, Integer> {
 
 }

@@ -16,7 +16,6 @@ import javax.persistence.filter.core.PassthroughRawClause;
 import javax.persistence.filter.core.Where;
 import javax.persistence.filter.core.conditional.exact.Exact.Operation;
 import javax.persistence.filter.test.context.Database;
-import javax.persistence.filter.test.context.Hibernate;
 import javax.persistence.filter.test.context.Jpa;
 import javax.persistence.filter.test.domain.City;
 import javax.persistence.filter.test.domain.Continent;
@@ -44,12 +43,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { JpaJpqlFilterTests.class, Database.class, Jpa.class, Hibernate.class })
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { JpaJpqlFilterTests.class, Database.class, Jpa.class })
 @Configuration
-@ComponentScan(basePackages = "javax.persistence.filter")
+@ComponentScan(basePackages = JpaJpqlFilterTests.BASE_PACKAGE)
 public class JpaJpqlFilterTests {
 
 	private static boolean isDatabaseStarted;
+
+	public static final String BASE_PACKAGE = "javax.persistence.filter";
 
 	@Autowired
 	private DataSource dataSource;

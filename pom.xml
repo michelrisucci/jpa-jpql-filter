@@ -7,12 +7,12 @@
 
 	<groupId>com.risucci</groupId>
 	<artifactId>jpa-jpql-filter</artifactId>
-	<version>1.21.0.GA</version>
+	<version>1.22.0.GA</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<modules.version>1.21.0.GA</modules.version>
+		<modules.version>1.22.0.GA</modules.version>
 	</properties>
 
 	<modules>
@@ -29,7 +29,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.3</version>
+					<version>3.5</version>
 					<configuration>
 						<!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
 						<source>1.7</source>
@@ -41,7 +41,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>2.4</version>
+					<version>3.0.1</version>
 					<executions>
 						<execution>
 							<id>attach-sources</id>
@@ -93,7 +93,7 @@
 			<dependency>
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
-				<version>[1.1,)</version>
+				<version>1.2</version>
 			</dependency>
 
 			<!-- TEST SCOPE -->
@@ -105,8 +105,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-entitymanager</artifactId>
-				<version>[4.3,)</version>
+				<artifactId>hibernate-core</artifactId>
+				<version>5.2.2.Final</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>

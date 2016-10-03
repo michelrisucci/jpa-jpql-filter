@@ -9,8 +9,6 @@ import javax.persistence.filter.test.service.CountryLanguageService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CountryLanguageServiceImpl
-		extends FilterServiceImpl<CountryLanguage, CountryLanguagePK, CountryLanguageRepository>
-		implements CountryLanguageService {
+public class CountryLanguageServiceImpl extends FilterServiceImpl<CountryLanguage, CountryLanguagePK, CountryLanguageRepository> implements CountryLanguageService {
 
 }

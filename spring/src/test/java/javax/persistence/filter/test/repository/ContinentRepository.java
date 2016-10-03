@@ -1,7 +1,9 @@
 package javax.persistence.filter.test.repository;
 
-import javax.persistence.filter.repository.JpaFilterRepository;
+import javax.persistence.filter.test.domain.Continent;
 
-public interface ContinentRepository extends JpaFilterRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ContinentRepository extends JpaRepository<Continent, String> {
 
 }

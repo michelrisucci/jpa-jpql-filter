@@ -30,7 +30,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
  * @param <E>
  * @param <F>
  */
-public abstract class FilterBean<E, S extends FilterService<E, ?, ?>> extends SpringBeanAutowiringSupport {
+public abstract class FilterBean<E, S extends FilterService<E, ?>> extends SpringBeanAutowiringSupport {
 
 	private static final String ORDER_ENTITY_RELATIVE_PATH = "entityRelativePath";
 

@@ -1,157 +1,69 @@
 package javax.persistence.filter.service;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.filter.Filter;
 import javax.persistence.filter.PageFilter;
-import javax.persistence.filter.repository.JpaFilterRepository;
-import javax.persistence.utils.ReflectionUtils;
+import javax.persistence.filter.core.Filters;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Transactional(propagation = Propagation.REQUIRED)
-public abstract class FilterServiceImpl<E, ID extends Serializable, R extends JpaFilterRepository> implements FilterService<E, ID, R> {
-
-	private Class<E> entityType;
-	private Class<ID> entityIdType;
+public abstract class FilterServiceImpl<E, ID extends Serializable, R extends JpaRepository<E, ID>> extends DefaultServiceImpl<E, ID, R> implements FilterService<E, ID> {
 
 	@Autowired
-	private R genericRepository;
-
-	@Override
-	public E find(ID id) {
-		Class<E> type = getEntityType();
-		return getRepository().find(type, id);
-	}
-
-	@Override
-	public List<E> find(Collection<ID> ids) {
-		Class<E> type = getEntityType();
-		return getRepository().find(type, ids);
-	}
-
-	@Override
-	public boolean exists(ID id) {
-		Class<E> type = getEntityType();
-		return getRepository().exists(type, id);
-	}
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public E save(E entity) {
-		return getRepository().save(entity);
-	}
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public E update(E entity) {
-		return getRepository().update(entity);
-	}
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public void save(Collection<E> entities) {
-		getRepository().save(entities);
-	}
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public List<E> update(Collection<E> entities) {
-		return getRepository().updateAll(entities);
-	}
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public void delete(E entity) {
-		getRepository().delete(entity);
-	}
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public void delete(ID id) {
-		Class<E> type = getEntityType();
-		getRepository().delete(type, id);
-	}
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public int deleteAll() {
-		Class<E> type = getEntityType();
-		return getRepository().deleteAll(type);
-	}
-
-	@Override
-	public List<E> listAll() {
-		Class<E> type = getEntityType();
-		return getRepository().listAll(type);
-	}
-
-	@Override
-	public long countAll() {
-		Class<E> type = getEntityType();
-		return getRepository().countAll(type);
-	}
+	private EntityManager manager;
 
 	@Override
 	public PageFilter<E> filter(Filter<E> filter) {
-		return getRepository().filter(filter);
+		return Filters.filter(manager, filter);
 	}
 
 	@Override
 	public PageFilter<E> filter(Filter<E> filter, int offset, int limit) {
-		return getRepository().filter(filter, offset, limit);
-	}
-
-	@Override
-	public E filterOne(Filter<E> filter) {
-		return getRepository().filterOne(filter);
+		return Filters.filter(manager, filter, offset, limit);
 	}
 
 	@Override
 	public List<E> list(Filter<E> filter) {
-		return getRepository().list(filter);
+		return list(filter, -1, -1);
 	}
 
 	@Override
 	public List<E> list(Filter<E> filter, int offset, int limit) {
-		return getRepository().list(filter, offset, limit);
+		return Filters.list(manager, filter, offset, limit);
+	}
+
+	@Override
+	public E filterOne(Filter<E> filter) throws NonUniqueResultException {
+		List<E> list = list(filter, 0, 1);
+		if (list.isEmpty()) {
+			return null;
+		}
+		int size = list.size();
+		if (size > 1) {
+			String message = "Conditionals does not ensure uniqueness: " + size + " results found.";
+			throw new NonUniqueResultException(message);
+		}
+		return list.get(0);
+	}
+
+	@Override
+	public List<E> listAll() {
+		return Filters.listAll(manager, type);
 	}
 
 	@Override
 	public long count(Filter<E> filter) {
-		return getRepository().count(filter);
+		return Filters.count(manager, filter);
 	}
 
 	@Override
-	public ID getId(E entity) {
-		return getRepository().getId(entity, getEntityIdType());
-	}
-
-	@Transactional(propagation = Propagation.SUPPORTS)
-	@SuppressWarnings("unchecked")
-	protected Class<E> getEntityType() {
-		if (entityType == null) {
-			entityType = (Class<E>) ReflectionUtils.getParameterType(this, 0);
-		}
-		return entityType;
-	}
-
-	@Transactional(propagation = Propagation.SUPPORTS)
-	@SuppressWarnings("unchecked")
-	protected Class<ID> getEntityIdType() {
-		if (entityIdType == null) {
-			entityIdType = (Class<ID>) ReflectionUtils.getParameterType(this, 1);
-		}
-		return entityIdType;
-	}
-
-	@Transactional(propagation = Propagation.SUPPORTS)
-	protected R getRepository() {
-		return genericRepository;
+	public long countAll() {
+		return Filters.countAll(manager, type);
 	}
 
 }

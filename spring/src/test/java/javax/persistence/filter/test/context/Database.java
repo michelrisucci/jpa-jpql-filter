@@ -1,6 +1,5 @@
 package javax.persistence.filter.test.context;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -8,11 +7,9 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor;
@@ -25,20 +22,12 @@ public class Database {
 	private static final Log log = LogFactory.getLog(Database.class);
 	private static final String DATASOURCE = "classpath:datasource.properties";
 
-	@Bean(name = "dsProperties")
-	public Properties dsProperties(@Value(DATASOURCE) Resource ds) throws IOException {
-		log.info("Loading DataSource configuration properties at " + DATASOURCE + ".");
-		Properties dsProperties = new Properties();
-		dsProperties.load(ds.getInputStream());
-		return dsProperties;
-	}
-
 	@Bean
-	@Primary
-	@Autowired
-	public DataSource dataSource(@Value("#{dsProperties}") Properties dsProperties) throws Exception {
-		log.info("Loading DataSource.");
-		return BasicDataSourceFactory.createDataSource(dsProperties);
+	public DataSource dataSource(@Value(DATASOURCE) Resource ds) throws Exception {
+		log.info("Loading DataSource configuration properties at " + DATASOURCE + ".");
+		Properties properties = new Properties();
+		properties.load(ds.getInputStream());
+		return BasicDataSourceFactory.createDataSource(properties);
 	}
 
 	@Bean

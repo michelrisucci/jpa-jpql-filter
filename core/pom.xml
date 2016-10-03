@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.risucci</groupId>
 		<artifactId>jpa-jpql-filter</artifactId>
-		<version>1.21.0.GA</version>
+		<version>1.22.0.GA</version>
 	</parent>
 
 	<artifactId>jpa-jpql-filter-core</artifactId>
@@ -36,7 +36,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
+			<artifactId>hibernate-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
