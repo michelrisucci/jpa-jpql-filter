@@ -38,7 +38,7 @@ public abstract class DefaultServiceImpl<E, ID extends Serializable, R extends J
 
 	@Override
 	@Transactional
-	public <S extends E> List<S> save(Iterable<S> entities) {
+	public List<E> save(Iterable<E> entities) {
 		return repository.save(entities);
 	}
 
@@ -60,12 +60,12 @@ public abstract class DefaultServiceImpl<E, ID extends Serializable, R extends J
 	}
 
 	@Override
-	public <S extends E> List<S> findAll(Example<S> example) {
+	public List<E> findAll(Example<E> example) {
 		return repository.findAll(example);
 	}
 
 	@Override
-	public <S extends E> List<S> findAll(Example<S> example, Sort sort) {
+	public List<E> findAll(Example<E> example, Sort sort) {
 		return repository.findAll(example, sort);
 	}
 
@@ -76,13 +76,13 @@ public abstract class DefaultServiceImpl<E, ID extends Serializable, R extends J
 
 	@Override
 	@Transactional
-	public <S extends E> S save(S entity) {
+	public E save(E entity) {
 		return repository.save(entity);
 	}
 
 	@Override
 	@Transactional
-	public <S extends E> S saveAndFlush(S entity) {
+	public E saveAndFlush(E entity) {
 		entity = save(entity);
 		repository.flush();
 		return entity;
@@ -90,7 +90,7 @@ public abstract class DefaultServiceImpl<E, ID extends Serializable, R extends J
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public <S extends E> S saveAndCommit(S entity) {
+	public E saveAndCommit(E entity) {
 		return saveAndFlush(entity);
 	}
 
@@ -125,7 +125,7 @@ public abstract class DefaultServiceImpl<E, ID extends Serializable, R extends J
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void deleteAndCommit(ID id) {
-		delete(id);
+		deleteAndFlush(id);
 	}
 
 	@Override
@@ -141,22 +141,22 @@ public abstract class DefaultServiceImpl<E, ID extends Serializable, R extends J
 	}
 
 	@Override
-	public <S extends E> S findOne(Example<S> example) {
+	public E findOne(Example<E> example) {
 		return repository.findOne(example);
 	}
 
 	@Override
-	public <S extends E> Page<S> findAll(Example<S> example, Pageable pageable) {
+	public Page<E> findAll(Example<E> example, Pageable pageable) {
 		return repository.findAll(example, pageable);
 	}
 
 	@Override
-	public <S extends E> long count(Example<S> example) {
+	public long count(Example<E> example) {
 		return repository.count(example);
 	}
 
 	@Override
-	public <S extends E> boolean exists(Example<S> example) {
+	public boolean exists(Example<E> example) {
 		return repository.exists(example);
 	}
 

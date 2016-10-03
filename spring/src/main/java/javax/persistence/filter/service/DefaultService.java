@@ -16,7 +16,7 @@ public interface DefaultService<E, ID extends Serializable> {
 
 	List<E> findAll(Iterable<ID> ids);
 
-	<S extends E> List<S> save(Iterable<S> entities);
+	List<E> save(Iterable<E> entities);
 
 	void deleteInBatch(Iterable<E> entities);
 
@@ -24,17 +24,17 @@ public interface DefaultService<E, ID extends Serializable> {
 
 	E getOne(ID id);
 
-	<S extends E> List<S> findAll(Example<S> example);
+	List<E> findAll(Example<E> example);
 
-	<S extends E> List<S> findAll(Example<S> example, Sort sort);
+	List<E> findAll(Example<E> example, Sort sort);
 
 	Page<E> findAll(Pageable pageable);
 
-	<S extends E> S save(S entity);
+	E save(E entity);
 
-	<S extends E> S saveAndFlush(S entity);
+	E saveAndFlush(E entity);
 
-	<S extends E> S saveAndCommit(S entity);
+	E saveAndCommit(E entity);
 
 	E findOne(ID id);
 
@@ -52,12 +52,12 @@ public interface DefaultService<E, ID extends Serializable> {
 
 	void deleteAll();
 
-	<S extends E> S findOne(Example<S> example);
+	E findOne(Example<E> example);
 
-	<S extends E> Page<S> findAll(Example<S> example, Pageable pageable);
+	Page<E> findAll(Example<E> example, Pageable pageable);
 
-	<S extends E> long count(Example<S> example);
+	long count(Example<E> example);
 
-	<S extends E> boolean exists(Example<S> example);
+	boolean exists(Example<E> example);
 
 }
