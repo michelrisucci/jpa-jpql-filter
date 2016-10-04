@@ -53,7 +53,7 @@ public abstract class FilterServiceImpl<E, ID extends Serializable, R extends Jp
 
 	@Override
 	public List<E> listAll() {
-		return Filters.listAll(manager, type);
+		return Filters.listAll(manager, getEntityType());
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public abstract class FilterServiceImpl<E, ID extends Serializable, R extends Jp
 
 	@Override
 	public long countAll() {
-		return Filters.countAll(manager, type);
+		return Filters.countAll(manager, getEntityType());
 	}
 
 }

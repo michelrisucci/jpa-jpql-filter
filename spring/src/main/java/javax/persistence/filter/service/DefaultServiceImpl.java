@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public abstract class DefaultServiceImpl<E, ID extends Serializable, R extends JpaRepository<E, ID>> implements DefaultService<E, ID> {
 
-	protected Class<E> type;
+	private Class<E> type;
 
 	@Autowired
 	protected R repository;
