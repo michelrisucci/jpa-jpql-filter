@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-public abstract class DefaultServiceImpl<E, ID extends Serializable, R extends JpaRepository<E, ID>> implements DefaultService<E, ID> {
+public abstract class SimpleDataService<E, ID extends Serializable, R extends JpaRepository<E, ID>> implements DataService<E, ID> {
 
 	private Class<E> type;
 

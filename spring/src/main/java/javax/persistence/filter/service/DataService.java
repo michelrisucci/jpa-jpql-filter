@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-public interface DefaultService<E, ID extends Serializable> {
+public interface DataService<E, ID extends Serializable> {
 
 	List<E> findAll();
 

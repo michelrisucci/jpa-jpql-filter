@@ -1,18 +1,14 @@
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.risucci</groupId>
 	<artifactId>jpa-jpql-filter</artifactId>
-	<version>1.22.0.GA</version>
+	<version>1.23.7.GA</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<modules.version>1.22.0.GA</modules.version>
+		<modules.version>1.23.7.GA</modules.version>
 	</properties>
 
 	<modules>
@@ -29,7 +25,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.5</version>
+					<version>3.5.1</version>
 					<configuration>
 						<!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
 						<source>1.7</source>
@@ -73,6 +69,14 @@
 	<!-- DEPENDENCIES FOR ALL MODULES -->
 	<dependencyManagement>
 		<dependencies>
+			<!-- JPA API -->
+			<dependency>
+				<groupId>org.hibernate.javax.persistence</groupId>
+				<artifactId>hibernate-jpa-2.1-api</artifactId>
+				<version>1.0.0.Final</version>
+				<scope>provided</scope>
+			</dependency>
+
 			<!-- JAVAEE WEB API -->
 			<dependency>
 				<groupId>javax</groupId>
@@ -94,6 +98,15 @@
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
 				<version>1.2</version>
+			</dependency>
+
+			<!-- SPRING BILL OF MATERIALS (ALL IMPORTS) -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-framework-bom</artifactId>
+				<version>4.3.3.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 
 			<!-- TEST SCOPE -->

@@ -7,7 +7,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.filter.Filter;
 import javax.persistence.filter.PageFilter;
 
-public interface FilterService<E, ID extends Serializable> extends DefaultService<E, ID> {
+public interface FilterService<E, ID extends Serializable> extends DataService<E, ID> {
 
 	PageFilter<E> filter(Filter<E> filter);
 
@@ -19,10 +19,6 @@ public interface FilterService<E, ID extends Serializable> extends DefaultServic
 
 	E filterOne(Filter<E> filter) throws NonUniqueResultException;
 
-	List<E> listAll();
-
 	long count(Filter<E> filter);
-
-	long countAll();
 
 }

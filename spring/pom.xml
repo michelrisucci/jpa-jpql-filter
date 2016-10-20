@@ -8,20 +8,16 @@
 	<parent>
 		<groupId>com.risucci</groupId>
 		<artifactId>jpa-jpql-filter</artifactId>
-		<version>1.22.0.GA</version>
+		<version>1.23.7.GA</version>
 	</parent>
 
 	<artifactId>jpa-jpql-filter-spring</artifactId>
 
 	<dependencies>
-		<!-- ******************************* -->
-		<!-- *** COMPILE/PROVIDED SCOPES *** -->
-		<!-- ******************************* -->
-
-		<!-- JAVAEE WEB API -->
+		<!-- JPA API -->
 		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-web-api</artifactId>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.1-api</artifactId>
 		</dependency>
 
 		<!-- INTERNAL JPA-JPQL-FILTER CORE -->
@@ -40,37 +36,31 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>4.3.3.RELEASE</version>
-			<scope>runtime</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
-			<version>4.3.3.RELEASE</version>
-			<scope>runtime</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			<version>4.3.3.RELEASE</version>
-			<scope>runtime</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 			<version>1.10.4.RELEASE</version>
-			<scope>runtime</scope>
+			<scope>provided</scope>
 		</dependency>
 
-		<!-- ****************** -->
-		<!-- *** TEST SCOPE *** -->
-		<!-- ****************** -->
+		<!-- TEST SCOPE -->
 
 		<!-- SPRING -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>4.3.3.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 

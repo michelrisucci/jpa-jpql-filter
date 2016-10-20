@@ -1,5 +1,6 @@
 package javax.persistence.filter;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -139,14 +140,35 @@ public class Filter<T> {
 	 * @param rootType
 	 *            root entity Java Class type
 	 * @param wheres
-	 *            optional array of {@link Where} conditionals
+	 *            array of {@link Where} conditionals
 	 * @param orders
-	 *            optional array of {@link Order} conditionals
+	 *            array of {@link Order} conditionals
 	 * @return a {@link Filter} definition with the defined {@link Where} and
 	 *         {@link Order} conditionals
 	 */
 	public static <T> Filter<T> newInstance(Class<T> rootType, Where[] wheres, Order[] orders) {
 		return new Filter<T>(rootType, wheres, orders);
+	}
+
+	/**
+	 * Filter constructor automatically adds Wheres and Orders.
+	 * 
+	 * @param <T>
+	 *            dynamic entity Java type
+	 * @param rootType
+	 *            root entity Java Class type
+	 * @param wheres
+	 *            any collection of {@link Where} conditionals
+	 * @param orders
+	 *            any collection of {@link Order} conditionals
+	 * @return a {@link Filter} definition with the defined {@link Where} and
+	 *         {@link Order} conditionals
+	 */
+	public static <T> Filter<T> newInstance(Class<T> rootType, Collection<Where> wheres, Collection<Order> orders) {
+		Where[] wheresArray = wheres.toArray(new Where[wheres.size()]);
+		Order[] ordersArray = orders.toArray(new Order[orders.size()]);
+
+		return new Filter<T>(rootType, wheresArray, ordersArray);
 	}
 
 	/**
@@ -251,6 +273,25 @@ public class Filter<T> {
 		for (Order order : orders) {
 			this.orders.add(order);
 			order.postProcess(this);
+		}
+		return this;
+	}
+
+	/**
+	 * Adds {@link Where} conditionals to this {@link Filter} model
+	 * 
+	 * @param wheres
+	 *            {@link Where} conditionals
+	 * @param orders
+	 *            {@link Order} conditionals
+	 * @return this {@link Filter}
+	 */
+	public Filter<T> add(Collection<Where> wheres, Collection<Order> orders) {
+		if (wheres != null && !wheres.isEmpty()) {
+			add(wheres.toArray(new Where[wheres.size()]));
+		}
+		if (orders != null && !orders.isEmpty()) {
+			add(orders.toArray(new Order[orders.size()]));
 		}
 		return this;
 	}

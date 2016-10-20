@@ -174,6 +174,21 @@ public class Filters {
 	 *            {@link EntityManager}
 	 * @param filter
 	 *            {@link Filter} instance
+	 * @return list of fetched values for this {@link Filter} instance
+	 */
+	public static <E> List<E> list(EntityManager em, Filter<E> filter) {
+		return list(em, filter, -1, -1);
+	}
+
+	/**
+	 * Filter method that performs list query based on {@link Filter} instance.
+	 * 
+	 * @param <E>
+	 *            dynamic entity Java Class type
+	 * @param em
+	 *            {@link EntityManager}
+	 * @param filter
+	 *            {@link Filter} instance
 	 * @param offset
 	 *            number of rows to skip before beginning to fetch
 	 * @param limit
